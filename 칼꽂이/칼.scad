@@ -23,12 +23,31 @@ module scissor(
     x1, y1, z1, //  길이, 너비, 두께
     z2  //  중앙 튀어 나온곳 높이
 ) {
-    translate([0, 0, -x1 / 2]) {
-        cube([y1, z1, x1]);
-    }
-    translate([-(z2 - y1) / 2, (z1 - z2) / 2, -x1 / 2]) {
-        cube([z2, z2, x1]);
-    }
+    translate([y1 / 2, z1/2, 0])
+        rotate([90, 90, 0]) {
+            resize([x1, y1, z1]) {
+                cylinder(1, 1, 1, $fn = 3);
+            }
+        }
+    translate([y1 / 2, z2/2, 0])
+        rotate([90, 90, 0]) {
+            cylinder(z2, z2, z2, $fn = 3);
+        }
+}
+module test(
+    x1, y1, z1, //  길이, 너비, 두께
+    z2  //  중앙 튀어 나온곳 높이
+) {
+    translate([0, z1/2, 0])
+        rotate([90, 90, 0]) {
+            resize([x1, y1, z1]) {
+                cylinder(1, 1, 1, $fn = 3);
+            }
+        }
+    translate([0, z2/2, 0])
+        rotate([90, 90, 0]) {
+            cylinder(z2, z2, z2, $fn = 3);
+        }
 }
 
 
@@ -52,8 +71,10 @@ module knifes() {
 
     dy = 20;
 
-    translate([0, dy * 8, 0])   scissor(234, 85, 10, 20);
-    translate([0, dy * 8 + 25, 0])   scissor(234, 85, 10, 20);
+    translate([0, dy * 8, 0])   scissor(234, 85, 8, 15);
+    translate([0, dy * 8 + 25, 0])   scissor(234, 85, 8, 15);
 }
 
 knifes();
+//test(234, 85, 10, 20);
+
