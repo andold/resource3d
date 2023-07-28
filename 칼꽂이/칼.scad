@@ -135,29 +135,32 @@ module prototype() {
     translate([start, 50, 0])   chef([140, 37, 20], [235, 46, 4]);
     translate([start + 37, 0, 0])   bread([112, 25, 15], [105, 20, 2]);
     translate([start + 37, 50, 0])   bread([112, 25, 15], [105, 20, 2]);
+    translate([start + 37 + 30, 0, 0])   scissor(220, 82, 12, 40, 14);
 
-	translate([128, 128, 0]) difference() {
-		union() {
-			translate([-32, -64 + 36, 0]) mold([140, 37, 20], 2, 2, [37 + 8, 45, 1], [0.0, 0.5, 0.0, 0.5]);
-			translate([-32, -64 + 36 + 50, 0]) mold([140, 37, 20], 2, 2, [37 + 8, 45, 1], [0.0, 0.5, 0.0, 0.5]);
-
-			translate([-32 + 37, -64 + 36, 0]) mold([112, 25, 15], 2, 2, [37 + 8, 45, 1], [0.2, 0.5, 0.0, 0.5]);
-			translate([-32 + 37, -64 + 36 + 50, 0]) mold([112, 25, 15], 2, 2, [37 + 8, 45, 1], [0.2, 0.5, 0.0, 0.5]);
-		}
-
+	translate([128, 128, 0]) {
 		difference() {
-			cube([128, 128, 2], center = true);
+			union() {
+				translate([-32, -64 + 36, 0]) mold([140, 37, 20], 2, 2, [37 + 8, 45, 1], [0.0, 0.5, 0.0, 0.5]);
+				translate([-32, -64 + 36 + 50, 0]) mold([140, 37, 20], 2, 2, [37 + 8, 45, 1], [0.0, 0.5, 0.0, 0.5]);
 
-			translate([-32, -64 + 36, 0]) roundedBox(size=moldInner([140, 37, 20], 2), radius=2, sidesonly=false);
-			translate([-32, -64 + 36 + 50, 0]) roundedBox(size=moldInner([140, 37, 20], 2), radius=2, sidesonly=false);
+				translate([-32 + 37, -64 + 36, 0]) mold([112, 25, 15], 2, 2, [37 + 8, 45, 1], [0.2, 0.5, 0.0, 0.5]);
+				translate([-32 + 37, -64 + 36 + 50, 0]) mold([112, 25, 15], 2, 2, [37 + 8, 45, 1], [0.2, 0.5, 0.0, 0.5]);
 
-			translate([-32 + 37, -64 + 36, 0]) roundedBox(size=moldInner([112, 25, 15], 2), radius=2, sidesonly=false);
-			translate([-32 + 37, -64 + 36 + 50, 0]) roundedBox(size=moldInner([112, 25, 15], 2), radius=2, sidesonly=false);
-		}
-		translate([-32, 0, 0]) cube([5, 110, 128], center = true);
-	}
+				difference() {
+					cube([128, 128, 2], center = true);
+
+					translate([-32, -64 + 36, 0]) roundedBox(size=moldInner([140, 37, 20], 2), radius=2, sidesonly=false);
+					translate([-32, -64 + 36 + 50, 0]) roundedBox(size=moldInner([140, 37, 20], 2), radius=2, sidesonly=false);
+
+					translate([-32 + 37, -64 + 36, 0]) roundedBox(size=moldInner([112, 25, 15], 2), radius=2, sidesonly=false);
+					translate([-32 + 37, -64 + 36 + 50, 0]) roundedBox(size=moldInner([112, 25, 15], 2), radius=2, sidesonly=false);
+				}
+			}
 
 			translate([-32, 0, 0]) cube([5, 110, 128], center = true);
+			translate([-32 + 37, 0, 0]) cube([3, 110, 128], center = true);
+		}
+	}
 }
 
 //knifes();
