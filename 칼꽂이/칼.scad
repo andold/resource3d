@@ -2,27 +2,28 @@ echo(version=version());
 
 // 칼
 module hilt(
-    x1, y1, z1, //  손잡이
-    margin      //  여유, 유격
+	x1, y1, z1, //  손잡이
+	margin,      //  여유, 유격
+	color
 ) {
-    color(c=[0.5, 0.5, 0, 0.5]) //  노란색 계통
-        cube([x1 + margin * 2, y1 + margin * 2, z1 + margin * 2]);
+    color(c=color) //  노란색 계통
+        cube([x1, y1, z1]);
 }
 
 module chef(
-    x1, y1, z1, //  손잡이
-    x2, y2, z2  //  칼날
+    z1, y1, x1, //  손잡이
+    z2, y2, x2  //  칼날
 ) {
-    hilt(x1, y1, z1, 2);
+    hilt(x1, y1, z1, 2, [0.5, 0.5, 0, 0.5]);
     color(c=[0.8, 0.8, 0.9, 0.5])
-        translate([0, (y1 - y2) / 2, -z2]) {
+        translate([(x1 - x2) / 2, 0 , -z2]) {
             cube([x2, y2, z2]);
         }
 }
 
 module bread(
-    x1, y1, z1, //  손잡이
-    x2, y2, z2  //  칼날
+    z1, y1, x1, //  손잡이
+    z2, y2, x2  //  칼날
 ) {
     color(c=[0.5, 0.0, 0, 0.5]) //  붉은색 계통
         cube([x1, y1, z1]);
@@ -33,61 +34,70 @@ module bread(
 }
 
 module scissor(
-    x1, y1, z1, //  길이, 너비, 두께
-    z2  //  중앙 튀어 나온곳 높이
+    z1, y1, x1, //  길이, 너비, 너비 중앙, 두께
+	y2, x2  //  중앙 튀어 나온곳 높이 너비
 ) {
-    color(c=[0.2, 0.2, 0.2, 0.5])   //검은색 계통
-        translate([y1 / 2, z1/2, 0])
-            rotate([90, 90, 0]) {
-                resize([x1, y1, z1]) {
+	dz = -z1 / 3 + y2 / y1 * z1;
+    color(c=[0.8, 0.8, 0.8, 0.5])   //검은색 계통
+        translate([0, y1 / 2, dz])
+            resize([x1, y1, z1])
+            rotate([90, 90, 90])
                         cylinder(1, 1, 1, $fn = 3);
-                }
-            }
-    color(c=[0.5, 0.5, 0.5, 0.5])
-        translate([y1 / 2, z2/2, 0])
-            rotate([90, 90, 0]) {
-                cylinder(z2, z2, z2, $fn = 3);
+    color(c=[0.5, 0.5, 0.1, 0.5])
+        translate([(x1 - x2) / 2, y1 / 2, 0])
+            rotate([90, 90, 90]) {
+				cylinder(x2, 10, 10);
             }
 }
 module test(
-    x1, y1, z1, //  길이, 너비, 두께
-    z2  //  중앙 튀어 나온곳 높이
+   z1, y1, x1, //  길이, 너비, 너비 중앙, 두께
+	y2, x2  //  중앙 튀어 나온곳 높이 너비
 ) {
-    //translate([-500, -500, 0]) cube(1000);
-    //translate([100, 0, 0])
-		difference() {
-            difference() {
-                    translate([-2, 0, 0]) scissor(234 + 4, 64 + 4, 8 + 4, 15 + 4);
-                    scissor(234, 64, 8, 15);
-            };
-            translate([-500, -500, 0]) cube(1000);
-        }
+	dz = -z1 / 3 + y2 / y1 * z1;
+    color(c=[0.8, 0.8, 0.8, 0.5])   //검은색 계통
+        translate([0, y1 / 2, dz])
+            resize([x1, y1, z1])
+				rotate([90, 90, 90])
+                        cylinder(1, 1, 1, $fn = 3);
+    color(c=[0.5, 0.5, 0.1, 0.5])
+        translate([(x1 - x2) / 2, y1 / 2, 0])
+            rotate([90, 90, 90]) {
+				cylinder(x2, 10, 10);
+            }
 }
 
 
-module chefs(start, dy) {
-    translate([0, dy * 0, 0])   chef(45, 20, 130, 47, 3, 230);
-    translate([0, dy * 1.5, 0])   chef(40, 20, 100, 40, 2, 200);
-    translate([50, dy * 1.5, 0])   chef(22, 16, 80, 30, 2, 150);
+module chefs(start, margin) {
+    translate([start, 0, 0])   chef(140, 37, 20, 235, 46, 4);
+    translate([start + 20 + margin, 0, 0])   chef(140, 37, 20, 205, 52, 2);
+    translate([start + 20 + margin + (20 - 16) / 2, 52 + margin, 0])   chef(120, 30, 16, 162, 42, 2);
+	// 여유
+    translate([start, 52 + margin, 0])   chef(140, 37, 20, 235, 46, 4);
 }
-module breads(start, dy) {
-    translate([0, start + dy * 0, 0])   bread(20, 15, 96, 18, 1, 112);
-    translate([0, start + 20 + dy / 2, 0])   bread(20, 12, 96, 18, 1, 112);
-    translate([0, start + 20 + 20 + dy / 2, 0])   bread(20, 10, 96, 18, 1, 112);
-    translate([40, start + dy * 0, 0])   bread(20, 15, 96, 18, 1, 112);
-    translate([40, start + 20 + dy / 2, 0])   bread(20, 12, 96, 18, 1, 112);
-    translate([40, start + 20 + 20 + dy / 2, 0])   bread(20, 10, 96, 18, 1, 112);
+module breads(start, margin) {
+    translate([start, 0, 0])   chef(112, 25, 20, 115, 27, 2);
+    translate([start + 20 + margin, 0, 0])   bread(112, 25, 15, 105, 20, 2);
+	translate([start + 20 + 15 + margin * 2, 0, 0])   bread(106, 22, 13, 127, 17, 1);
+
+    translate([start, 27 + margin, 0])   bread(112, 25, 20, 127, 20, 2);// 여유
+    translate([start + 20 + margin, 27 + margin, 0])   bread(112, 25, 20, 127, 20, 2);// 여유
+	translate([start + 20 + 20 + margin * 2, 27 + margin, 0])   bread(112, 25, 20, 127, 20, 2);// 여유
+
+    translate([start, 50 + margin * 2, 0])   bread(112, 25, 15, 105, 20, 2);// 여유
+    translate([start + 20 + margin, 50 + margin * 2, 0])   bread(112, 25, 15, 105, 20, 2);// 여유
+	translate([start + 20 + 20 + margin * 2, 50 + margin * 2, 0])   bread(112, 25, 15, 105, 20, 2);// 여유
+
 }
-module scissors(start, dy) {
-    translate([0, start + dy * 0, 0])   scissor(234, 64, 8, 15);
-    translate([0, start + dy * 1, 0])   scissor(234, 64, 8, 15);
+module scissors(start, margin) {
+    translate([start, 0, 0])   scissor(220, 82, 12, 40, 14);
+    translate([start, 40 + margin, 0])   scissor(220, 82, 12, 40, 14);
 }
 module knifes() {
-    chefs(0, 20);
+    chefs(0, 10);
     breads(60, 10);
-    scissors(130, 20);
+    scissors(150, 10);
 }
 
 knifes();
-//test(234, 64, 8, 15);
+// translate([0, 0, 0]) test(220, 82, 12, 40, 14);
 
