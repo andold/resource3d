@@ -1,6 +1,7 @@
 use <MCAD/boxes.scad>
 $fa=1;
 $fs=0.4;
+height = 24;
 
 echo(version=version());
 
@@ -128,46 +129,57 @@ module knifes() {
     breads(60, 10);
     scissors(150, 10);
 }
+opacity = 1;
+colorScissor = [0.2, 0.3, 0.4, opacity];
 module prototype() {
 	start = 0;
-
-    translate([start, 0, 0])   chef([140, 37, 20], [235, 46, 4]);
-    translate([start, 50, 0])   chef([140, 37, 20], [235, 46, 4]);
-    translate([start + 37, 0, 0])   bread([112, 25, 15], [105, 20, 2]);
-    translate([start + 37, 50, 0])   bread([112, 25, 15], [105, 20, 2]);
-    translate([start + 37 + 30, 0, 0])   scissor(220, 82, 12, 40, 14);
 
 	translate([128, 128, 0]) {
 		difference() {
 			union() {
-				translate([-32, -64 + 36, 0]) mold([140, 37, 20], 2, 2, [37 + 8, 45, 1], [0.0, 0.5, 0.0, 0.5]);
-				translate([-32, -64 + 36 + 50, 0]) mold([140, 37, 20], 2, 2, [37 + 8, 45, 1], [0.0, 0.5, 0.0, 0.5]);
+				translate([-32, -64 + 36, 0]) mold([140, 37, 20], 2, 2, [37 + 8, height, 1], [0.0, 0.5, 0.0, opacity]);
+				translate([-32, -64 + 36 + 50, 0]) mold([140, 37, 20], 2, 2, [37 + 8, height, 1], [0.0, 0.5, 0.0, opacity]);
 
-				translate([-32 + 37, -64 + 36, 0]) mold([112, 25, 15], 2, 2, [37 + 8, 45, 1], [0.2, 0.5, 0.0, 0.5]);
-				translate([-32 + 37, -64 + 36 + 50, 0]) mold([112, 25, 15], 2, 2, [37 + 8, 45, 1], [0.2, 0.5, 0.0, 0.5]);
+				translate([-32 + 37, -64 + 36, 0]) mold([112, 25, 15], 2, 2, [37 + 8, height, 1], [0.2, 0.5, 0.0, opacity]);
+				translate([-32 + 37, -64 + 36 + 50, 0]) mold([112, 25, 15], 2, 2, [37 + 8, height, 1], [0.2, 0.5, 0.0, opacity]);
+
+				translate([-32 + 37 + 25 + 10, -64 + 36, -height / 2]) moldScissor([220, 82, 12], [40, 14], 2, 1, colorScissor);
 
 				difference() {
-					cube([128, 128, 2], center = true);
+					color(c=[0.8, 0.8, 0.8, 0.2]) roundedBox(size=[128, 128, 2],radius=1,sidesonly=true);
 
 					translate([-32, -64 + 36, 0]) roundedBox(size=moldInner([140, 37, 20], 2), radius=2, sidesonly=false);
 					translate([-32, -64 + 36 + 50, 0]) roundedBox(size=moldInner([140, 37, 20], 2), radius=2, sidesonly=false);
 
 					translate([-32 + 37, -64 + 36, 0]) roundedBox(size=moldInner([112, 25, 15], 2), radius=2, sidesonly=false);
 					translate([-32 + 37, -64 + 36 + 50, 0]) roundedBox(size=moldInner([112, 25, 15], 2), radius=2, sidesonly=false);
+
+					translate([-32 + 37 + 25 + 10, -64 + 36, 0]) moldScissorInner([220, 82, 12], [40, 14], 2, 1, colorScissor);
 				}
 			}
 
+			// 칼날을 위한 홈
 			translate([-32, 0, 0]) cube([5, 110, 128], center = true);
 			translate([-32 + 37, 0, 0]) cube([3, 110, 128], center = true);
 		}
 	}
 }
 
-//knifes();
-//chefs(0, 10);
-//chef([140, 37, 20], [235, 46, 4]);
-//test(140, 37, 20, 235, 46, 4);
-//rsquare(64, 48, 2);
+// 가위 거푸집 body[길이, 너비, 두께] center[거리, 두께]
+module moldScissor(body, center, margin, thick, color) {
+	outter = [center[1] + (margin + thick) * 2, center[0] + (margin + thick) * 2, height];
+	inner = outter - [margin * 2, margin * 2, -margin];
+	color(color) {
+		difference() {
+			resize(outter) cylinder(h = outter[2], r1 = outter[1], r2 = outter[1], center = true);
+			resize(inner) cylinder(h = inner[2], r1 = inner[1], r2 = inner[1], center = true);
+		}
+	}
+}
+module moldScissorInner(body, center, margin, thick, color) {
+	outter = [center[1] + (margin + thick) * 2, center[0] + (margin + thick) * 2, height];
+	inner = outter - [margin * 2, margin * 2, -margin];
+	resize(inner) cylinder(h = inner[2], r1 = inner[1], r2 = inner[1], center = true);
+}
 prototype();
-//bread([112, 25, 15], [105, 20, 2]);
 
