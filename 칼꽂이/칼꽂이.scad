@@ -18,7 +18,7 @@ module prototype() {
 	gy0 = -28;
 	gy1 = 0;
 	gy2 = -gy0;
-	translate([128, 128, 0]) {
+	rotate([180, 0, 0]) translate([0, 0, 0]) {
 		difference() {
 			union() {
 				translate([gx0, gy0, 0]) mold([140, 37, 20], 2, 2, [37 + 8, height, 1], [0.0, 0.5, 0.0, opacity]);
