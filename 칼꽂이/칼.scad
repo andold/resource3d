@@ -147,5 +147,6 @@ module moldScissorInner(body, center, margin, thick, color) {
 	inner = outter - [margin * 2, margin * 2, -margin];
 	resize(inner) cylinder(h = inner[2], r1 = inner[1], r2 = inner[1], center = true);
 }
-prototype();
+
+chefs(0, 2);
 
