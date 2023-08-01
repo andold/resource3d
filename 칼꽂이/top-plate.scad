@@ -35,7 +35,7 @@ module hilt(base, r) {
 module top_plate() {
 	t = 3;		//	thick 껍질 두께
 	m = 16;	//	margin 여유
-	base = [74, 120, t] + [0, 0, 0];	//	상판
+	base = [78, 126, t] + [0, 0, 0];	//	상판
 	HILT = [4 + t * 2, 32, 16];	//	손잡이
 
 	difference() {
@@ -43,11 +43,11 @@ module top_plate() {
 			//	상판
 			color(c=PALETTE[2])		translate([base[0] / 2, base[1] / 2, t / 2])		roundedBox(size=base, radius = m / 4, sidesonly = true);
 			
-			//	손잡이
-			translate([-8, -8, 0])		color(c=PALETTE[0])	translate([m, m, 0])		hilt(HILT, t);
-			
 			//	서명
 			color(c=PALETTE[1])		translate([base[0] - m / 2 - 2, m / 4, t])		mark("andold", 0.2, 1);
+
+			//	손잡이
+			translate([-8, -8, 0])		color(c=PALETTE[0])	translate([m, m, 0])		hilt(HILT, t);
 		}
 		
 		translate([-8, -8, 0]) {
@@ -57,22 +57,18 @@ module top_plate() {
 			translate([m  + t + 32, m + t, 0])	hole(3, 60);
 
 			// 과도
-			translate([m  + t + 00, m + t + 64, 0])	hole(3, 28);
+			translate([m  + t + 00, m + t + 70, 0])	hole(3, 36);
 
 			// 빵칼
-			translate([m  + t + 12, m + t + 64, 0])	hole(3, 20);
-			translate([m  + t + 12, m + t + 64 + 22, 0])	hole(3, 18);
-			translate([m  + t + 22, m + t + 64, 0])	hole(3, 20);
-			translate([m  + t + 22, m + t + 64 + 22, 0])	hole(3, 18);
-			translate([m  + t + 32, m + t + 64, 0])	hole(3, 20);
-			translate([m  + t + 32, m + t + 64 + 22, 0])	hole(3, 18);
+			translate([m  + t + 10, m + t + 70, 0])	hole(3, 36);
+			translate([m  + t + 20, m + t + 70, 0])	hole(3, 36);
+			translate([m  + t + 30, m + t + 70, 0])	hole(3, 36);
 
 			// 가위
-			translate([m  + t + 42, m + t + 0, 0])	ellipsis(16, 40);
-			translate([m  + t + 42, m + t + 50, 0])	ellipsis(16, 40);
+			translate([m  + t + 42, m + t + 0, -1])		ellipsis(16, 40);
+			translate([m  + t + 42, m + t + 65, -1])		ellipsis(16, 40);
 			
 			// 여유
-			translate([m  + t + 58, m + t + 95, 0])	rotate([0, 0, 90])	hole(3, 20);
 		}
 
 		// 모서리 구멍

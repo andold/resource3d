@@ -7,11 +7,11 @@ module mark(name = "andold", height = 4, base = BASE, mx = ROUND * 2) {
 				text(name, size = 1, language = "kr", font = "NanumGothic");
 }
 
-module lineBox(outter = [128, 128, 128], t = 4) {
-	size = outter - [t, t, t];
+module lineBox(outter = [100, 100, 100], t = 2) {
+	size = outter - [t*2, t*2, t*2];
 	center = false;
 
-	scale([0, 0, 0]) {
+	scale([1, 1, 1]) translate([t, t, t])	{
 		
 	// x
 	translate([0, 0, 0])						rotate([0, 90, 0])		cylinder(h = size[0], r = t, center = center);
@@ -31,14 +31,20 @@ module lineBox(outter = [128, 128, 128], t = 4) {
 	translate([size[0], size[1], 0])	rotate([0, 0, 0])		cylinder(h = size[2], r = t, center = center);
 	translate([0, size[1], 0])	rotate([0, 0, 0])				cylinder(h = size[2], r = t, center = center);
 	}
-
-	translate([0, 0, 0])						rotate([0, 0, 0])		cylinder(h = size[2], r = t, center = center);
 }
 
 module basis() {
-	//wall(320, 320);
-	lineBox();
-//	lineBox([240, 320, 240], 32, sidesonly = false);
+	main = [78, 126, 240];	//	높이는 230mm 이상이어야 한다.
+	full = [240, 128, 240 + 70.7];
+
+	color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
+	translate([0, 0, 70.7])
+		translate([0, 64, 64])		rotate([20, 0, 0])		rotate([0, 45, 0])		rotate([0, 0, -30])
+		color([0.8, 0.8, 0.0, 0.8])	
+		lineBox(main);
+
+	//color([0.8, 0.0, 0.8, 0.5])	lineBox(full, 1);	//	점유 영역?
+	translate([16, 0, 0])	color([0.0, 0.0, 0.8, 0.5])	body(full[0], full[1], full[2]);	//	점유 영역?
 }
 
 basis();
@@ -64,4 +70,18 @@ module wall(x, y, z) {
 	];
 	translate([0, y / 2, 0])	rotate([90, 0, 0])	linear_extrude(x)	polygon(points);
 }
-//wall(640, 640);
+module body(x, y, z) {
+	points = [
+		[0,	70.7],	//	70.7
+		[0,	z],		//	dy
+		[x,	z],		//	x
+		[x,	0],		// y
+		[167,	0],		// 167
+		[167,	57.7]	,	// 57.7
+		[180,	57.7],	// 13
+		[180,	70.7],	// 20
+		[180,	70.7],	// 20
+		[0,	70.7]	//	70.7
+	];
+	translate([0, y, 0])	rotate([90, 0, 0])	linear_extrude(y)	polygon(points);
+}
