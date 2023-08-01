@@ -8,7 +8,7 @@ BIG = [1024, 1024, 1024];
 //
 
 // 주요 수치
-THICK = 3;		//	껍질두께
+THICK = 2;		//	껍질두께
 ROUND = 8;	//	상판굴곡
 BASE_WIDTH	=	128 - 32 - 8;
 BASE_HEIGHT	=	128 - 8;
@@ -223,6 +223,7 @@ module hilt(base, r) {
 
 //
 module top_plate() {
+	base = BASE + [-12, 4, 0];
 	HILT = [4 + THICK * 2, 32, 16];
 		union() {
 			//	홈파기
@@ -230,30 +231,48 @@ module top_plate() {
 				union() {
 					//	상판
 					color(c=PALETTE[2])
-						translate([BASE[0] / 2, BASE[1] / 2, THICK / 2])
-							roundedBox(size=BASE, radius = ROUND, sidesonly = true);
-					color(c=PALETTE[0])
-						translate([BASE_MARGIN, BASE_MARGIN, 0])
-								hilt(HILT, THICK);
+						translate([base[0] / 2, base[1] / 2, THICK / 2])
+							roundedBox(size=base, radius = ROUND, sidesonly = true);
+					translate([-8, -8, 0]) {
+						color(c=PALETTE[0])
+							translate([BASE_MARGIN, BASE_MARGIN, 0])
+									hilt(HILT, THICK);
+					}
 				}
-				translate([BASE_MARGIN + THICK, BASE_MARGIN + THICK, 0])			hole(4, 60);
-				translate([BASE_MARGIN  + THICK + 16, BASE_MARGIN + THICK, 0])	hole(5, 60);
-				translate([BASE_MARGIN  + THICK + 32, BASE_MARGIN + THICK, 0])	hole(3, 60);
+				
+				translate([-8, -8, 0]) {
+					//	식도
+					translate([BASE_MARGIN + THICK, BASE_MARGIN + THICK, 0])			hole(4, 60);
+					translate([BASE_MARGIN  + THICK + 16, BASE_MARGIN + THICK, 0])	hole(5, 60);
+					translate([BASE_MARGIN  + THICK + 32, BASE_MARGIN + THICK, 0])	hole(3, 60);
 
-				translate([BASE_MARGIN  + THICK + 00, BASE_MARGIN + THICK + 64, 0])	hole(2, 14);
-				translate([BASE_MARGIN  + THICK + 00, BASE_MARGIN + THICK + 80, 0])	hole(2, 14);
-				translate([BASE_MARGIN  + THICK + 12, BASE_MARGIN + THICK + 64, 0])	hole(2, 16);
+					// 과도
+					translate([BASE_MARGIN  + THICK + 00, BASE_MARGIN + THICK + 64, 0])	hole(3, 28);
 
-				translate([BASE_MARGIN  + THICK + 12, BASE_MARGIN + THICK + 82, 0])	hole(1, 14);
-				translate([BASE_MARGIN  + THICK + 22, BASE_MARGIN + THICK + 64, 0])	hole(1, 14);
-				translate([BASE_MARGIN  + THICK + 22, BASE_MARGIN + THICK + 82, 0])	hole(1, 14);
-				translate([BASE_MARGIN  + THICK + 32, BASE_MARGIN + THICK + 64, 0])	hole(1, 14);
-				translate([BASE_MARGIN  + THICK + 32, BASE_MARGIN + THICK + 82, 0])	hole(1, 14);
+					// 빵칼
+					translate([BASE_MARGIN  + THICK + 12, BASE_MARGIN + THICK + 64, 0])	hole(3, 20);
+					translate([BASE_MARGIN  + THICK + 12, BASE_MARGIN + THICK + 64 + 22, 0])	hole(3, 18);
+					translate([BASE_MARGIN  + THICK + 22, BASE_MARGIN + THICK + 64, 0])	hole(3, 20);
+					translate([BASE_MARGIN  + THICK + 22, BASE_MARGIN + THICK + 64 + 22, 0])	hole(3, 18);
+					translate([BASE_MARGIN  + THICK + 32, BASE_MARGIN + THICK + 64, 0])	hole(3, 20);
+					translate([BASE_MARGIN  + THICK + 32, BASE_MARGIN + THICK + 64 + 22, 0])	hole(3, 18);
 
-				translate([BASE_MARGIN  + THICK + 42, BASE_MARGIN + THICK + 0, 0])	ellipsis(16, 40);
-				translate([BASE_MARGIN  + THICK + 42, BASE_MARGIN + THICK + 50, 0])	ellipsis(16, 40);
+					// 가위
+					translate([BASE_MARGIN  + THICK + 42, BASE_MARGIN + THICK + 0, 0])	ellipsis(16, 40);
+					translate([BASE_MARGIN  + THICK + 42, BASE_MARGIN + THICK + 50, 0])	ellipsis(16, 40);
+					
+					// 여유
+					translate([BASE_MARGIN  + THICK + 58, BASE_MARGIN + THICK + 100, 0])	rotate([0, 0, 90])	hole(3, 20);
+				}
+
+				// 모서리 구멍
+				translate([4, 4, 0])	ellipsis(1, 1);
+				translate([base[0] - 8, 4, 0])	ellipsis(1, 1);
+				translate([base[0] - 8, base[1] - 8, 0])	ellipsis(1, 1);
+				translate([4, base[1] - 8, 0])	ellipsis(1, 1);
 			}
 		}
+				//	translate([8, 8, 0])	ellipsis(2, 2);
 }
 top_plate();
 
