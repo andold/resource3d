@@ -1,25 +1,5 @@
 use <MCAD/boxes.scad>
 
-//
-//	under construction
-//
-
-// 상수
-THICK = 2;			//	껍질두께
-WIDTH	=	300;	//	몸통 너비
-DEEP	=	300;	//	깊이
-HEIGHT	=	500;	//	전체 홈 높이이
-ROUND = 2;	//	굴곡
-BIG = [1024, 1024, 1024];	//	절단면을 보기 위한 절단 물체(아주 큰거면 다됨)
-
-// 주요 수치
-SHELF_WIDTH	=	180;	//	선반 너비
-SHELF_HEIGHT	=	70;	//	선반 높이
-HOLE_WIDTH		=	14;	//	파인곳 너비
-HOLE_HEIGHT	=	50;	//	파인곳 높이
-
-// 텍스트 홈파기
-// 상판(base)의 왼쪽 아래 기준준
 module mark(name = "andold", height = 4, base = BASE, mx = ROUND * 2) {
 	translate([-base[0] / 2 + mx, base[1] / 2 - mx, base[2] / 2 - height])
 		rotate([180, 0, 0])
@@ -27,38 +7,61 @@ module mark(name = "andold", height = 4, base = BASE, mx = ROUND * 2) {
 				text(name, size = 1, language = "kr", font = "NanumGothic");
 }
 
-module prototype() {
-	difference() {	//	절단면을 보기위하여
-		
-		// 주 물체
-		union() {
-			//	홈파기
-			difference() {
-				union() {
-					color(c=[0.3, 0.1, 0.0, 0.5])	roundedBox(size=[WIDTH - (SHELF_WIDTH - HOLE_WIDTH), DEEP, HOLE_HEIGHT], radius = ROUND, sidesonly = true);
-					color(c=[0.3, 0.1, 0.0, 0.9])
-						translate([0, 0, -HOLE_HEIGHT])
-							roundedBox(size=[WIDTH - (SHELF_WIDTH), DEEP, SHELF_HEIGHT - HOLE_HEIGHT], radius = ROUND, sidesonly = true);
-					color(c=[0.8, 0.8, 0.8, 0.0])
-						translate([-WIDTH / 2, 0, HEIGHT/2])
-							translate([HOLE_WIDTH/2, 0, -HOLE_HEIGHT/2])
-								roundedBox(size=[HOLE_WIDTH, WIDTH, HOLE_HEIGHT], radius = ROUND, sidesonly = true);
-					color(c=[0.8, 0.8, 0.8, 0.0])
-						translate([-WIDTH / 2, 0, HEIGHT/2])
-							translate([SHELF_WIDTH/2, 0, -HOLE_HEIGHT-SHELF_HEIGHT])
-								roundedBox(size=[SHELF_WIDTH, WIDTH, SHELF_HEIGHT], radius = ROUND, sidesonly = true);
-				}
-			}
+module lineBox(outter = [128, 128, 128], t = 4) {
+	size = outter - [t, t, t];
+	center = false;
 
-		}
+	scale([0, 0, 0]) {
 		
-		//	절단방법 기술
-		//	translate([BIG[0] / 2, 0, 0]) roundedBox(size=BIG, radius = 0, sidesonly = false);	// x축 절단면 보기
-		//	translate([0, BIG[1] / 2, 0]) roundedBox(size=BIG, radius = 0, sidesonly = false);	// y축 절단면 보기
-		//	translate([0, 0, BIG[2] / 2]) roundedBox(size=BIG, radius = 0, sidesonly = false);	// z축 절단면 보기
+	// x
+	translate([0, 0, 0])						rotate([0, 90, 0])		cylinder(h = size[0], r = t, center = center);
+	translate([0, size[1], 0])			rotate([0, 90, 0])		cylinder(h = size[0], r = t, center = center);
+	translate([0, size[1], size[2]])	rotate([0, 90, 0])		cylinder(h = size[0], r = t, center = center);
+	translate([0, 0, size[2]])			rotate([0, 90, 0])		cylinder(h = size[0], r = t, center = center);
+
+	// y
+	translate([0, 0, 0])						rotate([270, 0, 0])		cylinder(h = size[1], r = t, center = center);
+	translate([size[0], 0, 0])			rotate([270, 0, 0])		cylinder(h = size[1], r = t, center = center);
+	translate([size[0], 0, size[2]])	rotate([270, 0, 0])		cylinder(h = size[1], r = t, center = center);
+	translate([0, 0, size[2]])			rotate([270, 0, 0])		cylinder(h = size[1], r = t, center = center);
+
+	// z
+	translate([0, 0, 0])						rotate([0, 0, 0])		cylinder(h = size[2], r = t, center = center);
+	translate([size[0], 0, 0])			rotate([0, 0, 0])		cylinder(h = size[2], r = t, center = center);
+	translate([size[0], size[1], 0])	rotate([0, 0, 0])		cylinder(h = size[2], r = t, center = center);
+	translate([0, size[1], 0])	rotate([0, 0, 0])				cylinder(h = size[2], r = t, center = center);
 	}
 
+	translate([0, 0, 0])						rotate([0, 0, 0])		cylinder(h = size[2], r = t, center = center);
 }
 
-rotate([180, 0, 0])
-	prototype();
+module basis() {
+	//wall(320, 320);
+	lineBox();
+//	lineBox([240, 320, 240], 32, sidesonly = false);
+}
+
+basis();
+
+
+module wall(x, y, z) {
+	points = [
+		[0,	0],
+		[0,	y],
+		[-1,	y],
+		[-1,	-1],
+		[x,	-1],
+		[x,	0],
+		[0,	0],
+
+		[0,	0],
+		[0,	70.7],	//	70.7
+		[180,	70.7],	//	180
+		[180,	57.7],	//	20
+		[167,	57.7],	//	13
+		[167,	0],		//	57.7
+		[0, 0]			//	167
+	];
+	translate([0, y / 2, 0])	rotate([90, 0, 0])	linear_extrude(x)	polygon(points);
+}
+//wall(640, 640);
