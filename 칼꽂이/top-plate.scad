@@ -2,6 +2,8 @@ use <MCAD/boxes.scad>
 
 //	상수
 BIG = [1024, 1024, 1024];
+ZERO=[0, 0, 0];
+ONE=[1, 1, 1];
 
 PALETTE = [
 	[0.3, 0.1, 0.0, 0.5],	//	갈색, 칼손잡이
@@ -26,13 +28,18 @@ module ellipsis(w, h) {
 		resize([w, h, 1024])
 			cylinder(1024, 1024, 1024);
 }
+// [가로, 세로, 높이], 홈너비
 module hilt(base, r) {
-	translate([base[0] / 2, base[1] / 2, base[2] / 2])
+//	//cylinder(base[2], base[0], base[0]);
+	scale(ONE)	translate([base[0] / 2, base[1] / 2, base[2] / 2])
 		roundedBox(size=base, radius = r, sidesonly = true);
 }
+module hilt_v_1(base, r) {
+	translate([base[0] / 2, base[1] / 2, base[2] / 2])
+		scale([1, 1, 1])	roundedBox(size=[base[0], base[1], base[2]], radius = r, sidesonly = true);
+}
 
-//
-module top_plate() {
+module portrait() {
 	t = 3;		//	thick 껍질 두께
 	m = 16;	//	margin 여유
 	base = [78, 126, t] + [0, 0, 0];	//	상판
@@ -83,4 +90,67 @@ module top_plate() {
 		translate([m / 4 - 1 / 2,					base[1] - m / 4 - 1 / 2,	t - 1])	ellipsis(2, 2);
 	}
 }
-top_plate();
+
+module cornerHole(base, m, in, out, t) {
+	delta = (out - in) / 2;
+		translate([m / 2,				m / 2,					0])	ellipsis(in, in);
+		translate([base[0] - m / 2,	m / 2,					0])	ellipsis(in, in);
+		translate([base[0] - m / 2,	base[1] - m / 2,	0])	ellipsis(in, in);
+		translate([m / 2,				base[1] - m / 2,	0])	ellipsis(in, in);
+
+		translate([m / 2 - delta,					m / 2 - delta,					t - 1])	ellipsis(out, out);
+		translate([base[0] - m / 2  - delta,	m / 2 - delta,					t - 1])	ellipsis(out, out);
+		translate([base[0] - m / 2  - delta,	base[1] - m / 2 - delta,	t - 1])	ellipsis(out, out);
+		translate([m / 2 - delta,					base[1] - m / 2 - delta,	t - 1])	ellipsis(out, out);
+}
+
+module landscape() {
+	t = 3;		//	thick 껍질 두께
+	m = 16;	//	margin 여유
+	base = [160, 88, t] + [0, 0, 0];	//	상판
+	HILT = [16, 32, 16];	//	손잡이
+
+	difference() {
+		union() {
+			//	상판
+			color(c=PALETTE[2])		translate([base[0] / 2, base[1] / 2, t / 2])		roundedBox(size=base, radius = m / 4, sidesonly = true);
+			
+			//	서명
+			color(c=PALETTE[1])		translate([base[0] - m / 2 - 2, m / 4, t])		mark("andold", 0.2, 1);
+
+			//	손잡이
+			translate([0, 0, 0])		color(c=PALETTE[0])		translate([m - HILT[0]/ 2 + 4 / 2, m - 4, 0])		hilt(HILT, 4);
+		}
+		
+		translate([0, 0, 0]) {
+			//	식도
+			translate([m, m, 0])			hole(4, 60);
+			translate([m + 16, m, 0])	hole(3, 60);
+
+			// 과도
+			translate([m + 32, m])		hole(3, 60);
+			translate([m + 48, m])		hole(3, 60);
+
+			// 빵칼
+			translate([m + 64, m])	hole(3, 60);
+
+			// 가위
+			scissor = [16, 40];
+			translate([base[0] - m - 5 - 48, base[1] / 2 - scissor[1] / 2, -1])		ellipsis(16, 40);
+			translate([base[0] - m - 5 - 24, base[1] / 2 - scissor[1] / 2, -1])		ellipsis(16, 40);
+			
+			translate([base[0] - m - 5, m, 0])	hole(5, 60);
+			// 여유
+		}
+
+		// 모서리 구멍
+		cornerHole(base, m, 1, 4, 3);
+	}
+}
+landscape();
+//
+module top_plate() {
+	portrait();
+}
+
+//top_plate();
