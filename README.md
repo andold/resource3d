@@ -2,14 +2,27 @@
 - 3d 모델링 자료
 
 ## trouble shooting
-- 
+- 3D 프린터 : 프린팅 불량유형 및 해결책
+	- https://blog.naver.com/technics3d/220778796667
+
+- [삼디불량사전] 3D 프린터 압출불량 (Under Extrusion)
+	- https://youtu.be/TUpwlxeG4qU
+
 ### 후반부에 아예 프린팅되지 않는다
 - 참고: [삼디불량사전] 3D 프린터 압출불량 (Under Extrusion)
 	- 7번 아얘 안나오는 압출불량
 	- https://youtu.be/TUpwlxeG4qU
 
-- 날씨가 더워서 냉각이 안되는게 아닐까
+- 실패: 노즐온도 190도, 3mm retraction distance로 해보았으나 동일 현상 발생
+	- 원복한다
 
+- 날씨가 더워서 냉각이 안되는게 아닐까?
+	- 상당히 설득력 있다. 에어컨을 켜주어야 하나?
+
+- 참고: [북리지의 삼디 Life] 압출불량 해결을 위한 16가지 가이드
+	- https://bookledge.tistory.com/982
+	- 날씨가 더워서 그럴수도 있다는 군
+	- 정말 에어컨을 켜줘야 하나?
 
 ### PLA 특성
 - 딱딱함의 정도가 낮다.
@@ -47,3 +60,7 @@
 
 - 아두이노 IDE 다운로드
 	- https://www.arduino.cc/en/software
+
+### 결론: Creality 사이트에 가면, 바이너리 다운로드 링크가 있다
+	- 다운받아서 CF 카드에 복사하면 된다.
+
