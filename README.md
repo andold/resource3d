@@ -1,5 +1,9 @@
 # resource3d
 - 3d 모델링 자료
+- Ender-3 프린터 사용
+	- Modeling Dimensions: 220*220*250mm
+	- Printing Material: PLA/ABS/PETG
+	- 사용 필라멘트: PLA 투명 1.75mm
 
 ## trouble shooting
 ### 참고
@@ -35,6 +39,8 @@
 - 해결을 위한 TODO
 	- [ ] 노즐목에 부품 추가: 위의 노즐목 조립 유튜브 영상 참조
 	- [ ] 필라멘트 교체: 현재 PLA에서 열에 잘 변형되지 않는 것으로, 뭔지는 찾아 보아야 한다
+	- [ ] retraction distance를 줄여본다
+		- 1mm ~ 1.5mm가 적당하다는 의견이 있다. 디폴트값은 5mm 이다
 
 ### PLA 특성
 - 딱딱함의 정도가 낮다.

@@ -4,46 +4,109 @@ use <utils.scad>
 ZERO = [0, 0, 0];
 ONE = [1, 1, 1];
 
-// 몸통
+// 주요 상수
 THICK = 4;
-module board(x, y, z, even = false) {
+HEIGHT = 240;
+HEIGHT_TOP = 64;
+OVERLAP = 32;
+
+function bodyAssembleTopSize()  = [topPlateSize()[0] + THICK * 2, topPlateSize()[1] + THICK * 2, HEIGHT_TOP];
+
+// 몸통
+module quartet(x, y, z, cx, cy) {
+	translate([cx,		cy,		-1])	children();
+	translate([x -  cx,	cy,		-1])	children();
+	translate([cx,		y - cy,	-1])	children();
+	translate([x - cx,	y - cy,	-1])	children();
+}
+module board(x, y, z, even = false, dz = 4) {
 	difference() {
 		union() {
 			cube([x, y, z]);
-			for (cy = [(even ? z : z * 2):z * 2:y - z]) {
+
+			// 조립 가이드
+			for (cy = [(even ? dz : dz + z):z * 2:y - z]) {
 				translate([z / 2, cy, z])	cube([z * 2, z, z]);
 			}
-			for (cy = [(even ? z : z * 2):z * 2:y - z]) {
+			for (cy = [(even ? dz : dz + z):z * 2:y - z]) {
 				translate([x - z * 2, cy, z])	cube([z * 2, z, z]);
 			}
 		}
+		
+		// 면 조립부분 홈파기
 		translate([-1024 + z / 2, -1, z / 2])	cube(1024);
 		translate([x - z / 2, -1, z / 2])	cube(1024);
-		scale(ONE)
-		for (cy=[z * 3:z * 3:(y - z * 5) / 2]) {
-			for (cx=[z * 3:z * 3:(x - z * 5) / 2]) {
-				translate([cx,					cy,				-1])	cube(z * 2);
-				translate([x - z * 2 - cx,	cy,				-1])	cube(z * 2);
-				translate([cx,					y - z * 2 - cy,	-1])	cube(z * 2);
-				translate([x - z * 2 - cx,	y - z * 2 - cy,	-1])	cube(z * 2);
+		
+		// 규칙적으로 구멍뚫기기
+		for (cy=[z * 3:z * 3:(y - z * 3) / 2]) {
+			for (cx=[z * 4:z * 3:(x - z * 3) / 2]) {
+				quartet(x, y, z, cx, cy)	cylinder(h=z*3, r=z*1.25, center=true);
+				//quartet(x, y, z, cx, cy)	cube([z * 2, z * 2, z * 4], center = true);
 			}
 		}
 	}
 }
-function bodyAssembleSize()  = [topPlateSize()[0] + THICK * 2, topPlateSize()[1] + THICK * 2, 240];
-module body_assemble() {
-	base = bodyAssembleSize();
-	board(base[0] + THICK, base[2], THICK, false);
-	translate([0, base[2] + 8, 0])	board(base[1], base[2], THICK, true);
-}
 
-//body_assemble();
+// 조립시 바깥쪽
+module boardTopFront() {
+	base = bodyAssembleTopSize();
+	board(base[0] + THICK, base[2], THICK, false);
+}
+//boardTopFront();
+
+// 조립시 안쪽
+module boardTopSide() {
+	base = bodyAssembleTopSize();
+	board(base[1], base[2], THICK, true);
+}
+//boardTopSide();
+
+module bodyBottomFront() {
+	base = bodyAssembleTopSize();
+	board(base[0] + THICK * 3, HEIGHT - base[2] + OVERLAP, THICK, false, OVERLAP);
+}
+module compareFront() {
+	bodyBottomFront();
+	translate([THICK, HEIGHT - bodyAssembleTopSize()[2] + OVERLAP + 1, 0])	boardTopFront();
+}
+//compareFront();
+
+module bodyBottomSide() {
+	base = bodyAssembleTopSize();
+	board(base[1] + THICK * 2,  HEIGHT - base[2] + OVERLAP, THICK, true, OVERLAP);
+}
+//bodyBottomSide();
+
+module compareSide() {
+	bodyBottomSide();
+	translate([THICK, HEIGHT - bodyAssembleTopSize()[2] + OVERLAP + 1, 0])	boardTopSide();
+}
+//compareSide();
+
+// 크기 제한으로 상하단으로 분리한다.
+module bodyTop() {
+	boardTopFront();
+	translate([0, bodyAssembleTopSize()[2] + 4, 0])	boardTopSide();
+}
+//bodyTop();
+
+module bodyBottom() {
+	bodyBottomFront();
+	translate([0, HEIGHT - bodyAssembleTopSize()[2] + OVERLAP + 1, 0])	bodyBottomSide();
+}
+//bodyBottom();
+
+module bodyAssemble() {
+	bodyTop();
+	translate([bodyAssembleTopSize()[0] + THICK * 1 + 1, 0, 0])	bodyBottom();
+}
+bodyAssemble();
 
 module quater() {
-	origin = bodyAssembleSize();
-	base = [origin[0], origin[1], origin[2] / 4];
+	origin = bodyAssembleTopSize();
+	base = [origin[0], origin[1], origin[2] / 2];
 	board(base[0] + THICK, base[2], THICK, false);
 	translate([0, base[2] + 8, 0])	board(base[1], base[2], THICK, true);
 }
-quater();
+//quater();
 
