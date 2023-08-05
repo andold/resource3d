@@ -14,7 +14,7 @@ module hilt(base, r) {
 	translate([base[0] / 2, base[1] / 2, base[2] / 2])	roundedBox(size=base, radius = r, sidesonly = true);
 }
 
-function landscapeSize()  = [160, 88, 3];
+function landscapeSize()  = [160, 88, 4];
 module landscape() {
 	base =  landscapeSize();	//	상판
 	t = base[2];		//	thick 껍질 두께
@@ -55,7 +55,7 @@ module landscape() {
 		}
 
 		// 모서리 구멍
-		cornerHole(base, m / 2, 2, 4, 2);
+		//cornerHole(base, m / 2, 2, 4, 2);
 	}
 }
 landscape();

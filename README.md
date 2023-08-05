@@ -2,11 +2,15 @@
 - 3d 모델링 자료
 
 ## trouble shooting
+### 참고
 - 3D 프린터 : 프린팅 불량유형 및 해결책
 	- https://blog.naver.com/technics3d/220778796667
 
 - [삼디불량사전] 3D 프린터 압출불량 (Under Extrusion)
 	- https://youtu.be/TUpwlxeG4qU
+
+- Ender3 압출불량 없는 노즐목 조립 2 (Ender 3 clog Zero making)
+	- https://youtu.be/6MH1XWbQdtw
 
 ### 후반부에 아예 프린팅되지 않는다
 - 참고: [삼디불량사전] 3D 프린터 압출불량 (Under Extrusion)
@@ -26,6 +30,7 @@
 
 - 실패: 에어컨을 켜주어도 해결이 안된다.
 	- 노즐쪽 냉각팬이 약해서 그런것 같다. 또는 이상 동작하든지. 분해해 보아야겠다.
+	- 모터 부분을 분해해 보았으나, 육안으로 보기엔 이상이 없다. 노즐 분해는 해보지 않았다.
 
 ### PLA 특성
 - 딱딱함의 정도가 낮다.

@@ -1,5 +1,7 @@
 use <MCAD/boxes.scad>
 
+BIG = [1024, 1024, 1024];
+
 module mark(name, height, size = 2) {
 	linear_extrude(height, center = false)	text(name, size = size);
 }
@@ -52,3 +54,29 @@ module hide(show = 0) {
 	if (show > 0) children();
 	else scale([0, 0, 0])	children();
 }
+
+module t() {
+	c = [0.5, 0.5, 0.5, 0.5];
+	d = [0.5, 0.5, 0.0, 0.5];
+	
+	color(c)	difference() {
+		cube([4, 16, 2]);
+		translate([2, -2, -1])	cube([4, 4, 4]);
+	}
+	color(d)	translate([8, 0, 0])	cube([16, 4, 2]);
+}
+
+module test(b) {
+	
+	c = [0.5, 0.5, 0.5, 0.5];
+	d = [0.5, 0.5, 0.0, 0.5];
+	
+	color(c)	difference() {
+		cube(b);
+		translate([-BIG[0]+b[1]/2, b[1]/2, -BIG[2] / 2])	cube(BIG);
+		//translate([b[0]-b[1]/2, b[1]/2, -1])	cube([b[1], b[1], b[2]*2]);
+	}
+}
+		//translate([-BIG[0]+16, 16, 0])	cube(BIG);
+test([16, 4, 2]);
+//cube(BIG);

@@ -41,4 +41,4 @@ module side(base, delta = 64, degree = 30) {
 	}
 }
 
-rotate([0, 0, 90])		body();
+// rotate([0, 0, 90])		body();
