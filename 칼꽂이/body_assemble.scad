@@ -15,7 +15,7 @@ function bodyAssembleTopSize()  = [topPlateSize()[0] + THICK * 2, topPlateSize()
 // 몸통
 module quartet(x, y, z, cx, cy) {
 	translate([cx,		cy,		-1])	children();
-	translate([x -  cx,	cy,		-1])	children();
+	translate([x - cx,	cy,		-1])	children();
 	translate([cx,		y - cy,	-1])	children();
 	translate([x - cx,	y - cy,	-1])	children();
 }
@@ -44,7 +44,7 @@ module board(x, y, z, even = false, dz = 4) {
 
 		// 조립 가이드
 		for (cy = [(even ? dz : dz + z):z * 2:y - z]) {
-			translate([z / 2,						cy, 0])	cube([z * 2, z, z*2]);
+			translate([z / 2,					cy, 0])	cube([z * 2, z, z*2]);
 			translate([x - (z / 2 + z * 2),	cy, 0])	cube([z * 2, z, z*2]);
 		}
 	}
@@ -68,6 +68,7 @@ module bodyBottomFront() {
 	base = bodyAssembleTopSize();
 	board(base[0] + THICK * 3, HEIGHT - base[2] + OVERLAP, THICK, false, OVERLAP);
 }
+//bodyBottomFront();
 module compareFront() {
 	bodyBottomFront();
 	translate([THICK, HEIGHT - bodyAssembleTopSize()[2] + OVERLAP + 1, 0])	boardTopFront();
@@ -93,30 +94,47 @@ module bodyTop() {
 }
 bodyTop();
 
-module assempleBodyTop() {
+module assempleBodyTop(help = 8) {
 	base = bodyAssembleTopSize();
-	help = 8;
 	color("red", 1.0)		translate([0, help, 0])			rotate([90, 0, 0])	boardTopFront();
-	color("blue", 1.0)	translate([0, -base[1] - THICK / 2, 0])	rotate([90, 0, 90])	boardTopSide();
+	color("blue", 1.0)	translate([0, -base[1] - THICK, 0])	rotate([90, 0, 90])	boardTopSide();
 	
-	translate([base[0] + THICK, -base[1] - help, 0])	rotate([0, 0, 180])	{
+	translate([base[0] + THICK, -base[1] -THICK*2- help, 0])	rotate([0, 0, 180])	{
 		color("red", 1.0)		translate([0, help, 0])			rotate([90, 0, 0])	boardTopFront();
-		color("blue", 1.0)	translate([0, -base[1] - THICK / 2, 0])	rotate([90, 0, 90])	boardTopSide();
+		color("blue", 1.0)	translate([0, -base[1] - THICK, 0])	rotate([90, 0, 90])	boardTopSide();
 	}
 }
-//assempleBodyTop();
+//assempleBodyTop(0);
 
+module assempleBodyBottom(help = 8) {
+	base = bodyAssembleTopSize();
+	color("red", 1.0)	translate([0, help, 0])							rotate([90, 0, 0])	bodyBottomFront();
+	color("blue", 1.0)	translate([0, -base[1] - THICK * 3, 0])	rotate([90, 0, 90])	bodyBottomSide();
+	
+	translate([base[0] + THICK * 3, -base[1] - THICK * 4 - help, 0])	rotate([0, 0, 180])	{
+		color("red", 1.0)	translate([0, help, 0])							rotate([90, 0, 0])	bodyBottomFront();
+		color("blue", 1.0)	translate([0, -base[1] - THICK * 3, 0])	rotate([90, 0, 90])	bodyBottomSide();
+	}
+}
+//assempleBodyBottom();
 module bodyBottom() {
 	bodyBottomFront();
 	translate([0, HEIGHT - bodyAssembleTopSize()[2] + OVERLAP + 1, 0])	bodyBottomSide();
 }
 //bodyBottom();
 
-module bodyAssemble() {
+module assempleBody(help = 8) {
+	base = bodyAssembleTopSize();
+	assempleBodyBottom(help);
+	translate([THICK, -THICK, HEIGHT])	assempleBodyTop(help);
+}
+//assempleBody(0);
+
+module body() {
 	bodyTop();
 	translate([bodyAssembleTopSize()[0] + THICK * 1 + 1, 0, 0])	bodyBottom();
 }
-//bodyAssemble();
+//body();
 
 module quater() {
 	origin = bodyAssembleTopSize();
