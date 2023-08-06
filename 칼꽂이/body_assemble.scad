@@ -20,29 +20,30 @@ module quartet(x, y, z, cx, cy) {
 	translate([x - cx,	y - cy,	-1])	children();
 }
 module board(x, y, z, even = false, dz = 4) {
-	difference() {
-		union() {
-			cube([x, y, z]);
-
-			// 조립 가이드
-			for (cy = [(even ? dz : dz + z):z * 2:y - z]) {
-				translate([z / 2, cy, z])	cube([z * 2, z, z]);
+	union() {
+		difference() {
+			union() {
+				cube([x, y, z]);
 			}
-			for (cy = [(even ? dz : dz + z):z * 2:y - z]) {
-				translate([x - z * 2, cy, z])	cube([z * 2, z, z]);
+			
+			// 면 조립부분 홈파기
+			deep = even ? z : z / 2;
+			translate([-1024 + deep, -1, z / 2])	cube(1024);
+			translate([x - deep, -1, z / 2])	cube(1024);
+			
+			// 규칙적으로 구멍뚫기기
+			for (cy=[z * 3:z * 3:(y - z * 3) / 2]) {
+				for (cx=[z * 4:z * 3:(x - z * 3) / 2]) {
+					quartet(x, y, z, cx, cy)	cylinder(h=z*3, r=z*1.25, center=true);
+					//quartet(x, y, z, cx, cy)	cube([z * 2, z * 2, z * 4], center = true);
+				}
 			}
 		}
-		
-		// 면 조립부분 홈파기
-		translate([-1024 + z / 2, -1, z / 2])	cube(1024);
-		translate([x - z / 2, -1, z / 2])	cube(1024);
-		
-		// 규칙적으로 구멍뚫기기
-		for (cy=[z * 3:z * 3:(y - z * 3) / 2]) {
-			for (cx=[z * 4:z * 3:(x - z * 3) / 2]) {
-				quartet(x, y, z, cx, cy)	cylinder(h=z*3, r=z*1.25, center=true);
-				//quartet(x, y, z, cx, cy)	cube([z * 2, z * 2, z * 4], center = true);
-			}
+
+		// 조립 가이드
+		for (cy = [(even ? dz : dz + z):z * 2:y - z]) {
+			translate([z / 2,						cy, 0])	cube([z * 2, z, z*2]);
+			translate([x - (z / 2 + z * 2),	cy, 0])	cube([z * 2, z, z*2]);
 		}
 	}
 }
@@ -88,7 +89,20 @@ module bodyTop() {
 	boardTopFront();
 	translate([0, bodyAssembleTopSize()[2] + 4, 0])	boardTopSide();
 }
-//bodyTop();
+bodyTop();
+
+module assempleBodyTop() {
+	base = bodyAssembleTopSize();
+	help = 8;
+	color("red", 1.0)		translate([0, help, 0])			rotate([90, 0, 0])	boardTopFront();
+	color("blue", 1.0)	translate([0, -base[1] - THICK / 2, 0])	rotate([90, 0, 90])	boardTopSide();
+	
+	translate([base[0] + THICK, -base[1] - help, 0])	rotate([0, 0, 180])	{
+		color("red", 1.0)		translate([0, help, 0])			rotate([90, 0, 0])	boardTopFront();
+		color("blue", 1.0)	translate([0, -base[1] - THICK / 2, 0])	rotate([90, 0, 90])	boardTopSide();
+	}
+}
+//assempleBodyTop();
 
 module bodyBottom() {
 	bodyBottomFront();
@@ -100,7 +114,7 @@ module bodyAssemble() {
 	bodyTop();
 	translate([bodyAssembleTopSize()[0] + THICK * 1 + 1, 0, 0])	bodyBottom();
 }
-bodyAssemble();
+//bodyAssemble();
 
 module quater() {
 	origin = bodyAssembleTopSize();
