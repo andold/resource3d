@@ -19,7 +19,7 @@ module quartet(x, y, z, cx, cy) {
 	translate([cx,		y - cy,	-1])	children();
 	translate([x - cx,	y - cy,	-1])	children();
 }
-module board(x, y, z, even = false, dz = 4) {
+module board(x, y, z, even = false, dz = 4, count = 2) {
 	union() {
 		difference() {
 			union() {
@@ -43,9 +43,10 @@ module board(x, y, z, even = false, dz = 4) {
 		}
 
 		// 조립 가이드
-		for (cy = [(even ? dz : dz + z):z * 2:y - z]) {
-			translate([z / 2,					cy, 0])	cube([z * 2, z, z*2]);
-			translate([x - (z / 2 + z * 2),	cy, 0])	cube([z * 2, z, z*2]);
+		length = (y - dz) / count / 2;
+		for (cy = [(even ? dz : dz + length):length * 2:y - length]) {
+			translate([z / 2,					cy, 0])	cube([z * 2, length, z*2]);
+			translate([x - (z / 2 + z * 2),	cy, 0])	cube([z * 2, length, z*2]);
 		}
 	}
 }
@@ -92,7 +93,6 @@ module bodyTop() {
 	boardTopFront();
 	translate([0, bodyAssembleTopSize()[2] + 4, 0])	boardTopSide();
 }
-bodyTop();
 
 module assempleBodyTop(help = 8) {
 	base = bodyAssembleTopSize();
@@ -121,7 +121,6 @@ module bodyBottom() {
 	bodyBottomFront();
 	translate([0, HEIGHT - bodyAssembleTopSize()[2] + OVERLAP + 1, 0])	bodyBottomSide();
 }
-//bodyBottom();
 
 module assempleBody(help = 8) {
 	base = bodyAssembleTopSize();
@@ -144,3 +143,5 @@ module quater() {
 }
 //quater();
 
+bodyTop();
+//bodyBottom();
