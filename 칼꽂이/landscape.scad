@@ -9,9 +9,19 @@ PALETTE = [
 	[0.0, 0.0, 0.0, 0.0]	//	검정 투명, 호환성 예약
 ];
 
+// 리트랙션을 줄일려면, 각진선이 유리하다
+module hole(w, h) {
+	translate([w / 2, h / 2, 0])
+		//roundedBox(size=[w, h, 1024], radius = w / 4, sidesonly = true);
+		cube([w, h, 1024], center = true);
+}
+
 // [가로, 세로, 높이], 홈너비
+// 리트랙션을 줄일려면, 각진선이 유리하다
 module hilt(base, r) {
-	translate([base[0] / 2, base[1] / 2, base[2] / 2])	roundedBox(size=base, radius = r, sidesonly = true);
+	translate([base[0] / 2, base[1] / 2, base[2] / 2])
+		//roundedBox(size=base, radius = r, sidesonly = true);
+		cube([base[0], base[1], base[2]], center = true);
 }
 
 function landscapeSize()  = [160, 88, 4];
@@ -27,7 +37,7 @@ module landscape() {
 			color(c=PALETTE[2])		translate([base[0] / 2, base[1] / 2, t / 2])		roundedBox(size=base, radius = m / 4, sidesonly = true);
 			
 			//	서명
-			color(c=PALETTE[1])		translate([base[0] - m / 2 - 2, m / 4, t])		mark("andold", 0.2, 1);
+			//color(c=PALETTE[1])		translate([base[0] - m / 2 - 2, m / 4, t])		mark("andold", 0.2, 1);
 
 			//	손잡이
 			translate([0, 0, 0])		color(c=PALETTE[0])		translate([m - HILT[0]/ 2 + 4 / 2, m - 4, 0])		hilt(HILT, 4);

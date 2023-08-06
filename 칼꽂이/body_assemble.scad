@@ -31,13 +31,15 @@ module board(x, y, z, even = false, dz = 4) {
 			translate([-1024 + deep, -1, z / 2])	cube(1024);
 			translate([x - deep, -1, z / 2])	cube(1024);
 			
-			// 규칙적으로 구멍뚫기기
+			// 규칙적으로 구멍뚫기. 리트랙션을 줄이기 위해서 구멍은 없앤다. 넣더라도 원형대신 네모형태로 넣겠다
+			/*
 			for (cy=[z * 3:z * 3:(y - z * 3) / 2]) {
 				for (cx=[z * 4:z * 3:(x - z * 3) / 2]) {
 					quartet(x, y, z, cx, cy)	cylinder(h=z*3, r=z*1.25, center=true);
 					//quartet(x, y, z, cx, cy)	cube([z * 2, z * 2, z * 4], center = true);
 				}
 			}
+			*/
 		}
 
 		// 조립 가이드
