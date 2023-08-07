@@ -1,4 +1,6 @@
+use <MCAD/boxes.scad>
 use <top-plate.scad>
+use <landscape.scad>
 use <utils.scad>
 
 ZERO = [0, 0, 0];
@@ -11,7 +13,7 @@ HEIGHT = 240;
 HEIGHT_TOP = 64;
 OVERLAP = 32;
 
-function bodyAssembleTopSize()  = [topPlateSize()[0] + THICK * 2, topPlateSize()[1] + THICK * 2, HEIGHT_TOP];
+function bodyAssembleTopSize()  = [topPlateSize()[0] + THICK, topPlateSize()[1] + THICK, HEIGHT_TOP];
 function	bodyAssembleBottomSize() = [
 	bodyAssembleTopSize()[0] + THICK,
 	bodyAssembleTopSize()[1] + THICK,
@@ -59,12 +61,12 @@ module board(x, y, z, even = false, dz = 4, count = 2) {
 		// 조립 가이드
 		length = (y - dz) / count / 2;
 		for (cy = [(even ? dz : dz + length):length * 2:y - length]) {
-			translate([z / 2,					cy, 0])	cube([z * 2, length, z*4]);
-			translate([x - (z / 2 + z * 2),	cy, 0])	cube([z * 2, length, z*4]);
+			translate([z / 2 * 3,			cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 4], radius = z / 2, sidesonly = true);
+			translate([x - z / 2 * 3,	cy + length / 2,	z * 2])		roundedBox(size=[z * 2, length, z * 4], radius = z / 2, sidesonly = true);
 		}
 	}
 }
-
+//boardTopSide();
 // 조립시 바깥쪽
 module bodyTopFront() {
 	base = bodyAssembleTopSize();
@@ -116,11 +118,12 @@ module assempleBodyBottom(help = 8) {
 		translate([0, 0, base[2]])	rotate([-90, 0, 0])	bodyBottomFront();
 		translate([base[0] + THICK * 2, base[1] + THICK * 2 + help * 2, 0])	rotate([0, 0, 180])	translate([0, 0, base[2]])	rotate([-90, 0, 0])	bodyBottomFront();
 	}
-//	color("blue", 1.0)
-	translate([base[0] + THICK * 2, THICK / 2 + help, base[2]])	rotate([-90, 0, 90])	bodyBottomSide();
-	translate([base[0] + THICK * 2, base[1] + THICK * 2 + help, 0])	rotate([0, 0, 180])	translate([base[0] + THICK * 2, THICK / 2, base[2]])	rotate([-90, 0, 90])	bodyBottomSide();
+	color("blue", 1.0) {
+		translate([base[0] + THICK * 2, THICK / 2 + help, base[2]])	rotate([-90, 0, 90])	bodyBottomSide();
+		translate([base[0] + THICK * 2, base[1] + THICK * 2 + help, 0])	rotate([0, 0, 180])	translate([base[0] + THICK * 2, THICK / 2, base[2]])	rotate([-90, 0, 90])	bodyBottomSide();
+	}
 }
-assempleBodyBottom(0);
+//assempleBodyBottom(0);
 module bodyBottom() {
 	bodyBottomFront();
 	translate([0, HEIGHT - bodyAssembleTopSize()[2] + OVERLAP + 1, 0])	bodyBottomSide();
@@ -140,11 +143,11 @@ module assempleBodyTop(help = 8) {
 //assempleBodyTop(16);
 module assempleBody(help = 8) {
 	base = bodyAssembleTopSize();
-	//assempleBodyBottom(help);
-	//translate([THICK, -THICK, HEIGHT])	
-	assempleBodyTop(help);
+	assempleBodyBottom(help);
+	translate([THICK, THICK, HEIGHT])	assempleBodyTop(help);
+	translate([THICK * 2, THICK* 2, HEIGHT + HEIGHT_TOP + 8])	landscape();
 }
-//assempleBody(0);
+assempleBody(0);
 
 //scale(HALF)	bodyTop();
 //bodyBottomFront();
