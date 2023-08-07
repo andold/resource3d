@@ -1,10 +1,50 @@
 use <MCAD/boxes.scad>
 use <wall.scad>
-use <body.scad>
+use <landscape.scad>
 
 // 상수
 ZERO = [0, 0, 0];
 ONE = [1, 1, 1];
+
+function topPlateSize()  = landscapeSize();
+function bodySize()  = [topPlateSize()[0] + 2, topPlateSize()[1] + 2, 240];
+module sides(base, t = 4, delta = 64, degree = 30) {
+	translate([base[0],	0,					base[2]])	rotate([0, 90, 90])	side([base[2], base[0], t]);
+	translate([base[0],	base[1] - t,	base[2]])	rotate([0, 90, 90])	side([base[2], base[0], t]);
+
+	translate([0,	0,	base[2]])	rotate([0, 90, 0])	side([base[2], base[1], t]);
+	translate([base[0] - t,	0,	base[2]])	rotate([0, 90, 0])	side([base[2], base[1], t]);
+}
+
+module side(base, delta = 64, degree = 30) {
+	inner = [base[0] - base[2] * 2, base[1] - base[2] * 2, base[2] + 2];
+	stick = [1024, base[2], base[2]];
+	difference() {
+		cube(base);
+		translate([base[2], base[2], -1])
+			cube(inner);
+	}
+	intersection() {
+		cube(base);
+		for (dx=[-base[0] * 2:delta:base[0] * 2]) {
+			translate([dx, 0, 0])			rotate([0, 0, degree])	cube(stick);
+			translate([dx, base[1], 0])			rotate([0, 0, -degree])	cube(stick);
+		}
+	}
+}
+module body() {
+	base = bodySize();
+	if (base[2] < 235)	echo("................. ERROR ............ 너무 낮아서 칼이 들어가질 않아요 ........................................................................");
+
+	s = [base[0] + 4, base[1] + 4, base[2]];
+	translate([base[1], 0, 0])		rotate([0, 0, 90]) {
+		difference() {
+			sides(s, 4);
+			translate([3, 3, base[2] - 2])	landscape();
+		}
+	}
+}
+
 
 module mark(name = "andold", height = 4, base = BASE, mx = ROUND * 2) {
 	translate([-base[0] / 2 + mx, base[1] / 2 - mx, base[2] / 2 - height])
@@ -41,13 +81,13 @@ module basis() {
 			rotate([0, 45, 0])
 			//rotate([0, 0, -30])
 			color([0.8, 0.8, 0.0, 0.8])
-		body(main)
+		body()
 	;
 
 	//color([0.8, 0.0, 0.8, 0.5])	lineBox(full, 1);	//	점유 영역?
 	scale(ONE)		translate(nature)	color([0.0, 0.0, 0.8, 0.5])	buttress(full[0], full[1], full[2]);	//	지지대
 	translate([main[0] + 512, 0, 0])
-		body(main);
+		body();
 }
 
 basis();
