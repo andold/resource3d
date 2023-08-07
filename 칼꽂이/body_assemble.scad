@@ -2,6 +2,7 @@ use <top-plate.scad>
 use <utils.scad>
 
 ZERO = [0, 0, 0];
+HALF = [1/2, 1/2, 1/2];
 ONE = [1, 1, 1];
 
 // 주요 상수
@@ -11,6 +12,10 @@ HEIGHT_TOP = 64;
 OVERLAP = 32;
 
 function bodyAssembleTopSize()  = [topPlateSize()[0] + THICK * 2, topPlateSize()[1] + THICK * 2, HEIGHT_TOP];
+function	bodyAssembleBottomSize() = [
+	bodyAssembleTopSize()[0] + THICK,
+	bodyAssembleTopSize()[1] + THICK,
+	HEIGHT - bodyAssembleTopSize()[2] + OVERLAP];
 
 // 몸통
 module quartet(x, y, z, cx, cy) {
@@ -18,6 +23,14 @@ module quartet(x, y, z, cx, cy) {
 	translate([x - cx,	cy,		-1])	children();
 	translate([cx,		y - cy,	-1])	children();
 	translate([x - cx,	y - cy,	-1])	children();
+}
+module boardHold(x, y, z, dx = 16, dy = 0) {
+	w = (x - dx * 2 - z * 3) / 2;
+	h = (y - dy * 2 - z * 3) / 2;
+	translate([dx + z,					dy + z,		-1])	cube([w, h, z * 4], center = false);
+	translate([x / 2 + z / 2,		dy + z,		-1])	cube([w, h, z * 4], center = false);
+	translate([x / 2 + z / 2,		y / 2 + z / 2,		-1])	cube([w, h, z * 4], center = false);
+	translate([dx + z,		y / 2 + z / 2,		-1])	cube([w, h, z * 4], center = false);
 }
 module board(x, y, z, even = false, dz = 4, count = 2) {
 	union() {
@@ -35,24 +48,25 @@ module board(x, y, z, even = false, dz = 4, count = 2) {
 			/*
 			for (cy=[z * 3:z * 3:(y - z * 3) / 2]) {
 				for (cx=[z * 4:z * 3:(x - z * 3) / 2]) {
-					quartet(x, y, z, cx, cy)	cylinder(h=z*3, r=z*1.25, center=true);
+					//quartet(x, y, z, cx, cy)	cylinder(h=z*3, r=z*1.25, center=true);
 					//quartet(x, y, z, cx, cy)	cube([z * 2, z * 2, z * 4], center = true);
 				}
 			}
 			*/
+			boardHold(x, y, z, 12);
 		}
 
 		// 조립 가이드
 		length = (y - dz) / count / 2;
 		for (cy = [(even ? dz : dz + length):length * 2:y - length]) {
-			translate([z / 2,					cy, 0])	cube([z * 2, length, z*2]);
-			translate([x - (z / 2 + z * 2),	cy, 0])	cube([z * 2, length, z*2]);
+			translate([z / 2,					cy, 0])	cube([z * 2, length, z*4]);
+			translate([x - (z / 2 + z * 2),	cy, 0])	cube([z * 2, length, z*4]);
 		}
 	}
 }
 
 // 조립시 바깥쪽
-module boardTopFront() {
+module bodyTopFront() {
 	base = bodyAssembleTopSize();
 	board(base[0] + THICK, base[2], THICK, false);
 }
@@ -90,58 +104,50 @@ module compareSide() {
 
 // 크기 제한으로 상하단으로 분리한다.
 module bodyTop() {
-	boardTopFront();
+	bodyTopFront();
 	translate([0, bodyAssembleTopSize()[2] + 4, 0])	boardTopSide();
 }
 
-module assempleBodyTop(help = 8) {
-	base = bodyAssembleTopSize();
-	color("red", 1.0)		translate([0, help, 0])			rotate([90, 0, 0])	boardTopFront();
-	color("blue", 1.0)	translate([0, -base[1] - THICK, 0])	rotate([90, 0, 90])	boardTopSide();
-	
-	translate([base[0] + THICK, -base[1] -THICK*2- help, 0])	rotate([0, 0, 180])	{
-		color("red", 1.0)		translate([0, help, 0])			rotate([90, 0, 0])	boardTopFront();
-		color("blue", 1.0)	translate([0, -base[1] - THICK, 0])	rotate([90, 0, 90])	boardTopSide();
-	}
-}
 //assempleBodyTop(0);
 
 module assempleBodyBottom(help = 8) {
-	base = bodyAssembleTopSize();
-	color("red", 1.0)	translate([0, help, 0])							rotate([90, 0, 0])	bodyBottomFront();
-	color("blue", 1.0)	translate([0, -base[1] - THICK * 3, 0])	rotate([90, 0, 90])	bodyBottomSide();
-	
-	translate([base[0] + THICK * 3, -base[1] - THICK * 4 - help, 0])	rotate([0, 0, 180])	{
-		color("red", 1.0)	translate([0, help, 0])							rotate([90, 0, 0])	bodyBottomFront();
-		color("blue", 1.0)	translate([0, -base[1] - THICK * 3, 0])	rotate([90, 0, 90])	bodyBottomSide();
+	base = bodyAssembleBottomSize();
+	color("red", 1.0) {
+		translate([0, 0, base[2]])	rotate([-90, 0, 0])	bodyBottomFront();
+		translate([base[0] + THICK * 2, base[1] + THICK * 2 + help * 2, 0])	rotate([0, 0, 180])	translate([0, 0, base[2]])	rotate([-90, 0, 0])	bodyBottomFront();
 	}
+//	color("blue", 1.0)
+	translate([base[0] + THICK * 2, THICK / 2 + help, base[2]])	rotate([-90, 0, 90])	bodyBottomSide();
+	translate([base[0] + THICK * 2, base[1] + THICK * 2 + help, 0])	rotate([0, 0, 180])	translate([base[0] + THICK * 2, THICK / 2, base[2]])	rotate([-90, 0, 90])	bodyBottomSide();
 }
-//assempleBodyBottom();
+assempleBodyBottom(0);
 module bodyBottom() {
 	bodyBottomFront();
 	translate([0, HEIGHT - bodyAssembleTopSize()[2] + OVERLAP + 1, 0])	bodyBottomSide();
 }
 
+module assempleBodyTop(help = 8) {
+	base = bodyAssembleTopSize();
+	color("red", 1.0) {
+		translate([0, 0, base[2]])	rotate([-90, 0, 0])	bodyTopFront();
+		translate([base[0] + THICK, base[1] + THICK + help + help, 0])	rotate([0, 0, 180])	translate([0, 0, base[2]])	rotate([-90, 0, 0])	bodyTopFront();
+	}
+	color("blue", 1.0) {
+		translate([base[0] + THICK, THICK / 2 + help, base[2]])		rotate([-90, 0, 90])		boardTopSide();
+		translate([base[0] + THICK, base[1] + THICK + help, 0])	rotate([0, 0, 180])	translate([base[0] + THICK, THICK / 2, base[2]])		rotate([-90, 0, 90])		boardTopSide();
+	}
+}
+//assempleBodyTop(16);
 module assempleBody(help = 8) {
 	base = bodyAssembleTopSize();
-	assempleBodyBottom(help);
-	translate([THICK, -THICK, HEIGHT])	assempleBodyTop(help);
+	//assempleBodyBottom(help);
+	//translate([THICK, -THICK, HEIGHT])	
+	assempleBodyTop(help);
 }
 //assempleBody(0);
 
-module body() {
-	bodyTop();
-	translate([bodyAssembleTopSize()[0] + THICK * 1 + 1, 0, 0])	bodyBottom();
-}
-//body();
-
-module quater() {
-	origin = bodyAssembleTopSize();
-	base = [origin[0], origin[1], origin[2] / 2];
-	board(base[0] + THICK, base[2], THICK, false);
-	translate([0, base[2] + 8, 0])	board(base[1], base[2], THICK, true);
-}
-//quater();
-
-bodyTop();
-//bodyBottom();
+//scale(HALF)	bodyTop();
+//bodyBottomFront();
+//bodyBottomSide();
+//halfBodyTop();
+//assempleBody();

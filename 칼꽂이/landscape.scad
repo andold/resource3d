@@ -12,16 +12,16 @@ PALETTE = [
 // 리트랙션을 줄일려면, 각진선이 유리하다
 module hole(w, h) {
 	translate([w / 2, h / 2, 0])
-		//roundedBox(size=[w, h, 1024], radius = w / 4, sidesonly = true);
-		cube([w, h, 1024], center = true);
+		roundedBox(size=[w, h, 1024], radius = w / 4, sidesonly = true);
+		//cube([w, h, 1024], center = true);
 }
 
 // [가로, 세로, 높이], 홈너비
 // 리트랙션을 줄일려면, 각진선이 유리하다
 module hilt(base, r) {
 	translate([base[0] / 2, base[1] / 2, base[2] / 2])
-		//roundedBox(size=base, radius = r, sidesonly = true);
-		cube([base[0], base[1], base[2]], center = true);
+		roundedBox(size=base, radius = r, sidesonly = true);
+		//cube([base[0], base[1], base[2]], center = true);
 }
 
 function landscapeSize()  = [160, 88, 4];
@@ -68,4 +68,7 @@ module landscape() {
 		//cornerHole(base, m / 2, 2, 4, 2);
 	}
 }
-landscape();
+HALF = [1/2, 1/2, 1/2];
+ONE = [1, 1, 1];
+scale(ONE)	landscape();
+
