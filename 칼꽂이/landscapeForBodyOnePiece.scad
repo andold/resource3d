@@ -72,6 +72,9 @@ module landscapeForBodyOnePiece() {
 		translate([0,		base[1],	-EPSILON])				cylinder(h, bottom, top);
 		translate([base[0],	base[1],	-EPSILON])	cylinder(h, bottom, top);
 		translate([base[0],	0,			-EPSILON])				cylinder(h, bottom, top);
+
+		translate([base[0] / 2,	base[1],	-EPSILON])	cylinder(h, bottom, top);
+		translate([base[0] / 2,	0,			-EPSILON])				cylinder(h, bottom, top);
 	}
 }
 scale(HALF)	landscapeForBodyOnePiece();
