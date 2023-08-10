@@ -2,15 +2,25 @@ use <MCAD/boxes.scad>
 
 BIG = [1024, 1024, 1024];
 
+module boardPattern(size = [128, 64, 4], degree = 60, stick = [THICK, THICK, 32]) {
+	intersection() {
+		cube([size[0], size[1], stick[1]]);
+		for (dx = [-1024: stick[2]: 1024]) {
+			translate([dx, -cos(degree) * stick[1], -1])	rotate([0, 0, degree])	cube([1024, stick[0], stick[1]]);
+			mirror([1, 0, 0])
+			translate([dx, -cos(degree) * stick[1], -1])	rotate([0, 0, degree])	cube([1024, stick[0], stick[1]]);
+		}
+	}
+}
 module mark(name, height, size = 2) {
 	linear_extrude(height, center = false)	text(name, size = size);
 }
 module hole(w, h) {
 	translate([w / 2, h / 2, 0])		roundedBox(size=[w, h, 1024], radius = w / 4, sidesonly = true);
 }
-module ellipsis(w, h) {
+module ellipsis(w = 32, h = 16, z = 4) {
 	translate([w / 2, h / 2, 0])
-		resize([w, h, 1024])
+		resize([w, h, z])
 			cylinder(1024, 1024, 1024);
 }
 module cornerHole(base, m, in, out, height) {
