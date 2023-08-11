@@ -5,9 +5,10 @@ use <../기타/utils.scad>
 ZERO = [0, 0, 0];
 HALF = [1/2, 1/2, 1/2];
 ONE = [1, 1, 1];
+EPSILON = 0.2;
 
 // 주요 상수
-THICK = 8;
+THICK = 4;
 HEIGHT = 240;
 HEIGHT_TOP = 128;
 OVERLAP = 32;
@@ -30,11 +31,38 @@ module boardHold(x, y, z, dx = 16, dy = 0, countx = 2, county = 2) {
 		}
 	}
 }
-module board(x, y, z, even = false, dz = THICK * 2, count = 5) {
+module assembleGuide(x = 16, p = 0.75, z = 4) {
+	if (y > x / 4 * 3)	echo("y값이 너무 큽니다", x / 4 * 3, "이하로 설정해 주세요"); 
+	r = x / 2;
+	intersection() {
+		translate([r, r * p, 0])	cylinder(z, r, r);
+		translate([0, 0, 0])		cube([r * 2, r * 2, z]);
+	}
+}
+//rotate([0, 0, -90])	assembleGuide();
+module board(x = 160, y = 128, z = 4, even = false, dz = THICK * 2, count = 5) {
+	echo(x, y, z, even, dz, count);
+			if (!even) {
+			//	translate([z,		dz,	z])
+			//	translate([16,		16,	16])
+				rotate([90, 0, -90])
+				assembleGuide(16, 12, 8);
+			}
 	union() {
 		difference() {
 			union() {
 				cube([x, y, z]);
+				if (!even) {
+					cr = z * 2;	//	반지름
+					translate([z / 2 * 3, z * 2 + dz, z])	rotate([90, 0, -90])	assembleGuide(cr, 0.75, z);
+					translate([x - z / 2, z * 2 + dz, z])	rotate([90, 0, -90])	assembleGuide(cr, 0.75, z);
+
+					translate([z / 2 * 3, y / 2 + z, z])	rotate([90, 0, -90])	assembleGuide(cr, 0.75, z);
+					translate([x - z / 2, y / 2 + z, z])	rotate([90, 0, -90])	assembleGuide(cr, 0.75, z);
+
+					translate([z / 2 * 3, y - dz, z])	rotate([90, 0, -90])	assembleGuide(z * 2, 0.75, z);
+					translate([x - z / 2, y - dz, z])	rotate([90, 0, -90])	assembleGuide(z * 2, 0.75, z);
+				}
 			}
 			
 			// 면 조립부분 홈파기
@@ -42,18 +70,27 @@ module board(x, y, z, even = false, dz = THICK * 2, count = 5) {
 			translate([-1024 + deep, -1, z / 2])	cube(1024);
 			translate([x - deep, -1, z / 2])		cube(1024);
 			
+
 			boardHold(x, y, z, 12, 4, ceil(x / 48), floor(y / 64));
+
 		}
 
 		// 조립 가이드
-		length = (y - dz) / count;
+		/*
+		length = (y - dz * 2) / count;
+		echo("length: ", length);
 		for (cy = [(even ? dz + length : dz):length * 2:y - length]) {
 			echo("guide", cy);
-			translate([z / 2 * 3,		cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 3], radius = z / 2, sidesonly = true);
-			translate([x - z / 2 * 3,	cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 3], radius = z / 2, sidesonly = true);
+			//translate([z / 2 * 3,		cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 3], radius = z / 2, sidesonly = true);
+			translate([z / 2,		cy + length / 2,	z])	rotate([90, 0, -90])	assembleGuide(length / 2, length / 2 / 4 * 3, z);
+
+			//translate([x - z / 2 * 3,	cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 3], radius = z / 2, sidesonly = true);
+			translate([x - z / 2,	cy,	z])	rotate([0, 0, 90])	assembleGuide(length / 2, length / 2 / 4 * 3, z);
 		}
+		*/
 	}
 }
+board(256, 128, 8, false, 16, 5);
 // 조립시 바깥쪽
 module bodyTopFront() {
 	base = bodyTopSize();
@@ -122,16 +159,16 @@ module assempleBodyTop(help = 8) {
 	translate([base[0] + THICK, THICK / 2 + help, base[2]])		rotate([-90, 0, 90])		bodyTopSide();
 	translate([base[0] + THICK, base[1] + THICK + help, 0])	rotate([0, 0, 180])	translate([base[0] + THICK, THICK / 2, base[2]])		rotate([-90, 0, 90])		bodyTopSide();
 }
-//assempleBodyTop(16);
+//assempleBodyTop(10);
 module assempleBody(help = 8) {
 	base = bodyTopSize();
 	assempleBodyBottom(help);
 	translate([THICK, THICK, HEIGHT])	assempleBodyTop(help);
 	translate([THICK * 2, THICK* 2, HEIGHT + HEIGHT_TOP + 8])	landscape();
 }
-//assempleBody(0);
+//assempleBody(8);
 
-scale(HALF)	bodyTop();	scale(HALF)	translate([bodyTopSize()[0] + 16, 0, 0])	bodyTop();
+//scale(HALF)	bodyTop();	scale(HALF)	translate([bodyTopSize()[0] + 16, 0, 0])	bodyTop();
 //scale(HALF)	bodyBottom();	scale(HALF)	translate([0, bodyBottomSize()[2] + 4, 0])	bodyBottom();
 //bodyBottomFront();
 //bodyBottomSide();
