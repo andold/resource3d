@@ -15,8 +15,8 @@ ONE = [1, 1, 1];
 EPSILON = 0.1;
 
 // export
-function coreWidth(delta = 8)  = (3 + 3 + 3) + (16 + 16) + (3 + 4 + 5) + delta * 7;
-function chefsInfo(delta = 8)  = [(3 + 3 + 3) + (16 + 16) + delta * 5, (3 + 4 + 5) + delta * 2];	//	[x위치, 길이]
+function chefsInfo(delta = 8)  = [(3 + 3 + 3) + (16 + 16) + delta * 5, (3 + 4 + 5) + (15 + 20)];	//	[x위치, 길이]
+function coreWidth(delta = 8)  = (3 + 3 + 3) + (16 + 16) + delta * 5 + chefsInfo(delta)[1];
 function coreSize(delta = 8, thick = 8)  = [coreWidth(delta), 60, thick];
 
 module test(delta = 4) {
@@ -53,15 +53,9 @@ module punch(height = 60, thick = 8, delta = 8) {
 	//	식도
 	chefsStart = scissorStart + scissorLength + delta;
 	translate([chefsStart, 0, 0])						roundedBoxNotCenter([3, height, thick], 1);
-	translate([chefsStart + 3 + delta, 0, 0])			roundedBoxNotCenter([4, height, thick], 1);
-	translate([chefsStart + (3 + 4) + delta * 2, 0, 0])	roundedBoxNotCenter([5, height, thick], 1);
-	chefsLength = (3 + 4 + 5) + delta * 2;
+	translate([chefsStart + 3 + 15, 0, 0])				roundedBoxNotCenter([4, height, thick], 1);
+	translate([chefsStart + (3 + 4) + (15 + 20), 0, 0])	roundedBoxNotCenter([5, height, thick], 1);
+	chefsLength = (3 + 4 + 5) + (15 + 20);
 	echo("last x position, ie width", delta, breadStart, breadLength, scissorStart, scissorLength, chefsStart, chefsLength);
 }
 punch();
-module hilt(height = 60, thick = 8, delta = 8) {
-	HILT = [41, 40, 16];	//	손잡이
-	color(c=PALETTE[0])
-		translate([100 + 5 - 6, HILT[1] / 2 - 2, HILT[2] / 2])
-			roundedBox(HILT, 4, true);
-}
