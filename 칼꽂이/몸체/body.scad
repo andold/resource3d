@@ -1,15 +1,15 @@
 use <MCAD/boxes.scad>
-use <landscape.scad>
-use <utils.scad>
+use <../상판/landscape.scad>
+use <../기타/utils.scad>
 
 ZERO = [0, 0, 0];
 HALF = [1/2, 1/2, 1/2];
 ONE = [1, 1, 1];
 
 // 주요 상수
-THICK = 4;
+THICK = 8;
 HEIGHT = 240;
-HEIGHT_TOP = 64;
+HEIGHT_TOP = 128;
 OVERLAP = 32;
 OPACITY = 0.75;
 
@@ -30,7 +30,7 @@ module boardHold(x, y, z, dx = 16, dy = 0, countx = 2, county = 2) {
 		}
 	}
 }
-module board(x, y, z, even = false, dz = 4, count = 2) {
+module board(x, y, z, even = false, dz = THICK * 2, count = 5) {
 	union() {
 		difference() {
 			union() {
@@ -40,16 +40,17 @@ module board(x, y, z, even = false, dz = 4, count = 2) {
 			// 면 조립부분 홈파기
 			deep = even ? z : z / 2;
 			translate([-1024 + deep, -1, z / 2])	cube(1024);
-			translate([x - deep, -1, z / 2])	cube(1024);
+			translate([x - deep, -1, z / 2])		cube(1024);
 			
 			boardHold(x, y, z, 12, 4, ceil(x / 48), floor(y / 64));
 		}
 
 		// 조립 가이드
-		length = (y - dz) / count / 2;
-		for (cy = [(even ? dz : dz + length):length * 2:y - length]) {
-			translate([z / 2 * 3,		cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 4], radius = z / 2, sidesonly = true);
-			translate([x - z / 2 * 3,	cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 4], radius = z / 2, sidesonly = true);
+		length = (y - dz) / count;
+		for (cy = [(even ? dz + length : dz):length * 2:y - length]) {
+			echo("guide", cy);
+			translate([z / 2 * 3,		cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 3], radius = z / 2, sidesonly = true);
+			translate([x - z / 2 * 3,	cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 3], radius = z / 2, sidesonly = true);
 		}
 	}
 }
@@ -68,7 +69,7 @@ module bodyTopSide() {
 //bodyTopSide();
 
 module bodyBottomFront() {
-	base = bodyTopSize();
+	base = bodyBottomSize();
 	color("Fuchsia", OPACITY)	board(base[0] + THICK * 3, HEIGHT - base[2] + OVERLAP, THICK, false, OVERLAP);
 }
 //bodyBottomFront();
@@ -79,7 +80,7 @@ module compareFront() {
 //compareFront();
 
 module bodyBottomSide() {
-	base = bodyTopSize();
+	base = bodyBottomSize();
 	color("MediumSlateBlue", OPACITY)	board(base[1] + THICK * 2,  HEIGHT - base[2] + OVERLAP, THICK, true, OVERLAP);
 }
 //bodyBottomSide();
@@ -109,7 +110,7 @@ module assempleBodyBottom(help = 8) {
 
 module bodyBottom() {
 	bodyBottomFront();
-	translate([bodyBottomSize()[0] + THICK * 3, 0, 0])	bodyBottomSide();
+	translate([bodyBottomSize()[0] + THICK * 4, 0, 0])	bodyBottomSide();
 }
 
 module assempleBodyTop(help = 8) {
@@ -130,8 +131,8 @@ module assempleBody(help = 8) {
 }
 //assempleBody(0);
 
-//scale(HALF)	bodyTop();
-scale(HALF)	bodyBottom();	translate([0, bodyBottomSize()[1] + 10, 0])	scale(HALF)	bodyBottom();
+scale(HALF)	bodyTop();	scale(HALF)	translate([bodyTopSize()[0] + 16, 0, 0])	bodyTop();
+//scale(HALF)	bodyBottom();	scale(HALF)	translate([0, bodyBottomSize()[2] + 4, 0])	bodyBottom();
 //bodyBottomFront();
 //bodyBottomSide();
 //halfBodyTop();
