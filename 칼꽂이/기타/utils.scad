@@ -15,8 +15,8 @@ module boardPattern(size = [128, 64, 4], degree = 60, stick = [THICK, THICK, 32]
 module mark(name, height, size = 2) {
 	linear_extrude(height, center = false)	text(name, size = size);
 }
-module hole(w, h) {
-	translate([w / 2, h / 2, 0])		roundedBox(size=[w, h, 1024], radius = w / 4, sidesonly = true);
+module hole(w, h, z) {
+	translate([w / 2, h / 2, z / 2])		roundedBox(size=[w, h, z], radius = w / 4, sidesonly = true);
 }
 module ellipsis(w = 32, h = 16, z = 4) {
 	translate([w / 2, h / 2, 0])

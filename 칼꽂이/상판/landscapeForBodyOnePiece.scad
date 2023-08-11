@@ -1,6 +1,6 @@
 use <MCAD/boxes.scad>
-use <corner-hole.scad>
-use <utils.scad>
+use <../기타/corner-hole.scad>
+use <../기타/utils.scad>
 
 PALETTE = [
 	[0.3, 0.1, 0.0, 1.0],	//	갈색, 칼손잡이
@@ -11,6 +11,7 @@ PALETTE = [
 ];
 ZERO = [0, 0, 0];
 HALF = [1/2, 1/2, 1/2];
+ONE = [1, 1, 1];
 EPSILON = 0.1;
 
 // 리트랙션을 줄일려면, 각진선이 유리하다
@@ -77,5 +78,7 @@ module landscapeForBodyOnePiece() {
 		translate([base[0] / 2,	0,			-EPSILON])				cylinder(h, bottom, top);
 	}
 }
-scale(HALF)	landscapeForBodyOnePiece();
+scale(ONE)
+//color("blue", 0.5)
+landscapeForBodyOnePiece();
 
