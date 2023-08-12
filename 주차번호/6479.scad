@@ -28,10 +28,16 @@ module andold() {
 }
 //andold();
 
+module textBold(title, size, font) {
+	for (cx = [0: 0.01: size / 10]) {
+		translate([cx, 0, 0])		text(title, size, font = font);
+	}
+}
 module themeCircle(number0, number1, number2, radius = 16) {
 	thick = 4;
-	size = radius / 4 * 1.25;
-	font = "Liberation Sans:style=Bold Italic";
+	size = radius / 4 * 1.33;
+	font = "Sans Serif:style=Bold";
+	widthBaseline = 2;
 
 	translate([radius, radius, 0]) {
 		linear_extrude(thick, false) {
@@ -42,21 +48,21 @@ module themeCircle(number0, number1, number2, radius = 16) {
 			}
 			
 			//	전화번호
-			translate([size / 2 - radius + size, size, 0])		text(number0, size / 3 * 2, font = font);
-			translate([size / 2 - radius + size, -size / 2, 0])	text(number1, size, font = font);
-			translate([size / 2 - radius + size, -size * 2, 0])	text(number2, size, font = font);
+			translate([size / 2 - radius + size, size + widthBaseline / 2, 0])		textBold(number0, size / 3 * 2, font);
+			translate([size / 2 - radius + size, -size / 2 + widthBaseline / 2, 0])	textBold(number1, size, font);
+			translate([size / 2 - radius + size, -size * 2 + widthBaseline / 2, 0])	textBold(number2, size, font);
 		}
 		
 		//	베이스라인
 		linear_extrude(thick / 2, true) {
-			translate([-radius * 0.85,	size, 1 / 2])			square([radius * 2 * 0.85, 1 / 4], false);
-			translate([-radius * 0.90,	-size / 2, 1 / 2])		square([radius * 2 * 0.90, 1 / 4], false);
-			translate([-radius * 0.70,	-size / 2 * 4, 1 / 2])	square([radius * 2 * 0.70, 1 / 4], false);
+			translate([-radius * 0.85,	size, 1 / 2])			square([radius * 2 * 0.85, widthBaseline], false);
+			translate([-radius * 0.90,	-size / 2, 1 / 2])		square([radius * 2 * 0.90, widthBaseline], false);
+			translate([-radius * 0.70,	-size / 2 * 4, 1 / 2])	square([radius * 2 * 0.70, widthBaseline], false);
 		}
 	}
 	
 	//	손잡이?
 	translate([radius - thick / 4, -128 / 2 + thick, thick / 4])	roundedBox([thick * 2, 128, thick / 2], thick / 4, true);
 }
-themeCircle("010", "6810", "6479", 32);
-translate([32 * 2 + 8, 0, 0])	themeCircle("010", "4240", "6479", 32);
+themeCircle("010", "6810", "6479", 16);
+translate([16 * 2 + 4, 0, 0])	themeCircle("010", "4240", "6479", 16);
