@@ -67,5 +67,10 @@ module themeCircle(number0, number1, number2, radius = 16) {
 	//	손잡이?
 	translate([radius - thick / 4, -128 / 2 + thick, thick / 4])	roundedBox([thick * 2, 128, thick / 2], thick / 4, true);
 }
-themeCircle("010", "6810", "6479", SIZE);
-translate([SIZE * 2 + 4, 0, 0])	themeCircle("010", "4240", "6479", SIZE);
+
+module build() {
+	themeCircle("010", "6810", "6479", SIZE);
+	translate([SIZE * 2 + 4, 0, 0])	themeCircle("010", "4240", "6479", SIZE);
+}
+
+build();
