@@ -1,5 +1,8 @@
 use <MCAD/boxes.scad>
 
+// 상수
+SIZE = 24;
+
 module mark(name, height, size = 2) {
 	linear_extrude(height, center = true)	text(name, size = size);
 }
@@ -64,5 +67,5 @@ module themeCircle(number0, number1, number2, radius = 16) {
 	//	손잡이?
 	translate([radius - thick / 4, -128 / 2 + thick, thick / 4])	roundedBox([thick * 2, 128, thick / 2], thick / 4, true);
 }
-themeCircle("010", "6810", "6479", 16);
-translate([16 * 2 + 4, 0, 0])	themeCircle("010", "4240", "6479", 16);
+themeCircle("010", "6810", "6479", SIZE);
+translate([SIZE * 2 + 4, 0, 0])	themeCircle("010", "4240", "6479", SIZE);
