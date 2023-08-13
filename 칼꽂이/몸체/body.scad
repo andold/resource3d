@@ -31,66 +31,48 @@ module boardHold(x, y, z, dx = 16, dy = 0, countx = 2, county = 2) {
 		}
 	}
 }
-module assembleGuide(x = 16, p = 0.75, z = 4) {
-	if (y > x / 4 * 3)	echo("y값이 너무 큽니다", x / 4 * 3, "이하로 설정해 주세요"); 
-	r = x / 2;
-	intersection() {
-		translate([r, r * p, 0])	cylinder(z, r, r);
-		translate([0, 0, 0])		cube([r * 2, r * 2, z]);
+
+module bulges(x = 128, y = 6, z = 4, count = 5) {
+	r = y / 0.75 / 2;
+	dx = (x - r * 2) / (count - 1);
+	for (cx = [0: dx: x]) {
+		translate([cx, 0, 0])	intersection() {
+			translate([r, r * 2 - y, 0])	cylinder(z, r, r);
+			cube([r * 2, r * 2, z]);
+		}
 	}
 }
-//rotate([0, 0, -90])	assembleGuide();
+//
+//rotate([90, 0, -90])	bulges();
+//bodyTopFront();
+//translate([164, 0, 0])	bodyTopSide();
 module board(x = 160, y = 128, z = 4, even = false, dz = THICK * 2, count = 5) {
-	echo(x, y, z, even, dz, count);
-			if (!even) {
-			//	translate([z,		dz,	z])
-			//	translate([16,		16,	16])
-				rotate([90, 0, -90])
-				assembleGuide(16, 12, 8);
-			}
+	echo("board", x, y, z, even, dz, count);
 	union() {
 		difference() {
 			union() {
 				cube([x, y, z]);
-				if (!even) {
-					cr = z * 2;	//	반지름
-					translate([z / 2 * 3, z * 2 + dz, z])	rotate([90, 0, -90])	assembleGuide(cr, 0.75, z);
-					translate([x - z / 2, z * 2 + dz, z])	rotate([90, 0, -90])	assembleGuide(cr, 0.75, z);
-
-					translate([z / 2 * 3, y / 2 + z, z])	rotate([90, 0, -90])	assembleGuide(cr, 0.75, z);
-					translate([x - z / 2, y / 2 + z, z])	rotate([90, 0, -90])	assembleGuide(cr, 0.75, z);
-
-					translate([z / 2 * 3, y - dz, z])	rotate([90, 0, -90])	assembleGuide(z * 2, 0.75, z);
-					translate([x - z / 2, y - dz, z])	rotate([90, 0, -90])	assembleGuide(z * 2, 0.75, z);
+				if (even) {
+				} else {
+					translate([z / 2 * 3, y - dz, z])	rotate([90, 0, -90])	bulges(y - dz * 2, z * 2 * 0.75, z, count);
+					translate([x - z / 2 * 3, dz, z])	rotate([90, 0, 90])		bulges(y - dz * 2, z * 2 * 0.75, z, count);
 				}
 			}
 			
 			// 면 조립부분 홈파기
-			deep = even ? z : z / 2;
-			translate([-1024 + deep, -1, z / 2])	cube(1024);
-			translate([x - deep, -1, z / 2])		cube(1024);
-			
-
+			translate([-1024 + z / 2, -1, z / 2])	cube(1024);
+			translate([x - z / 2, -1, z / 2])		cube(1024);
 			boardHold(x, y, z, 12, 4, ceil(x / 48), floor(y / 64));
 
+			if (even) {
+				translate([z / 2, y - dz, z / 2])	rotate([0, 0, -90])	bulges(y - dz * 2, z * 2 * 0.75, z, count);
+				translate([x - z / 2, dz, z / 2])	rotate([0, 0, 90])	bulges(y - dz * 2, z * 2 * 0.75, z, count);
+			} else {
+			}
 		}
-
-		// 조립 가이드
-		/*
-		length = (y - dz * 2) / count;
-		echo("length: ", length);
-		for (cy = [(even ? dz + length : dz):length * 2:y - length]) {
-			echo("guide", cy);
-			//translate([z / 2 * 3,		cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 3], radius = z / 2, sidesonly = true);
-			translate([z / 2,		cy + length / 2,	z])	rotate([90, 0, -90])	assembleGuide(length / 2, length / 2 / 4 * 3, z);
-
-			//translate([x - z / 2 * 3,	cy + length / 2,	z * 2])	roundedBox(size=[z * 2, length, z * 3], radius = z / 2, sidesonly = true);
-			translate([x - z / 2,	cy,	z])	rotate([0, 0, 90])	assembleGuide(length / 2, length / 2 / 4 * 3, z);
-		}
-		*/
 	}
 }
-board(256, 128, 8, false, 16, 5);
+//board(256, 128, 8, false, 16, 5);
 // 조립시 바깥쪽
 module bodyTopFront() {
 	base = bodyTopSize();
@@ -101,7 +83,7 @@ module bodyTopFront() {
 // 조립시 안쪽
 module bodyTopSide() {
 	base = bodyTopSize();
-	color("PeachPuff", OPACITY)	board(base[1], base[2], THICK, true);
+	color("Blue", OPACITY)	board(base[1], base[2], THICK, true);
 }
 //bodyTopSide();
 
@@ -133,7 +115,7 @@ module bodyTop() {
 	bodyTopFront();
 	translate([0, bodyTopSize()[2] + 4, 0])	bodyTopSide();
 }
-//bodyTop(0);
+//scale(HALF)	bodyTop();
 
 module assempleBodyBottom(help = 8) {
 	base = bodyBottomSize();
@@ -164,9 +146,18 @@ module assempleBody(help = 8) {
 	base = bodyTopSize();
 	assempleBodyBottom(help);
 	translate([THICK, THICK, HEIGHT])	assempleBodyTop(help);
-	translate([THICK * 2, THICK* 2, HEIGHT + HEIGHT_TOP + 8])	landscape();
+//	translate([THICK * 2, THICK* 2, HEIGHT + HEIGHT_TOP + 8])	landscape();
 }
 //assempleBody(8);
+
+module build() {
+	//scale(HALF)	bodyTopFront();
+	scale(HALF)	bodyTopSide();
+//	translate([0, bodyTopSize()[2] + 4, 0])	bodyTopSide();
+	//scale(HALF)	bodyTop();	scale(HALF)	translate([bodyTopSize()[0] + 16, 0, 0])	bodyTop();
+	//scale(HALF)	bodyBottom();	scale(HALF)	translate([0, bodyBottomSize()[2] + 4, 0])	bodyBottom();
+}
+build();
 
 //scale(HALF)	bodyTop();	scale(HALF)	translate([bodyTopSize()[0] + 16, 0, 0])	bodyTop();
 //scale(HALF)	bodyBottom();	scale(HALF)	translate([0, bodyBottomSize()[2] + 4, 0])	bodyBottom();
