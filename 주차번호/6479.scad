@@ -36,14 +36,16 @@ module textBold(title, size, font) {
 		translate([cx, 0, 0])		text(title, size, font = font);
 	}
 }
-module themeCircle(number0, number1, number2, radius = 16) {
+module themeCircle(number0, number1, number2, radius = 16, prototype = true) {
 	thick = 4;
 	size = radius / 4 * 1.33;
 	font = "Sans Serif:style=Bold";
 	widthBaseline = 2;
+	slices = prototype ? 20 : thick * 16;
+	fn = prototype ? 32 : 256;
 
 	translate([radius, radius, 0]) {
-		linear_extrude(thick, false) {
+		linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1], $fn = fn) {
 			//	원
 			difference() {
 				circle(radius);
@@ -68,9 +70,9 @@ module themeCircle(number0, number1, number2, radius = 16) {
 	translate([radius - thick / 4, -128 / 2 + thick, thick / 4])	roundedBox([thick * 2, 128, thick / 2], thick / 4, true);
 }
 
-module build() {
-	themeCircle("010", "6810", "6479", SIZE);
-	translate([SIZE * 2 + 4, 0, 0])	themeCircle("010", "4240", "6479", SIZE);
+module build(prototype = true) {
+	themeCircle("010", "6810", "6479", SIZE, prototype);
+	translate([SIZE * 2 + 4, 0, 0])	themeCircle("010", "4240", "6479", SIZE, prototype);
 }
 
 build();
