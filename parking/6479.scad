@@ -91,7 +91,7 @@ module themeCircleCap(radius, thick, prototype) {
 
 module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
 	echo("themeCircleWeb start: ", number0, number1, number2, radius, thick, prototype);
-	size = (radius - thick) * 2 / 9;
+	size = (radius - thick) * 2 / 8.5;
 	font = "Sans Serif:style=Bold";
 	widthBaseline = 2;
 	slices = prototype ? 20 : thick * 16;
@@ -116,18 +116,22 @@ module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
 			translate([-radius + thick + size,		size / 2 * 2, 0])	textBold(number1, size, font);
 
 			rotate([0, 0, 180]) {
-			translate([-radius + thick + size * 2,	size / 2 * 5, 0])	textBold(number0, size / 3 * 2, font);
-			translate([-radius + thick + size,		size / 2 * 2, 0])	textBold(number2, size, font);
+				translate([-radius + thick + size * 2,	size / 2 * 5, 0])	textBold(number0, size / 3 * 2, font);
+				translate([-radius + thick + size,		size / 2 * 2, 0])	textBold(number2, size, font);
 			}
 		}
-		color("blue", 0.8)	translate([-radius, -thick / 2, thick])	cube([4, thick, thick]);
-		color("blue", 0.8)	translate([radius - thick * 2, -thick / 2, thick])	cube([4, thick, thick]);
+		color("blue", 0.8)
+			translate([-radius, -thick / 2, thick])
+			cube([4, thick, thick / 2]);
+		color("blue", 0.8)
+			translate([radius - thick * 2, -thick / 2, thick / 2])
+			cube([4, thick, thick]);
 	}
 	
 	echo("themeCircleWeb done: ", number0, number1, number2, radius, prototype);
 }
 
-target = 1;
+target = 2;
 radius = 32;
 thick = 2;
 prototype = true;
