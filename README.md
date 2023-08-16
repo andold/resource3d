@@ -119,5 +119,5 @@
 	- https://www.arduino.cc/en/software
 
 ### 결론: Creality 사이트에 가면, 바이너리 다운로드 링크가 있다
-	- 다운받아서 CF 카드에 복사하면 된다.
+	- 다운받아서 카드에 복사하면 된다.
 
