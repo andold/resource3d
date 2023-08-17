@@ -1,4 +1,5 @@
 use <MCAD/boxes.scad>
+use <spider_web_generator.scad>
 
 ZERO = [0, 0, 0];
 // 상수
@@ -76,23 +77,33 @@ module themeCircle(number0, number1, number2, radius = 16, prototype = true) {
 }
 
 module themeCircleCap(radius, thick, prototype) {
-	outter = radius + thick / 2 * 3;
-	inner = radius + thick / 2;
+	outter = radius + thick;
+	inner = radius;
 	fn = prototype ? 32 : 256;
 	difference() {
-		translate([0, 0, 0])						cylinder(h = thick * 2.5, r1 = outter, r2 = outter, center = false, $fn = fn);
-		translate([0, 0, thick / 2])				cylinder(h = thick * 1.1, r1 = inner, r2 = inner, center = false, $fn = fn);
-		translate([0, 0, thick / 2 + thick * 1.09])	cylinder(h = thick, r1 = inner, r2 = radius - thick, center = false, $fn = fn);
+		color("white", 0.8)
+			translate([0, 0, 0])
+			cylinder(h = thick * 2, r1 = outter, r2 = outter, center = false, $fn = fn);
+		translate([0, 0, thick / 2])
+			cylinder(h = thick, r1 = inner, r2 = inner, center = false, $fn = fn);
+		translate([0, 0, thick / 2 * 3])
+			cylinder(h = thick / 2, r1 = inner, r2 = radius - thick, center = false, $fn = fn);
+		translate([0, 0, thick / 2 * 3])
+			cylinder(h = thick, r1 = radius - thick, r2 = radius - thick, center = false, $fn = fn);
 
-		translate([-outter, 0, -thick])	cube([outter * 2, outter * 2, thick * 4]);
+		translate([-outter * 2, -thick / 2, thick / 2])
+			cube([outter * 8, thick, thick * 3]);
+
+		translate([-outter, 0, -thick / 2])
+			cube([outter * 2, outter * 2, thick * 4]);
 	}
-	translate([0, -128 / 2 - radius - thick, thick / 2])	roundedBox([thick * 2, 128, thick], thick / 4, true);
+	translate([0, -128 / 2 - radius + thick / 8 , thick])	roundedBox([thick * 4, 128, thick * 2], thick, true);
 }
 
 module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
 	echo("themeCircleWeb start: ", number0, number1, number2, radius, thick, prototype);
 	size = (radius - thick) * 2 / 8.5;
-	font = "Sans Serif:style=Bold";
+	font = "나눔고딕:style=Normal";
 	widthBaseline = 2;
 	slices = prototype ? 20 : thick * 16;
 	fn = prototype ? 32 : 256;
@@ -101,42 +112,52 @@ module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
 		linear_extrude(height = thick / 2, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1], $fn = fn) {
 			intersection() {
 				circle(radius);
-				resize([radius * 2, radius * 2])	import(file = "web.svg", dpi = 96 * 2, center = true);
+				offset(0.1)
+					//resize([radius * 2, radius * 2])
+					import(file = "web.svg", dpi = 96, center = true);
 			}
 		}
 		linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1], $fn = fn) {
 			//	원
 			difference() {
 				circle(radius);
-				circle(radius - thick * 2);
+				circle(radius - thick);
 			}
 
 			//	전화번호
-			translate([-radius + thick + size * 2,	size / 2 * 5, 0])	textBold(number0, size / 3 * 2, font);
-			translate([-radius + thick + size,		size / 2 * 2, 0])	textBold(number1, size, font);
+			offset(0.4)
+				translate([-radius + thick + size * 2,	size / 2 * 4.5, 0])
+				text(number0, size / 3 * 2, font);
+			offset(0.4)
+				translate([-radius + thick + size * 0.75,		size / 2 * 1.5, 0])
+				text(number1, size, font);
 
 			rotate([0, 0, 180]) {
-				translate([-radius + thick + size * 2,	size / 2 * 5, 0])	textBold(number0, size / 3 * 2, font);
-				translate([-radius + thick + size,		size / 2 * 2, 0])	textBold(number2, size, font);
+				offset(0.4)
+					translate([-radius + thick + size * 2,	size / 2 * 4.5, 0])
+					text(number0, size / 3 * 2, font);
+				offset(0.4)
+					translate([-radius + thick + size * 0.75,		size / 2 * 1.5, 0])
+					text(number2, size, font);
 			}
 		}
 		color("blue", 0.8)
 			translate([-radius, -thick / 2, thick])
-			cube([4, thick, thick / 2]);
+			cube([thick, thick, thick]);
 		color("blue", 0.8)
-			translate([radius - thick * 2, -thick / 2, thick / 2])
-			cube([4, thick, thick]);
+			translate([radius - thick, -thick / 2, thick / 2])
+			cube([thick, thick, thick]);
 	}
 	
-	echo("themeCircleWeb done: ", number0, number1, number2, radius, prototype);
+	echo("themeCircleWeb done: ", number0, number1, number2, radius, thick, prototype);
 }
 
-target = 2;
+target = 1;
 radius = 32;
-thick = 2;
+thick = 1;
 prototype = true;
-module build(target, prototype, radius) {
-	echo("build start: ", prototype, radius);
+module build(target, thick, prototype, radius) {
+	echo("build start: ", target, thick, prototype, radius);
 
 	if (target == 1) {
 		themeCircleCap(
@@ -152,8 +173,7 @@ module build(target, prototype, radius) {
 		);
 	}
 
-	echo("build done: ", prototype, radius);
+	echo("build done: ", target, thick, prototype, radius);
 }
 
-build(target, prototype, radius);
-//resize([SIZE, SIZE])	import(file = "web.svg", dpi = 96 * 1 / 2, center = true);
+build(target, thick, prototype, radius);
