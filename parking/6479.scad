@@ -80,6 +80,7 @@ module themeCircleCap(radius, thick, prototype) {
 	margin = thick / 4;
 	inner = radius + margin;
 	outter = radius + margin + thick;
+	padding = thick * 3;
 	fn = prototype ? 32 : 256;
 	difference() {
 		color("white", 0.8)
@@ -93,8 +94,10 @@ module themeCircleCap(radius, thick, prototype) {
 			cylinder(h = thick / 2, r1 = inner, r2 = radius - thick / 4, center = false, $fn = fn);
 
 		// 살짝 걸치는 곳
-		translate([-outter * 2, -thick / 2, thick / 2])
-			cube([outter * 8, thick, thick * 3]);
+		translate([-inner, -thick / 2, -thick / 2])
+			cube([padding, thick, thick * 2]);
+		translate([inner - padding, -thick / 2, -thick / 2])
+			cube([padding, thick, thick * 2]);
 
 		// 반원으로 자르기
 		translate([-outter, 0, -thick / 2])
@@ -161,7 +164,7 @@ module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
 	echo("themeCircleWeb done: ", number0, number1, number2, radius, thick, prototype);
 }
 
-target = 2;
+target = 1;
 radius = 32;
 thick = 2;
 prototype = true;
