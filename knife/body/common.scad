@@ -29,8 +29,10 @@ module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
 	}
 }
 
-module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 24, paddingy = 24, count = 5) {
+module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 24, paddingy = 24) {
 	echo("board", x, y, z, female, marginy, paddingx, paddingy, count);
+	joint = z * 2;
+	count = floor((y - marginy * 2 - joint) / (joint / 2 * 3) + 1);
 	union() {
 		difference() {
 			union() {
@@ -75,7 +77,7 @@ module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 2
 module build() {
 	board(20, 64, 8, false, 2, 8, 8, 2);
 	translate([20 + 4, 0, 0])
-		board(44, 64, 8, true, 2, 24, 8, 2);
+		board(44, 64, 8, true, 2, 24, 8);
 }
 
 build();

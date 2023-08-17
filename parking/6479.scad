@@ -77,34 +77,43 @@ module themeCircle(number0, number1, number2, radius = 16, prototype = true) {
 }
 
 module themeCircleCap(radius, thick, prototype) {
-	outter = radius + thick;
-	inner = radius;
+	margin = thick / 4;
+	inner = radius + margin;
+	outter = radius + margin + thick;
 	fn = prototype ? 32 : 256;
 	difference() {
 		color("white", 0.8)
 			translate([0, 0, 0])
-			cylinder(h = thick * 2, r1 = outter, r2 = outter, center = false, $fn = fn);
+			cylinder(h = thick * 2 + margin, r1 = outter, r2 = outter, center = false, $fn = fn);
+		// 넣는 장소
 		translate([0, 0, thick / 2])
-			cylinder(h = thick, r1 = inner, r2 = inner, center = false, $fn = fn);
-		translate([0, 0, thick / 2 * 3])
-			cylinder(h = thick / 2, r1 = inner, r2 = radius - thick, center = false, $fn = fn);
-		translate([0, 0, thick / 2 * 3])
-			cylinder(h = thick, r1 = radius - thick, r2 = radius - thick, center = false, $fn = fn);
+			cylinder(h = thick + margin, r1 = inner, r2 = inner, center = false, $fn = fn);
+		// 가두는 테두리
+		translate([0, 0, thick / 2 * 3 + margin])
+			cylinder(h = thick / 2, r1 = inner, r2 = radius - thick / 4, center = false, $fn = fn);
 
+		// 살짝 걸치는 곳
 		translate([-outter * 2, -thick / 2, thick / 2])
 			cube([outter * 8, thick, thick * 3]);
 
+		// 반원으로 자르기
 		translate([-outter, 0, -thick / 2])
 			cube([outter * 2, outter * 2, thick * 4]);
 	}
-	translate([0, -128 / 2 - radius + thick / 8 , thick])	roundedBox([thick * 4, 128, thick * 2], thick, true);
+	
+	// 손잡이
+	stickx = thick * 4;
+	sticky = 128;
+	stickz = thick;
+	translate([0, -sticky / 2 - radius - thick / 2, stickz / 2])
+		roundedBox([stickx, sticky, stickz], thick, true);
 }
 
 module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
 	echo("themeCircleWeb start: ", number0, number1, number2, radius, thick, prototype);
 	size = (radius - thick) * 2 / 8.5;
 	font = "나눔고딕:style=Normal";
-	widthBaseline = 2;
+	padding = thick * 2;
 	slices = prototype ? 20 : thick * 16;
 	fn = prototype ? 32 : 256;
 
@@ -121,14 +130,14 @@ module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
 			//	원
 			difference() {
 				circle(radius);
-				circle(radius - thick);
+				circle(radius - padding);
 			}
 
 			//	전화번호
 			offset(0.4)
 				translate([-radius + thick + size * 2,	size / 2 * 4.5, 0])
 				text(number0, size / 3 * 2, font);
-			offset(0.4)
+			offset(0.6)
 				translate([-radius + thick + size * 0.75,		size / 2 * 1.5, 0])
 				text(number1, size, font);
 
@@ -136,25 +145,25 @@ module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
 				offset(0.4)
 					translate([-radius + thick + size * 2,	size / 2 * 4.5, 0])
 					text(number0, size / 3 * 2, font);
-				offset(0.4)
-					translate([-radius + thick + size * 0.75,		size / 2 * 1.5, 0])
+				offset(0.6)
+					translate([-radius + thick + size * 0.75, size / 2 * 1.5, 0])
 					text(number2, size, font);
 			}
 		}
 		color("blue", 0.8)
 			translate([-radius, -thick / 2, thick])
-			cube([thick, thick, thick]);
+			cube([padding, thick, thick]);
 		color("blue", 0.8)
-			translate([radius - thick, -thick / 2, thick / 2])
-			cube([thick, thick, thick]);
+			translate([radius - padding, -thick / 2, thick])
+			cube([padding, thick, thick]);
 	}
 	
 	echo("themeCircleWeb done: ", number0, number1, number2, radius, thick, prototype);
 }
 
-target = 1;
+target = 2;
 radius = 32;
-thick = 1;
+thick = 2;
 prototype = true;
 module build(target, thick, prototype, radius) {
 	echo("build start: ", target, thick, prototype, radius);

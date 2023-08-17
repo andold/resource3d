@@ -8,16 +8,6 @@ ONE = [1, 1, 1];
 EPSILON = 0.2;
 
 // 주요 상수
-prototype = true;
-target = 1;
-thick = 8;
-margin = 8;
-delta = 8;
-marginy = 12;
-paddingx = 24;
-paddingy = 24;
-count = 4;
-
 HEIGHT = 240;
 HEIGHT_TOP = 128;
 OVERLAP = 32;
@@ -25,7 +15,7 @@ OPACITY = 0.75;
 
 // 외경
 function bodyTopSize(thick, margin, delta)  = [
-	landscapeSize(thick, margin, delta)[0] + thick,
+	landscapeSize(thick, margin, delta)[0] + thick * 2,
 	landscapeSize(thick, margin, delta)[1] + thick,
 	HEIGHT_TOP
 ];
@@ -35,74 +25,80 @@ function	bodyBottomSize(thick, margin, delta) = [
 	HEIGHT - bodyTopSize(thick, margin, delta)[2] + OVERLAP
 ];
 
-//module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 24, paddingy = 24, count = 5) {
 module bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy, count) {
 	base = bodyTopSize(thick, margin, delta);
-	color("DarkKhaki", OPACITY)	board(base[0], base[2], thick, false, marginy, paddingx, paddingy, count);
+	color("DarkKhaki", OPACITY)
+		board(base[0], base[2], thick, false, marginy, paddingx, paddingy);
 }
 
 // 조립시 안쪽
-module bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy, count) {
+module bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy) {
 	base = bodyTopSize(thick, margin, delta);
-	color("Blue", OPACITY)	board(base[1], base[2], thick, true, marginy, paddingx, paddingy, count);
+	color("Blue", OPACITY)
+		board(base[1], base[2], thick, true, marginy, paddingx, paddingy);
 }
 
-module bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy, count) {
+module bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy) {
 	base = bodyBottomSize(thick, margin, delta);
-	color("Fuchsia", OPACITY)	board(base[0] + THICK * 3, HEIGHT - base[2] + OVERLAP, THICK, false, OVERLAP);
+	color("Fuchsia", OPACITY)
+		board(base[0] + thick * 3, HEIGHT - base[2] + OVERLAP, thick, false, OVERLAP);
 }
 //bodyBottomFront();
-module compareFront(thick, margin, delta, marginy, paddingx, paddingy, count) {
-	bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy, count);
+module compareFront(thick, margin, delta, marginy, paddingx, paddingy) {
+	bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
 	translate([thick, HEIGHT - bodyTopSize(thick, margin, delta)[2] + OVERLAP + 1, 0])
-		boardTopFront(thick, margin, delta, marginy, paddingx, paddingy, count);
+		boardTopFront(thick, margin, delta, marginy, paddingx, paddingy);
 }
 //compareFront();
 
-module bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy, count) {
-	base = bodyBottomSize(thick, margin, delta, marginy, paddingx, paddingy, count);
-	color("MediumSlateBlue", OPACITY)	board(base[1] + thick * 2,  HEIGHT - base[2] + OVERLAP, thick, true, OVERLAP, paddingx, paddingy, count);
+module bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy) {
+	base = bodyBottomSize(thick, margin, delta, marginy, paddingx, paddingy);
+	color("MediumSlateBlue", OPACITY)
+		board(base[1] + thick * 2,  HEIGHT - base[2] + OVERLAP, thick, true, OVERLAP, paddingx, paddingy);
 }
 //bodyBottomSide();
 
-module compareSide(thick, margin, delta, marginy, paddingx, paddingy, count) {
+module compareSide(thick, margin, delta, marginy, paddingx, paddingy) {
 	bodyBottomSide(thick, margin, delta);
 	translate([thick, HEIGHT - bodyTopSize()[2] + OVERLAP + 1, 0])
-		boardTopSide(thick, margin, delta, marginy, paddingx, paddingy, count);
+		boardTopSide(thick, margin, delta, marginy, paddingx, paddingy);
 }
 //compareSide();
 
 // 크기 제한으로 상하단으로 분리한다.
-module bodyTop(thick, margin, delt, marginy, paddingx, paddingy, counta) {
-	bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy, count);
+module bodyTop(thick, margin, delt, marginy, paddingx, paddingy) {
+	bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy);
 	translate([0, bodyTopSize(thick, margin, delta)[2] + 4, 0])
-		bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy, count);
+		bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy);
 }
 //scale(HALF)	bodyTop();
 
-module assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, count, help = 8) {
-	base = bodyBottomSize(thick, margin, delta, marginy, paddingx, paddingy, count);
+module assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, help = 8) {
+	base = bodyBottomSize(thick, margin, delta, marginy, paddingx, paddingy);
 
-	translate([0, 0, base[2]])	rotate([-90, 0, 0])	bodyBottomFront(thick, margin, delta);
+	translate([0, 0, base[2]])
+		rotate([-90, 0, 0])
+		bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
 	translate([base[0] + thick * 2, base[1] + thick * 2 + help * 2, 0])
 		rotate([0, 0, 180])
 		translate([0, 0, base[2]])
-		rotate([-90, 0, 0])	bodyBottomFront();
+		rotate([-90, 0, 0])
+		bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
 	translate([base[0] + thick * 2, thick / 2 + help, base[2]])
 		rotate([-90, 0, 90])
-		bodyBottomSide(thick, margin, delta);
+		bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy);
 	translate([base[0] + thick * 2, base[1] + thick * 2 + help, 0])
 		rotate([0, 0, 180])
 		translate([base[0] + thick * 2, thick / 2, base[2]])
 		rotate([-90, 0, 90])
-		bodyBottomSide(thick, margin, delta);
+		bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy);
 }
 //assempleBodyBottom(0);
 
-module bodyBottom(thick, margin, delta, marginy, paddingx, paddingy, count) {
-	bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy, count);
+module bodyBottom(thick, margin, delta, marginy, paddingx, paddingy) {
+	bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
 	translate([bodyBottomSize(thick, margin, delta)[0] + thick * 4, 0, 0])
-		bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy, count);
+		bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy);
 }
 
 module assempleBodyTop(thick, margin, delta, help = 8) {
@@ -136,8 +132,8 @@ module assempleBody(thick, margin, delta, help = 8) {
 }
 //assempleBody(8);
 
-module build(target, thick, margin, delta, prototype, marginy, paddingx, paddingy, count) {
-	echo("build start: ", target, thick, margin, delta, prototype, marginy, paddingx, paddingy, count);
+module build(target, thick, margin, delta, prototype, marginy, paddingx, paddingy) {
+	echo("build start: ", target, thick, margin, delta, prototype, marginy, paddingx, paddingy);
 
 	echo("상판: ", landscapeSize(thick, margin, delta));
 	echo("상층: ", bodyTopSize(thick, margin, delta));
@@ -146,35 +142,35 @@ module build(target, thick, margin, delta, prototype, marginy, paddingx, padding
 	scale = prototype ? HALF : ONE;
 
 	if (target == 1) {
-		scale(scale)	bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy, count);
+		scale(scale)	bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy);
 	} else if (target == 2) {
 		scale(scale)
 		//	translate([bodyTopSize(thick, margin, delta)[0], 0, 0])
-			bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy, count);
+			bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy);
 	} else if (target == 3) {
-		scale(scale) {
-			bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy, count);
-			translate([bodyTopSize(thick, margin, delta)[0] + 2, 0, 0])
-				bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy, count);
+		scale(scale) intersection() {
+			translate([-24, 0, 0])	cube([40, 64, 64]);
+			union() {
+				bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy);
+				translate([-bodyTopSize(thick, margin, delta)[1] - 2, 0, 0])
+					bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy);
+			}
 		}
 	} else if (target == 4) {
-		scale(scale)	bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy, count);
+		scale(scale)	bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
 	} else if (target == 5) {
-		scale(scale)	bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy, count);
+		scale(scale)	bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy);
 	}
 
-	//scale(HALF)	bodyTopFront();
-//	scale(HALF)	bodyTopSide(thick, margin, delta);
-//	translate([0, bodyTopSize()[2] + 4, 0])	bodyTopSide();
-	//scale(HALF)	bodyTop();	scale(HALF)	translate([bodyTopSize()[0] + 16, 0, 0])	bodyTop();
-	//scale(HALF)	bodyBottom();	scale(HALF)	translate([0, bodyBottomSize()[2] + 4, 0])	bodyBottom();
-	echo("build done: ", target, thick, margin, delta, prototype);
+	echo("build done: ", target, thick, margin, delta, prototype, marginy, paddingx, paddingy);
 }
-build(3, thick, margin, delta, false, marginy, paddingx, paddingy, count);
 
-//scale(HALF)	bodyTop();	scale(HALF)	translate([bodyTopSize()[0] + 16, 0, 0])	bodyTop();
-//scale(HALF)	bodyBottom();	scale(HALF)	translate([0, bodyBottomSize()[2] + 4, 0])	bodyBottom();
-//bodyBottomFront();
-//bodyBottomSide();
-//halfBodyTop();
-//assempleBody();
+prototype = true;
+target = 5;
+thick = 8;
+margin = 8;
+delta = 8;
+marginy = 12;
+paddingx = 24;
+paddingy = 24;
+build(target, thick, margin, delta, prototype, marginy, paddingx, paddingy);
