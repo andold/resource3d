@@ -1,21 +1,30 @@
 EPSILON = 0.01;
 
 module bulge(x = 8, y = 8, z = 4) {
+	echo("bulge start: ", x, y, z);
+
 	r = x / 2;
 	dx = r * 2 / 4 * 3;
 	translate([r, r, 0])
 		cylinder(z, r, r, $fn = 64);
 	translate([x / 2 - dx / 2, 0, 0])
 		cube([dx, dx, z]);
-}
 
+	echo("bulge done: ", x, y, z);
+}
+//bulge();
 module bulges(x = 128, y = 8, z = 4, count = 5) {
+	echo("bulges start: ", x, y, z, count);
+
 	dx = (x - y) / (count - 1);
 	for (cx = [0: dx: x]) {
 		translate([cx, 0, 0])
 		bulge(y, y, z);
 	}
+
+	echo("bulges done: ", x, y, z, count);
 }
+//bulges();
 
 module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
 	echo(x, y, z, dx, dy, countx, county);
@@ -30,7 +39,8 @@ module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
 }
 
 module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 24, paddingy = 24) {
-	echo("board", x, y, z, female, marginy, paddingx, paddingy, count);
+	echo("board start: ", x, y, z, female, marginy, paddingx, paddingy);
+
 	joint = z * 2;
 	count = floor((y - marginy * 2 - joint) / (joint / 2 * 3) + 1);
 	union() {
@@ -38,12 +48,12 @@ module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 2
 			union() {
 				cube([x, y, z]);
 				if (!female) {
-					translate([z, y - marginy, z])
+					translate([z / 2 * 3, y - marginy, z])
 						rotate([90, 0, -90])
-						bulges(y - marginy * 2, z * 2, z / 2, count);
-					translate([x - z, marginy, z])
+						bulges(y - marginy * 2, z * 2, z, count);
+					translate([x - z / 2 * 3, marginy, z])
 						rotate([90, 0, 90])
-						bulges(y - marginy * 2, z * 2, z / 2, count);
+						bulges(y - marginy * 2, z * 2, z, count);
 				}
 			}
 			
@@ -72,12 +82,13 @@ module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 2
 			}
 		}
 	}
+
+	echo("board done: ", x, y, z, female, marginy, paddingx, paddingy);
 }
 
 module build() {
-	board(20, 64, 8, false, 2, 8, 8, 2);
-	translate([20 + 4, 0, 0])
-		board(44, 64, 8, true, 2, 24, 8);
+	board(32, 64, 8, false, 2, 24, 8);
+	//translate([20 + 4, 0, 0])		board(44, 64, 8, true, 2, 24, 8);
 }
 
 build();
