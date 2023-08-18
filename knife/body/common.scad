@@ -1,12 +1,19 @@
-EPSILON = 0.01;
+use <MCAD/boxes.scad>
+
+EPSILON = 0.001;
+
+module	roundedBoxNotCenter(size = [32, 64, 8], radius = 8, sidesonly = true) {
+	translate([size[0] / 2, size[1] / 2, size[2] / 2])		roundedBox(size, radius, sidesonly);
+}
 
 module bulge(x = 8, y = 8, z = 4) {
 	echo("bulge start: ", x, y, z);
 
-	r = x / 2;
-	dx = r * 2 / 4 * 3;
-	translate([r, r, 0])
-		cylinder(z, r, r, $fn = 64);
+	r1 = x / 2;
+	r2 = r1 / 4 * 3;
+	dx = r2 * 2 / 4 * 3;
+	translate([r1, r1, 0])
+		cylinder(z, r1, r2, $fn = 64);
 	translate([x / 2 - dx / 2, 0, 0])
 		cube([dx, dx, z]);
 
@@ -33,7 +40,7 @@ module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
 	for (cw = [0:w:x - dx]) {
 		for (ch = [0:h:y - dy]) {
 			translate([cw, ch, -1])
-				cube([w - dx, h - z, z * 4], center = false);
+				roundedBoxNotCenter([w - dx, h - z, z * 4], z / 2, true);
 		}
 	}
 }
@@ -48,12 +55,32 @@ module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 2
 			union() {
 				cube([x, y, z]);
 				if (!female) {
-					translate([z / 2 * 3, y - marginy, z])
+					translate([z, y - marginy, z])
 						rotate([90, 0, -90])
-						bulges(y - marginy * 2, z * 2, z, count);
-					translate([x - z / 2 * 3, marginy, z])
+						bulges(y - marginy * 2, z * 2, z / 2, count);
+					translate([x - z, marginy, z])
 						rotate([90, 0, 90])
-						bulges(y - marginy * 2, z * 2, z, count);
+						bulges(y - marginy * 2, z * 2, z / 2, count);
+					translate([z, marginy, z])
+						intersection() {
+							sphere(z);
+							cube(z);
+						}
+					translate([z, y - marginy, z])
+						intersection() {
+							sphere(z);
+							translate([0, -z, 0])	cube(z);
+						}
+					translate([x - z, marginy, z])
+						intersection() {
+							sphere(z);
+							translate([-z, 0, 0])	cube(z);
+						}
+					translate([x - z, y - marginy, z])
+						intersection() {
+							sphere(z);
+							translate([-z, -z, 0])	cube(z);
+						}
 				}
 			}
 			
@@ -73,12 +100,12 @@ module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 2
 				windows(x - paddingx * 2, y - paddingy * 2, z, z, z, ceil(x / 48), floor(y / 64));
 
 			if (female) {
-				translate([z / 2, y - marginy, z / 2])
-					rotate([0, 0, -90])
-					bulges(y - marginy * 2, z * 2, z / 2 + EPSILON, count);
-				translate([x - z / 2, marginy, z / 2])
-					rotate([0, 0, 90])
-					bulges(y - marginy * 2, z * 2, z / 2 + EPSILON, count);
+				translate([z / 2, marginy, z])
+					rotate([0, 180, -90])
+					bulges(y - marginy * 2, z * 2, z / 2, count);
+				translate([x - z / 2, y - marginy, z])
+					rotate([0, 180, 90])
+					bulges(y - marginy * 2, z * 2, z / 2, count);
 			}
 		}
 	}
@@ -87,8 +114,18 @@ module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 2
 }
 
 module build() {
-	board(32, 64, 8, false, 2, 24, 8);
-	//translate([20 + 4, 0, 0])		board(44, 64, 8, true, 2, 24, 8);
+	x = 160;
+	y = 128;
+	z = 8;
+	female = false;
+	marginy = 12;
+	paddingx = 24;
+	paddingy = 8;
+	count = 4;
+	board(x, y, z, false, marginy, paddingx, paddingy);
+	//translate([x + 4, 0, 0])	board(x, y, z, true, marginy, paddingx, paddingy);
+	//translate([z, y - marginy, z])	rotate([90, 0, -90])	bulges(y - marginy * 2, z * 2, z / 2, count);
+	//translate([z / 2, marginy, z])	rotate([0, 180, -90])	bulges(y - marginy * 2, z * 2, z / 2, count);
 }
 
 build();
