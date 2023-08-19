@@ -8,8 +8,8 @@ ONE = [1, 1, 1];
 EPSILON = 0.2;
 
 // 주요 상수
-HEIGHT = 240;
-HEIGHT_TOP = 128;
+HEIGHT = 220;	//	240;
+HEIGHT_TOP = 220;	//	128;
 OVERLAP = 32;
 OPACITY = 0.75;
 
@@ -19,61 +19,66 @@ function bodyTopSize(thick, margin, delta)  = [
 	landscapeSize(thick, margin, delta)[1] + thick * 2,
 	HEIGHT_TOP
 ];
-function	bodyBottomSize(thick, margin, delta) = [
+function bodyBottomSize(thick, margin, delta) = [
 	bodyTopSize(thick, margin, delta)[0] + thick * 2,
 	bodyTopSize(thick, margin, delta)[1] + thick * 2,
 	HEIGHT - bodyTopSize(thick, margin, delta)[2] + OVERLAP
 ];
+function bodySize(thick, margin, delta) = [
+	bodyBottomSize(thick, margin, delta)[0],
+	bodyBottomSize(thick, margin, delta)[1],
+	HEIGHT
+];
 
 module bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy) {
-	echo("bodyTopFront start: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("bodyTopFront start: ", thick, margin, delta, marginy, paddingx, paddingy);
 
 	base = bodyTopSize(thick, margin, delta);
 	color("DarkKhaki", OPACITY)
 		board(base[0], base[2], thick, false, marginy, paddingy + thick / 2, paddingy);
 
-	echo("bodyTopFront done: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("bodyTopFront done: ", thick, margin, delta, marginy, paddingx, paddingy);
 }
 
 // 조립시 안쪽
 module bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy) {
-	echo("bodyTopSide start: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("bodyTopSide start: ", thick, margin, delta, marginy, paddingx, paddingy);
 
 	base = bodyTopSize(thick, margin, delta);
 	color("Blue", OPACITY)
 		board(base[1] - thick, base[2], thick, true, marginy, paddingx, paddingy);
 
-	echo("bodyTopSide done: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("bodyTopSide done: ", thick, margin, delta, marginy, paddingx, paddingy);
 }
 
 module bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy) {
-	echo("bodyBottomFront start: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("bodyBottomFront start: ", thick, margin, delta, marginy, paddingx, paddingy);
 
 	base = bodyBottomSize(thick, margin, delta);
 	color("Fuchsia", OPACITY)
 		board(base[0], base[2], thick, false, OVERLAP, paddingy + thick / 2, paddingy);
 
-	echo("bodyBottomFront done: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("bodyBottomFront done: ", thick, margin, delta, marginy, paddingx, paddingy);
 }
 
 module bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy) {
-	echo("bodyBottomSide start: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("bodyBottomSide start: ", thick, margin, delta, marginy, paddingx, paddingy);
 
 	base = bodyBottomSize(thick, margin, delta);
 	color("MediumSlateBlue", OPACITY)
 		board(base[1] - thick, base[2], thick, true, OVERLAP, paddingx, paddingy);
 
-	echo("bodyBottomSide done: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("bodyBottomSide done: ", thick, margin, delta, marginy, paddingx, paddingy);
 }
 
 module compareFront(thick, margin, delta, marginy, paddingx, paddingy) {
-	echo("compareFront start: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("compareFront start: ", thick, margin, delta, marginy, paddingx, paddingy);
 
 	bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
 	translate([thick, HEIGHT - bodyTopSize(thick, margin, delta)[2] + OVERLAP + 1, 0])
 		boardTopFront(thick, margin, delta, marginy, paddingx, paddingy);
 
-	echo("compareFront done: ", thick, margin, delta, marginy, paddingx, paddingy);
+//	echo("compareFront done: ", thick, margin, delta, marginy, paddingx, paddingy);
 }
 
 
@@ -99,7 +104,7 @@ module bodyBottom(thick, margin, delta, marginy, paddingx, paddingy) {
 }
 
 module assempleBodyTop(thick, margin, delta, marginy, paddingx, paddingy, help = 8) {
-	echo("assempleBodyTop start: ", thick, margin, delta, marginy, paddingx, paddingy, help);
+//	echo("assempleBodyTop start: ", thick, margin, delta, marginy, paddingx, paddingy, help);
 
 	base = bodyTopSize(thick, margin, delta);
 
@@ -121,11 +126,11 @@ module assempleBodyTop(thick, margin, delta, marginy, paddingx, paddingy, help =
 		rotate([-90, 0, 90])
 		bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy);
 
-	echo("assempleBodyTop done: ", thick, margin, delta, marginy, paddingx, paddingy, help);
+//	echo("assempleBodyTop done: ", thick, margin, delta, marginy, paddingx, paddingy, help);
 }
 
 module assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, help = 8) {
-	echo("assempleBodyBottom start: ", thick, margin, delta, marginy, paddingx, paddingy, help);
+//	echo("assempleBodyBottom start: ", thick, margin, delta, marginy, paddingx, paddingy, help);
 
 	base = bodyBottomSize(thick, margin, delta);
 
@@ -147,20 +152,20 @@ module assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, hel
 		rotate([-90, 0, 90])
 		bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy);
 
-	echo("assempleBodyBottom done: ", thick, margin, delta, marginy, paddingx, paddingy, help);
+//	echo("assempleBodyBottom done: ", thick, margin, delta, marginy, paddingx, paddingy, help);
 }
 
 module assempleBody(thick, margin, delta, marginy, paddingx, paddingy, help = 8) {
-	echo("assempleBody start: ", thick, margin, delta, marginy, paddingx, paddingy, help);
+//	echo("assempleBody start: ", thick, margin, delta, marginy, paddingx, paddingy, help);
 
 	base = bodyTopSize(thick, margin, delta);
 	assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, help);
-	translate([thick, thick, HEIGHT - HEIGHT_TOP + 64])
+	translate([thick, thick, HEIGHT - HEIGHT_TOP + help])
 		assempleBodyTop(thick, margin, delta, marginy, paddingx, paddingy, help);
-	translate([thick * 2, thick * 2, HEIGHT + 64 + 32])
+	translate([thick * 2, thick * 2, HEIGHT - thick * 2 + help * 2])
 		landscape(thick, margin, delta);
 
-	echo("assempleBody done: ", thick, margin, delta, prototype, marginy, paddingx, paddingy, help);
+//	echo("assempleBody done: ", thick, margin, delta, prototype, marginy, paddingx, paddingy, help);
 }
 
 module build(target, thick, margin, delta, prototype, marginy, paddingx, paddingy) {

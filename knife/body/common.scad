@@ -7,7 +7,7 @@ module	roundedBoxNotCenter(size = [32, 64, 8], radius = 8, sidesonly = true) {
 }
 
 module bulge(x = 8, y = 8, z = 4) {
-	echo("bulge start: ", x, y, z);
+//	echo("bulge start: ", x, y, z);
 
 	r1 = x / 2;
 	r2 = r1 / 4 * 3;
@@ -17,11 +17,11 @@ module bulge(x = 8, y = 8, z = 4) {
 	translate([x / 2 - dx / 2, 0, 0])
 		cube([dx, dx, z]);
 
-	echo("bulge done: ", x, y, z);
+//	echo("bulge done: ", x, y, z);
 }
 //bulge();
 module bulges(x = 128, y = 8, z = 4, count = 5) {
-	echo("bulges start: ", x, y, z, count);
+//	echo("bulges start: ", x, y, z, count);
 
 	dx = (x - y) / (count - 1);
 	for (cx = [0: dx: x]) {
@@ -29,12 +29,12 @@ module bulges(x = 128, y = 8, z = 4, count = 5) {
 		bulge(y, y, z);
 	}
 
-	echo("bulges done: ", x, y, z, count);
+//	echo("bulges done: ", x, y, z, count);
 }
 //bulges();
 
 module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
-	echo(x, y, z, dx, dy, countx, county);
+//	echo(x, y, z, dx, dy, countx, county);
 	w = (x + dx) / countx;
 	h = (y + dy) / county;
 	for (cw = [0:w:x - dx]) {
@@ -46,7 +46,7 @@ module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
 }
 
 module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 24, paddingy = 24) {
-	echo("board start: ", x, y, z, female, marginy, paddingx, paddingy);
+//	echo("board start: ", x, y, z, female, marginy, paddingx, paddingy);
 
 	joint = z * 2;
 	count = floor((y - marginy * 2 - joint) / (joint / 2 * 3) + 1);
@@ -110,7 +110,7 @@ module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 2
 		}
 	}
 
-	echo("board done: ", x, y, z, female, marginy, paddingx, paddingy);
+//	echo("board done: ", x, y, z, female, marginy, paddingx, paddingy);
 }
 
 module build() {
