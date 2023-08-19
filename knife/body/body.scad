@@ -8,8 +8,8 @@ ONE = [1, 1, 1];
 EPSILON = 0.2;
 
 // 주요 상수
-HEIGHT = 220;	//	240;
-HEIGHT_TOP = 220;	//	128;
+HEIGHT = 240;
+HEIGHT_TOP = 128;
 OVERLAP = 32;
 OPACITY = 0.75;
 
@@ -34,8 +34,8 @@ module bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy) {
 //	echo("bodyTopFront start: ", thick, margin, delta, marginy, paddingx, paddingy);
 
 	base = bodyTopSize(thick, margin, delta);
-	color("DarkKhaki", OPACITY)
-		board(base[0], base[2], thick, false, marginy, paddingy + thick / 2, paddingy);
+	
+	board(base[0], base[2], thick, false, marginy, paddingy + thick / 2, paddingy);
 
 //	echo("bodyTopFront done: ", thick, margin, delta, marginy, paddingx, paddingy);
 }
@@ -45,8 +45,7 @@ module bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy) {
 //	echo("bodyTopSide start: ", thick, margin, delta, marginy, paddingx, paddingy);
 
 	base = bodyTopSize(thick, margin, delta);
-	color("Blue", OPACITY)
-		board(base[1] - thick, base[2], thick, true, marginy, paddingx, paddingy);
+	board(base[1] - thick, base[2], thick, true, marginy, paddingx, paddingy);
 
 //	echo("bodyTopSide done: ", thick, margin, delta, marginy, paddingx, paddingy);
 }
@@ -55,8 +54,7 @@ module bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy) {
 //	echo("bodyBottomFront start: ", thick, margin, delta, marginy, paddingx, paddingy);
 
 	base = bodyBottomSize(thick, margin, delta);
-	color("Fuchsia", OPACITY)
-		board(base[0], base[2], thick, false, OVERLAP, paddingy + thick / 2, paddingy);
+	board(base[0], base[2], thick, false, OVERLAP, paddingy + thick / 2, paddingy);
 
 //	echo("bodyBottomFront done: ", thick, margin, delta, marginy, paddingx, paddingy);
 }
@@ -65,8 +63,7 @@ module bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy) {
 //	echo("bodyBottomSide start: ", thick, margin, delta, marginy, paddingx, paddingy);
 
 	base = bodyBottomSize(thick, margin, delta);
-	color("MediumSlateBlue", OPACITY)
-		board(base[1] - thick, base[2], thick, true, OVERLAP, paddingx, paddingy);
+	board(base[1] - thick, base[2], thick, true, OVERLAP, paddingx, paddingy);
 
 //	echo("bodyBottomSide done: ", thick, margin, delta, marginy, paddingx, paddingy);
 }

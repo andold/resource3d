@@ -1,6 +1,7 @@
 use <MCAD/boxes.scad>
 use <wall.scad>
 use <body.scad>
+use <../etc/utils.scad>
 
 // 상수
 ZERO = [0, 0, 0];
@@ -63,13 +64,81 @@ module buttress(x, y, z) {
 	];
 	translate([0, y, 0])	rotate([90, 0, 0])	linear_extrude(y)	polygon(points);
 }
+
+// 본체와의 결합 부위
+module basis01(thick, margin, delta, overlap, margn, height, angle) {
+	echo("basis01 처음: ", thick, margin, delta, overlap, margn, height, angle);
+
+	bodySize = bodySize(thick, margin, delta);
+	CONSTANT01 = 64;	//	하층판과 기초판이 겹치는 길이
+	CONSTANT02 = 1;		//	하층판 결합부위 여유 공간
+	CONSTANT03 = 180;	//	기초판의 높이
+	CONSTANT04 = -45;	//	기울기
+
+	//	하층판과 기초판의 결합부위(이하 물체1)
+	outter = [
+		bodySize[0] + thick * 2 + margn,
+		bodySize[1] + thick * 2 + margn,
+		overlap
+	];
+	inner = [
+		bodySize[0] - margn,
+		bodySize[1] - margn,
+		overlap
+	];
+	inner2 = [
+		bodySize[0] - margn - thick * 2,
+		bodySize[1] - margn - thick * 2,
+		overlap
+	];
+	translate([0, 0, height])
+		rotate([angle, 0, 0])
+		difference() {
+			cube(outter);
+			note(outter[0], outter[1], outter[2], fontSize = 4);
+			translate([thick + margn / 2, thick + margn / 2, thick])
+				cube(inner);
+			translate([thick * 2 + margn / 2, thick * 2 + margn / 2, -thick])
+				cube(inner2);
+		}
+
+	echo("basis01 끝: ", thick, margin, delta, overlap, margn, height, angle);
+}
+
+// 본체와의 결합 부위(basis01)를 받치는 기둥들
+module basis02(thick, margin, delta, overlap, margn, height, angle) {
+	echo("basis02 처음: ", thick, margin, delta, overlap, margn, height, angle);
+
+	bodySize = bodySize(thick, margin, delta);	//	높이는 230mm 이상이어야 한다.
+	translate([0, thick + overlap - overlap * sin(angle), 0]) {
+		cube([thick, thick, height - overlap * cos(angle)]);
+		note(thick, thick, height - overlap * cos(angle));
+	}
+	translate([bodySize[0] + thick + margn, thick + overlap-overlap * sin(angle), 0]) {
+		cube([thick, thick, height - overlap * cos(angle)]);
+		note(thick, thick, height - overlap * cos(angle));
+	}
+	translate([0, 0, 0]) {
+		cube([thick, thick, height]);
+		note(thick, thick, height);
+	}
+	translate([bodySize[0] + thick + margn, 0, 0]) {
+		cube([thick, thick, height]);
+		note(thick, thick, height);
+	}
+
+	echo("basis02 끝: ", thick, margin, delta, overlap, margn, height, angle);
+}
 module basis(thick, margin, delta, marginy, paddingx, paddingy) {
 	echo("basis start: ", thick, margin, delta);
 
-	translate([512, 0, 0])
-		rotate([30, 0, 0])
-		//assempleBody(thick, margin, delta, marginy, paddingx, paddingy, 0);
-		cube(0);
+	CONSTANT01 = 64;	//	하층판과 기초판이 겹치는 길이
+	CONSTANT02 = 1;		//	하층판 결합부위 여유 공간
+	CONSTANT03 = 180;	//	기초판의 높이
+	CONSTANT04 = -45;	//	기울기
+
+	color("Pink", 0.5)	basis01(thick, margin, delta, CONSTANT01, CONSTANT02, CONSTANT03, CONSTANT04);
+	color("Pink", 0.5)	basis02(thick, margin, delta, CONSTANT01, CONSTANT02, CONSTANT03, CONSTANT04);
 
 	bodySize = bodySize(thick, margin, delta);	//	높이는 230mm 이상이어야 한다.
 	echo("basis ...ing: ", bodySize=bodySize);
@@ -77,58 +146,7 @@ module basis(thick, margin, delta, marginy, paddingx, paddingy) {
 	nature = [32, 0, 0];		//	자연스럽게 놓여진 위치
 
 	//color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
-
-CONSTANT01 = 64;	//	하층판과 기초판이 겹치는 길이
-CONSTANT02 = 1;		//	하층판 결합부위 여유 공간
-CONSTANT03 = 180;	//	기초판의 높이
-CONSTANT04 = -45;	//	기울기
-	//	하층판과 기초판의 결합부위(이하 물체1)
-	outter = [
-		bodySize[0] + thick * 2 + CONSTANT02,
-		bodySize[1] + thick * 2 + CONSTANT02,
-		CONSTANT01
-	];
-	inner = [
-		bodySize[0] - CONSTANT02,
-		bodySize[1] - CONSTANT02,
-		CONSTANT01
-	];
-	inner2 = [
-		bodySize[0] - CONSTANT02 - thick * 2,
-		bodySize[1] - CONSTANT02 - thick * 2,
-		CONSTANT01
-	];
-	color("blue", 0.5)
-		translate([0, 0, CONSTANT03])
-		rotate([CONSTANT04, 0, 0])
-		difference() {
-			cube(outter);
-			translate([thick + CONSTANT02 / 2, thick + CONSTANT02 / 2, thick])
-				cube(inner);
-			translate([thick * 2 + CONSTANT02 / 2, thick * 2 + CONSTANT02 / 2, -thick])
-				cube(inner2);
-		}
-
-	// 물체1을 받치는 기둥들
-//	color("Red", 0.8)
-	{
-		translate([
-			0,
-			thick + CONSTANT01 - CONSTANT01 * sin(CONSTANT04)+ CONSTANT03,
-			0
-		])
-			cube([
-				thick,
-				thick,
-				CONSTANT03 - CONSTANT01 * cos(CONSTANT04)
-			]);
-		translate([bodySize[0] + thick + CONSTANT02, thick + CONSTANT01-CONSTANT01 * sin(CONSTANT04), 0])
-			cube([thick, thick, CONSTANT03 - CONSTANT01 * cos(CONSTANT04)]);
-		translate([0, 0, 0])
-			cube([thick, thick, CONSTANT03]);
-		translate([bodySize[0] + thick + CONSTANT02, 0, 0])
-			cube([thick, thick, CONSTANT03]);
-	}
+	
 	// 기둥들의 지지대
 	translate([0, 0, CONSTANT03 - CONSTANT01 * cos(CONSTANT04)])
 	difference() {
@@ -151,19 +169,16 @@ CONSTANT04 = -45;	//	기울기
 	}
 
 	// 본체
+	color("Blue", 0.5)
 	translate([0, 0, CONSTANT03])
 		rotate([CONSTANT04, 0, 0])
 		translate([thick, thick, thick])
-		color([0.8, 0.8, 0.0, 0.8])
+		translate([bodySize[0], bodySize[1], 0])
+		rotate([0, 0, 180])
 		assempleBody(thick, margin, delta, marginy, paddingx, paddingy, 0);
 		cube(0);
-	rotate([0, 0, 90])	color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
+	*rotate([0, 0, 90])	color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
 
-	//color([0.8, 0.0, 0.8, 0.5])	lineBox(full, 1);	//	점유 영역?
-	translate(nature)
-		color("Red", 0.5)
-		//buttress(full[0], full[1], full[2]);	//	지지대
-		cube(0);
 
 	echo("basis done: ", thick, margin, delta);
 }

@@ -1,4 +1,5 @@
 use <MCAD/boxes.scad>
+use <../etc/utils.scad>
 
 EPSILON = 0.001;
 
@@ -54,6 +55,7 @@ module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 2
 		difference() {
 			union() {
 				cube([x, y, z]);
+				%note(x, y, z);
 				if (!female) {
 					translate([z, y - marginy, z])
 						rotate([90, 0, -90])
