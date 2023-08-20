@@ -73,7 +73,7 @@ module basis01(thick, margin, delta, overlap, margn, height, angle) {
 	CONSTANT01 = 64;	//	하층판과 기초판이 겹치는 길이
 	CONSTANT02 = 1;		//	하층판 결합부위 여유 공간
 	CONSTANT03 = 180;	//	기초판의 높이
-	CONSTANT04 = -45;	//	기울기
+	CONSTANT04 = -30;	//	기울기
 
 	//	하층판과 기초판의 결합부위(이하 물체1)
 	outter = [
@@ -110,6 +110,7 @@ module basis02(thick, margin, delta, overlap, margn, height, angle) {
 	echo("basis02 처음: ", thick, margin, delta, overlap, margn, height, angle);
 
 	bodySize = bodySize(thick, margin, delta);	//	높이는 230mm 이상이어야 한다.
+	// before
 	translate([0, thick + overlap - overlap * sin(angle), 0]) {
 		cube([thick, thick, height - overlap * cos(angle)]);
 		note(thick, thick, height - overlap * cos(angle));
@@ -135,7 +136,7 @@ module basis(thick, margin, delta, marginy, paddingx, paddingy) {
 	CONSTANT01 = 64;	//	하층판과 기초판이 겹치는 길이
 	CONSTANT02 = 1;		//	하층판 결합부위 여유 공간
 	CONSTANT03 = 180;	//	기초판의 높이
-	CONSTANT04 = -45;	//	기울기
+	CONSTANT04 = -30;	//	기울기
 
 	color("Pink", 0.5)	basis01(thick, margin, delta, CONSTANT01, CONSTANT02, CONSTANT03, CONSTANT04);
 	color("Pink", 0.5)	basis02(thick, margin, delta, CONSTANT01, CONSTANT02, CONSTANT03, CONSTANT04);
@@ -169,15 +170,16 @@ module basis(thick, margin, delta, marginy, paddingx, paddingy) {
 	}
 
 	// 본체
-	color("Blue", 0.5)
-	translate([0, 0, CONSTANT03])
+	#color("Blue", 0.5)
+		//rotate([0, 0, -30])
+		translate([CONSTANT02 / 2, -CONSTANT02 / 2, CONSTANT03])
 		rotate([CONSTANT04, 0, 0])
 		translate([thick, thick, thick])
 		translate([bodySize[0], bodySize[1], 0])
 		rotate([0, 0, 180])
 		assempleBody(thick, margin, delta, marginy, paddingx, paddingy, 0);
 		cube(0);
-	*rotate([0, 0, 90])	color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
+	%rotate([0, 0, 90])	color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
 
 
 	echo("basis done: ", thick, margin, delta);
@@ -192,3 +194,9 @@ marginy = 12;
 paddingx = 24;
 paddingy = 12;
 basis(thick, margin, delta, marginy, paddingx, paddingy);
+*rotate([0, 0, -$t * 360])
+		rotate([-30, 0, 0])
+		translate([thick, thick, thick])
+		translate([bodySize(thick, margin, delta)[0], bodySize(thick, margin, delta)[1], 0])
+		rotate([0, 0, 180])
+		assempleBody(thick, margin, delta, marginy, paddingx, paddingy, 0);
