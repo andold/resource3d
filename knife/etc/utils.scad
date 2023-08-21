@@ -3,6 +3,14 @@ use <MCAD/boxes.scad>
 BIG = [1024, 1024, 1024];
 EPSILON = 0.01;
 
+//	끝이 구인 선
+module line_sphere(start, end, thickness = 1) {
+    hull() {
+        translate(start) sphere(thickness);
+        translate(end) sphere(thickness);
+    }
+}
+
 module note(x, y, z, centered = false, fontSize = 1) {
 	mm = " mm";	//	"㎜";
 	center = centered ? [-x / 2, -y / 2, -z / 2] : [0, 0, 0];
@@ -105,9 +113,6 @@ module note(x, y, z, centered = false, fontSize = 1) {
 			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
 	}
 }
-size = [64, 32, 8]; cube(size); note(size[0], size[1], size[2], fontSize = 1);
-//rotate([0, 0, $t * 360])	translate([50, 0, 0])	sphere(10);
-
 module boardPattern(size = [128, 64, 4], degree = 60, stick = [THICK, THICK, 32]) {
 	intersection() {
 		cube([size[0], size[1], stick[1]]);

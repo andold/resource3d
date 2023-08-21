@@ -19,16 +19,25 @@ function bodyTopSize(thick, margin, delta)  = [
 	landscapeSize(thick, margin, delta)[1] + thick * 2,
 	HEIGHT_TOP
 ];
+function volumeTop(thick, margin, delta) =	bodyTopSize(thick, margin, delta)[0]
+											* bodyTopSize(thick, margin, delta)[1]
+											* bodyTopSize(thick, margin, delta)[2];
 function bodyBottomSize(thick, margin, delta) = [
 	bodyTopSize(thick, margin, delta)[0] + thick * 2,
 	bodyTopSize(thick, margin, delta)[1] + thick * 2,
 	HEIGHT - bodyTopSize(thick, margin, delta)[2] + OVERLAP
 ];
+function volumeBottom(thick, margin, delta) =	bodyBottomSize(thick, margin, delta)[0]
+												* bodyBottomSize(thick, margin, delta)[1]
+												* bodyBottomSize(thick, margin, delta)[2];
 function bodySize(thick, margin, delta) = [
-	bodyBottomSize(thick, margin, delta)[0],
-	bodyBottomSize(thick, margin, delta)[1],
+	OVERLAP == 0 ? bodyTopSize(thick, margin, delta)[0] : bodyBottomSize(thick, margin, delta)[0],
+	OVERLAP == 0 ? bodyTopSize(thick, margin, delta)[1] : bodyBottomSize(thick, margin, delta)[1],
 	HEIGHT
 ];
+function volumeBody(thick, margin, delta) =	bodySize(thick, margin, delta)[0]
+											* bodySize(thick, margin, delta)[1]
+											* bodySize(thick, margin, delta)[2];
 
 module bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy) {
 //	echo("bodyTopFront start: ", thick, margin, delta, marginy, paddingx, paddingy);
@@ -130,24 +139,25 @@ module assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, hel
 //	echo("assempleBodyBottom start: ", thick, margin, delta, marginy, paddingx, paddingy, help);
 
 	base = bodyBottomSize(thick, margin, delta);
+	if (base[0] > 0 && base[1] > 0 && base[2] > 0) {
+		translate([help, 0, base[2]])
+			rotate([-90, 0, 0])
+			bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
+		translate([base[0] + help, base[1], 0])
+			rotate([0, 0, 180])
+			translate([0, 0, base[2]])
+			rotate([-90, 0, 0])
+			bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
 
-	translate([help, 0, base[2]])
-		rotate([-90, 0, 0])
-		bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
-	translate([base[0] + help, base[1], 0])
-		rotate([0, 0, 180])
-		translate([0, 0, base[2]])
-		rotate([-90, 0, 0])
-		bodyBottomFront(thick, margin, delta, marginy, paddingx, paddingy);
-
-	translate([base[0] + help * 2, thick / 2, base[2]])
-		rotate([-90, 0, 90])
-		bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy);
-	translate([base[0] + thick * 2, base[1], 0])
-		rotate([0, 0, 180])
-		translate([base[0] + thick * 2, thick / 2, base[2]])
-		rotate([-90, 0, 90])
-		bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy);
+		translate([base[0] + help * 2, thick / 2, base[2]])
+			rotate([-90, 0, 90])
+			bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy);
+		translate([base[0] + thick * 2, base[1], 0])
+			rotate([0, 0, 180])
+			translate([base[0] + thick * 2, thick / 2, base[2]])
+			rotate([-90, 0, 90])
+			bodyBottomSide(thick, margin, delta, marginy, paddingx, paddingy);
+	}
 
 //	echo("assempleBodyBottom done: ", thick, margin, delta, marginy, paddingx, paddingy, help);
 }
@@ -156,10 +166,12 @@ module assempleBody(thick, margin, delta, marginy, paddingx, paddingy, help = 8)
 //	echo("assempleBody start: ", thick, margin, delta, marginy, paddingx, paddingy, help);
 
 	base = bodyTopSize(thick, margin, delta);
-	*assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, help);
-	#translate([thick, thick, HEIGHT - HEIGHT_TOP + help])
+	marginTop = volumeTop(thick, margin, delta) > 0 ? thick : 0;
+	assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, help);
+	marginBottom = volumeBottom(thick, margin, delta) > 0 ? thick : 0;
+	translate([marginBottom, marginBottom, HEIGHT - HEIGHT_TOP + help])
 		assempleBodyTop(thick, margin, delta, marginy, paddingx, paddingy, help);
-	%translate([thick * 2, thick * 2, HEIGHT - thick * 2 + help * 2])
+	%translate([marginBottom + marginTop, marginBottom + marginTop, HEIGHT - thick * 2 + help * 2])
 		landscape(thick, margin, delta);
 
 //	echo("assempleBody done: ", thick, margin, delta, prototype, marginy, paddingx, paddingy, help);
@@ -173,7 +185,7 @@ module build(target, thick, margin, delta, prototype, marginy, paddingx, padding
 	echo("하층: ", bodyBottomSize(thick, margin, delta));
 	
 	scale = prototype ? HALF : ONE;
-	$fn = prototype ? 32 : 256;
+	$fn = prototype ? 16 : 256;
 
 	if (target == 1) {
 		scale(scale)	bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy);
