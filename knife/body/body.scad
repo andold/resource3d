@@ -8,9 +8,9 @@ ONE = [1, 1, 1];
 EPSILON = 0.2;
 
 // 주요 상수
-HEIGHT = 240;
-HEIGHT_TOP = 128;
-OVERLAP = 32;
+HEIGHT = 210;
+HEIGHT_TOP = 210;
+OVERLAP = 0;
 OPACITY = 0.75;
 
 // 외경
@@ -156,10 +156,10 @@ module assempleBody(thick, margin, delta, marginy, paddingx, paddingy, help = 8)
 //	echo("assempleBody start: ", thick, margin, delta, marginy, paddingx, paddingy, help);
 
 	base = bodyTopSize(thick, margin, delta);
-	assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, help);
-	translate([thick, thick, HEIGHT - HEIGHT_TOP + help])
+	*assempleBodyBottom(thick, margin, delta, marginy, paddingx, paddingy, help);
+	#translate([thick, thick, HEIGHT - HEIGHT_TOP + help])
 		assempleBodyTop(thick, margin, delta, marginy, paddingx, paddingy, help);
-	translate([thick * 2, thick * 2, HEIGHT - thick * 2 + help * 2])
+	%translate([thick * 2, thick * 2, HEIGHT - thick * 2 + help * 2])
 		landscape(thick, margin, delta);
 
 //	echo("assempleBody done: ", thick, margin, delta, prototype, marginy, paddingx, paddingy, help);
@@ -179,7 +179,6 @@ module build(target, thick, margin, delta, prototype, marginy, paddingx, padding
 		scale(scale)	bodyTopFront(thick, margin, delta, marginy, paddingx, paddingy);
 	} else if (target == 2) {
 		scale(scale)
-		//	translate([bodyTopSize(thick, margin, delta)[0], 0, 0])
 			bodyTopSide(thick, margin, delta, marginy, paddingx, paddingy);
 	} else if (target == 3) {
 		scale(scale) {
@@ -204,7 +203,7 @@ module build(target, thick, margin, delta, prototype, marginy, paddingx, padding
 
 prototype = true;
 target = 8;
-thick = 8;
+thick = 4;
 margin = 8;
 delta = 8;
 marginy = 12;
