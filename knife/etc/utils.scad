@@ -3,6 +3,32 @@ use <MCAD/boxes.scad>
 BIG = [1024, 1024, 1024];
 EPSILON = 0.01;
 
+// 벡터 회전 계산
+function rotate_vector(angle, vector) = [
+	rotatez_vector(angle[2], rotatey_vector(angle[1], rotatex_vector(angle[0], vector)))[0],
+	rotatez_vector(angle[2], rotatey_vector(angle[1], rotatex_vector(angle[0], vector)))[1],
+	rotatez_vector(angle[2], rotatey_vector(angle[1], rotatex_vector(angle[0], vector)))[2]
+];
+// x축 기준 회전 벡터 회전 계산
+function rotatex_vector(anglex, vector) = [
+	vector[0],
+	-vector[2] * sin(anglex) + vector[1] * cos(anglex),
+	vector[2] * cos(anglex) + vector[1] * sin(anglex)
+];
+// y축 기준 회전 벡터 회전 계산
+function rotatey_vector(angley, vector) = [
+	vector[0] * cos(angley) + vector[2] * sin(angley),
+	vector[1],
+	-vector[0] * sin(angley) + vector[2] * cos(angley)
+];
+
+// z축 기준 회전 벡터 회전 계산
+function rotatez_vector(anglez, vector) = [
+	-vector[1] * sin(anglez) + vector[0] * cos(anglez),
+	vector[1] * cos(anglez) + vector[0] * sin(anglez),
+	vector[2]
+];
+
 //	끝이 구인 선
 module line_sphere(start, end, thickness = 1) {
     hull() {
@@ -11,6 +37,7 @@ module line_sphere(start, end, thickness = 1) {
     }
 }
 
+// 치수 표시
 module note(x, y, z, centered = false, fontSize = 1) {
 	mm = " mm";	//	"㎜";
 	center = centered ? [-x / 2, -y / 2, -z / 2] : [0, 0, 0];
@@ -174,15 +201,4 @@ module lineBox(outter = [100, 100, 100], t = 2) {
 module hide(show = 0) {
 	if (show > 0) children();
 	else scale([0, 0, 0])	children();
-}
-
-module t() {
-	c = [0.5, 0.5, 0.5, 0.5];
-	d = [0.5, 0.5, 0.0, 0.5];
-	
-	color(c)	difference() {
-		cube([4, 16, 2]);
-		translate([2, -2, -1])	cube([4, 4, 4]);
-	}
-	color(d)	translate([8, 0, 0])	cube([16, 4, 2]);
 }

@@ -65,20 +65,33 @@ module basis01(param, paramBody) {
 		translate([thick * 2 + margin / 2, thick * 2 + margin / 2, -thick])
 			cube(inner2);
 	}
-	%translate([thick + margin, thick + margin, thick])
+	%translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
+		rotate([0, 0, 180])
 		assempleBody(paramBody[0], paramBody[1], paramBody[2], paramBody[3], paramBody[4], paramBody[5], 0);
 
 	echo("basis01 끝: ", param, paramBody);
 }
 
 // 본체와의 결합 부위(basis01)를 받치는 기둥들
+function basis02translate(param, paramBody) = [
+	0,
+	-rotate_vector([
+		param[4],
+		0,
+		param[5]
+	], [
+		basis01Size(param, paramBody)[0] - param[0] / 2,
+		param[0] / 2,
+		param[0] / 2])[1],
+	param[3]
+];
 module basis02(param, paramBody) {
 	echo("basis02 처음: ", param, paramBody);
 
 	bodySize = bodySize(paramBody[0], paramBody[1], paramBody[2]);
 	basis01Size = basis01Size(param, paramBody);
-	echo(bodySize, basis01Size);
-	thick = param[0];
+
+	thick = param[0] * 2;
 	margin = param[1];
 	overlap = param[2];
 	height = param[3];
@@ -98,89 +111,155 @@ module basis02(param, paramBody) {
 		[thick / 2,						basis01Size[1] - thick / 2,	basis01Size[2] - thick / 2],
 		[0,								0,							0]	//	reserved
 	];
-	
-	for (cx = [0:len(points) - 2]) {
-		x = points[cx][0];
-		y = points[cx][1];
-		z = points[cx][2];
-		
-		rx = x;
-		ry = -z * sin(anglex) + y * cos(anglex);
-		rz = z * cos(anglex) + y * sin(anglex);
-		
-		rrx = -ry * sin(anglez) + rx * cos(anglez);
-		rry = ry * cos(anglez) + rx * sin(anglez);
-		rrz = rz;
-		
-		echo("회전: ", angle=anglex, cx=cx, str("(", x, ", ", y, ", ", z, ") => (", rx, ", ", ry, ", ", rz, ") => (", rrx, ", ", rry, ", ", rrz, ")"));
-		rs = [rx, ry, rz + height];
-		re = [rx, ry, 0];
-		*color("red", 0.8)	line_sphere(rs, re, thick);
-		rrs = [rrx, rry, rrz + height];
-		rre = [rrx, rry, 0];
-		color("blue", 0.8)	line_sphere(rrs, rre, thick);
-	}
 
-	translate([0, 0, height])
-	rotate([0, 0, anglez])
-	rotate([anglex, 0, 0])
-	basis01(param, paramBody);
+	rpoints = [for (cx = [0:len(points) - 1])	rotate_vector([anglex, 0, anglez], points[cx])];
+	translate([0, -rpoints[1][1], 0]) {
+		for (cx = [0:len(rpoints) - 2]) {
+			start = [rpoints[cx][0], rpoints[cx][1], rpoints[cx][2] + height];
+			end = [rpoints[cx][0], rpoints[cx][1], 0];
+			color("blue", 0.8)	line_sphere(start, end, thick);
+		}
+		color("blue", 0.8) {
+			// 밑판 둘레
+			line_sphere([
+				rpoints[0][0],
+				rpoints[0][1],
+				rpoints[0][2] + height
+			], [
+				rpoints[1][0],
+				rpoints[1][1],
+				rpoints[1][2] + height
+			], thick);
+			line_sphere([
+				rpoints[1][0],
+				rpoints[1][1],
+				rpoints[1][2] + height
+			], [
+				rpoints[2][0],
+				rpoints[2][1],
+				rpoints[2][2] + height
+			], thick);
+			line_sphere([
+				rpoints[2][0],
+				rpoints[2][1],
+				rpoints[2][2] + height
+			], [
+				rpoints[3][0],
+				rpoints[3][1],
+				rpoints[3][2] + height
+			], thick);
+			line_sphere([
+				rpoints[3][0],
+				rpoints[3][1],
+				rpoints[3][2] + height
+			], [
+				rpoints[0][0],
+				rpoints[0][1],
+				rpoints[0][2] + height
+			], thick);
+
+			// 앞쪽위로
+			line_sphere([
+				rpoints[2][0],
+				rpoints[2][1],
+				rpoints[2][2] + height
+			], [
+				rpoints[4][0],
+				rpoints[4][1],
+				rpoints[4][2] + height
+			], thick);
+			line_sphere([
+				rpoints[3][0],
+				rpoints[3][1],
+				rpoints[3][2] + height
+			], [
+				rpoints[5][0],
+				rpoints[5][1],
+				rpoints[5][2] + height
+			], thick);
+			
+			//	위쪽 앞
+			line_sphere([
+				rpoints[4][0],
+				rpoints[4][1],
+				rpoints[4][2] + height
+			], [
+				rpoints[5][0],
+				rpoints[5][1],
+				rpoints[5][2] + height
+			], thick);
+
+			line_sphere([
+				rpoints[4][0],
+				rpoints[4][1],
+				rpoints[2][2] + height
+			], [
+				rpoints[1][0],
+				rpoints[1][1],
+				rpoints[2][2] + height
+			], thick);
+			line_sphere([
+				rpoints[1][0],
+				rpoints[1][1],
+				rpoints[2][2] + height
+			], [
+				rpoints[0][0],
+				rpoints[0][1],
+				rpoints[2][2] + height
+			], thick);
+			line_sphere([
+				rpoints[0][0],
+				rpoints[0][1],
+				rpoints[2][2] + height
+			], [
+				rpoints[5][0],
+				rpoints[5][1],
+				rpoints[2][2] + height
+			], thick);
+			line_sphere([
+				rpoints[5][0],
+				rpoints[5][1],
+				rpoints[2][2] + height
+			], [
+				rpoints[4][0],
+				rpoints[4][1],
+				rpoints[2][2] + height
+			], thick);
+		}
+	}
 	
 	echo("basis02 끝: ", param, paramBody);
 }
-module basis(paramBody, thick, overlap, margin, height, angle) {
-	echo("basis start: ", thick, margin, delta);
+module basis(param, paramBody) {
+	echo("basis start: ", param, paramBody);
 
-	CONSTANT01 = 64;	//	하층판과 기초판이 겹치는 길이
-	CONSTANT02 = 1;		//	하층판 결합부위 여유 공간
-	CONSTANT03 = 180;	//	기초판의 높이
-	CONSTANT04 = -30;	//	기울기
+	bodySize = bodySize(paramBody[0], paramBody[1], paramBody[2]);
 
-	color("Pink", 0.5)	basis01(paramBody, thick, CONSTANT01, CONSTANT02, CONSTANT03, CONSTANT04);
-	color("Pink", 0.5)	basis02(thick, margin, delta, CONSTANT01, CONSTANT02, CONSTANT03, CONSTANT04);
+	thick = param[0];
+	margin = param[1];
+	overlap = param[2];
+	height = param[3];
+	anglex = param[4];
+	anglez = param[5];
 
-	bodySize = bodySize(thick, margin, delta);	//	높이는 230mm 이상이어야 한다.
+	color("Pink", 0.5)
+		translate(basis02translate(param, paramBody))
+		rotate([anglex, 0, anglez])
+//		basis01(param, paramBody);
+		%translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
+			rotate([0, 0, 180])
+			assempleBody(paramBody[0], paramBody[1], paramBody[2], paramBody[3], paramBody[4], paramBody[5], 0);
+
+	basis02(param, paramBody);
+
+
 	echo("basis ...ing: ", bodySize=bodySize);
 	full = [240, 128, bodySize[2] + 70.7];
 	nature = [32, 0, 0];		//	자연스럽게 놓여진 위치
 
-	//color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
-	
-	// 기둥들의 지지대
-	translate([0, 0, CONSTANT03 - CONSTANT01 * cos(CONSTANT04)])
-	difference() {
-		cube([
-			bodySize[0] + thick * 2 + CONSTANT02,
-			thick * 2 + CONSTANT01-CONSTANT01 * sin(CONSTANT04) + CONSTANT02,
-			thick
-		]);
-		translate([thick + CONSTANT02 / 2, thick + CONSTANT02 / 2, -EPSILON])
-			cube([bodySize[0] + CONSTANT02, CONSTANT01-CONSTANT01 * sin(CONSTANT04) + CONSTANT02, thick * 2]);
-	}
-	difference() {
-		cube([
-			bodySize[0] + thick * 2 + CONSTANT02,
-			thick * 2 + CONSTANT01-CONSTANT01 * sin(CONSTANT04) + CONSTANT02,
-			thick
-		]);
-		translate([thick + CONSTANT02 / 2, thick + CONSTANT02 / 2, -EPSILON])
-			cube([bodySize[0] + CONSTANT02, CONSTANT01-CONSTANT01 * sin(CONSTANT04) + CONSTANT02, thick * 2]);
-	}
+	*rotate([0, 0, 90])	color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
 
-	// 본체
-	#color("Blue", 0.5)
-		//rotate([0, 0, -30])
-		translate([CONSTANT02 / 2, -CONSTANT02 / 2, CONSTANT03])
-		rotate([CONSTANT04, 0, 0])
-		translate([thick, thick, thick])
-		translate([bodySize[0], bodySize[1], 0])
-		rotate([0, 0, 180])
-		assempleBody(thick, margin, delta, marginy, paddingx, paddingy, 0);
-		cube(0);
-	%rotate([0, 0, 90])	color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
-
-
-	echo("basis done: ", thick, margin, delta);
+	echo("basis done: ", param, paramBody);
 }
 
 module build(target, prototype, param, paramBody) {
@@ -220,14 +299,14 @@ paramBody = [
 	12	// paddingy
 ];
 prototype = true;
-target = 2;
+target = 3;
 param = [
 	4,		//	thick = 4;
 	1,		//	margin = 1;		//	하층판 결합부위 여유 공간
 	bodySize(paramBody[0], paramBody[1], paramBody[2])[2],		//	overlap = 32;	//	하층판과 기초판이 겹치는 길이
 	128,	//	height = 128;	//	기초판의 높이
 	-30,	//	anglex = -30;	//	앞으로 기울어지는 정도
-	-30,	//	anglez = -30;	//	옆으로 돌아가는 정도
+	-45,	//	anglez = -30;	//	옆으로 돌아가는 정도
 	0,		//	reserved
 ];
 
