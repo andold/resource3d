@@ -214,7 +214,7 @@ module build(target, thick, margin, delta, prototype, marginy, paddingx, padding
 }
 
 prototype = true;
-target = 8;
+target = 1;
 thick = 4;
 margin = 8;
 delta = 8;

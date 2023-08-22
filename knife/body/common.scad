@@ -47,7 +47,7 @@ module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
 }
 
 module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 24, paddingy = 24) {
-//	echo("board start: ", x, y, z, female, marginy, paddingx, paddingy);
+	echo("board start: ", x, y, z, female, marginy, paddingx, paddingy);
 
 	assert(x > 0 && y > 0 && z > 0, str("size invalid:", "x=", x, " y=", y, " z=", z));
 	joint = z * 2;
@@ -113,7 +113,7 @@ module board(x = 160, y = 128, z = 8, female = false, marginy = 12, paddingx = 2
 		}
 	}
 
-//	echo("board done: ", x, y, z, female, marginy, paddingx, paddingy);
+	echo("board done: ", x, y, z, female, marginy, paddingx, paddingy);
 }
 
 module build() {

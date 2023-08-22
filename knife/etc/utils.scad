@@ -3,6 +3,21 @@ use <MCAD/boxes.scad>
 BIG = [1024, 1024, 1024];
 EPSILON = 0.01;
 
+module	roundedBoxNotCenter(size = [32, 64, 8], radius = 8, sidesonly = true) {
+	translate([size[0] / 2, size[1] / 2, size[2] / 2])		roundedBox(size, radius, sidesonly);
+}
+module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
+//	echo(x, y, z, dx, dy, countx, county);
+	w = (x + dx) / countx;
+	h = (y + dy) / county;
+	for (cw = [0:w:x - dx]) {
+		for (ch = [0:h:y - dy]) {
+			translate([cw, ch, -1])
+				roundedBoxNotCenter([w - dx, h - z, z * 4], z / 2, true);
+		}
+	}
+}
+
 // 벡터 회전 계산
 function rotate_vector(angle, vector) = [
 	rotatez_vector(angle[2], rotatey_vector(angle[1], rotatex_vector(angle[0], vector)))[0],
@@ -38,106 +53,109 @@ module line_sphere(start, end, thickness = 1) {
 }
 
 // 치수 표시
-module note(x, y, z, centered = false, fontSize = 1) {
+module note(x, y, z, centered = false, fs) {
 	mm = " mm";	//	"㎜";
 	center = centered ? [-x / 2, -y / 2, -z / 2] : [0, 0, 0];
 	%color("Black")
 	translate(center)
 	{
 		// x, z view
-		translate([x / 2, y - fontSize * 1.5, z + EPSILON])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x / 2, fontSize * 1.5, z + EPSILON])
+		xyfs = is_undef(fs) ? max(1, min(min(x, y) / 16, 20)) : 1;
+		translate([x / 2, y - xyfs * 1.5, z + EPSILON])
+			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([x / 2, xyfs * 1.5, z + EPSILON])
 			rotate([0, 0, 180])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
 
 		// x, -z view
-		translate([x / 2, fontSize * 1.5, -EPSILON])
+		translate([x / 2, xyfs * 1.5, -EPSILON])
 			rotate([180, 0, 0])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x / 2, y - fontSize * 1.5, -EPSILON])
+			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([x / 2, y - xyfs * 1.5, -EPSILON])
 			rotate([180, 0, 180])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
 
+		zxfs = is_undef(fs) ? max(1, min(min(z, x) / 16, 20)) : 1;
 		// x, y view
-		translate([x / 2, y + EPSILON, z - fontSize * 1.5])
+		translate([x / 2, y + EPSILON, z - zxfs * 1.5])
 			rotate([90, 0, 180])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x / 2, y + EPSILON, fontSize * 1.5])
+			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([x / 2, y + EPSILON, zxfs * 1.5])
 			rotate([90, 180, 180])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
 
 		// x, -y view
-		translate([x / 2, -EPSILON, z - fontSize * 1.5])
+		translate([x / 2, -EPSILON, z - zxfs * 1.5])
 			rotate([90, 0, 0])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x / 2, -EPSILON, fontSize * 1.5])
+			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([x / 2, -EPSILON, zxfs * 1.5])
 			rotate([90, 180, 0])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
 
+		yzfs = is_undef(fs) ? max(1, min(min(y, z) / 16, 20)) : 1;
 		// y, x view
-		translate([x + EPSILON, y / 2, z - fontSize * 1.5])
+		translate([x + EPSILON, y / 2, z - yzfs * 1.5])
 			rotate([90, 0, 90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x + EPSILON, y / 2, fontSize * 1.5])
+			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([x + EPSILON, y / 2, yzfs * 1.5])
 			rotate([-90, 0, -90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
 
 		// y, -x view
-		translate([-EPSILON, y / 2, fontSize * 1.5])
+		translate([-EPSILON, y / 2, yzfs * 1.5])
 			rotate([-90, 0, 90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([-EPSILON, y / 2, z - fontSize * 1.5])
+			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([-EPSILON, y / 2, z - yzfs * 1.5])
 			rotate([90, 0, -90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
 
 		// y, z view
-		translate([fontSize * 1.5, y / 2, z + EPSILON])
+		translate([xyfs * 1.5, y / 2, z + EPSILON])
 			rotate([0, 0, 90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x - fontSize * 1.5, y / 2, z + EPSILON])
+			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([x - xyfs * 1.5, y / 2, z + EPSILON])
 			rotate([0, 0, -90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
 
 		// y, -z view
-		translate([x - fontSize * 1.5, y / 2, -EPSILON])
+		translate([x - xyfs * 1.5, y / 2, -EPSILON])
 			rotate([180, 0, 90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([fontSize * 1.5, y / 2, -EPSILON])
+			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([xyfs * 1.5, y / 2, -EPSILON])
 			rotate([180, 0, -90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
 
 		// z, x view
-		translate([x + EPSILON, y - fontSize * 1.5, z / 2])
+		translate([x + EPSILON, y - yzfs * 1.5, z / 2])
 			rotate([90, 90, 90])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x + EPSILON, fontSize * 1.5, z / 2])
+			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([x + EPSILON, yzfs * 1.5, z / 2])
 			rotate([90, -90, 90])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
 
 		// z, -x view
-		translate([-EPSILON, fontSize * 1.5, z / 2])
+		translate([-EPSILON, yzfs * 1.5, z / 2])
 			rotate([-90, 90, 90])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([-EPSILON, y - fontSize * 1.5, z / 2])
+			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([-EPSILON, y - yzfs * 1.5, z / 2])
 			rotate([-90, -90, 90])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
 
 		// z, y view
-		translate([x - fontSize * 1.5, y + EPSILON, z / 2])
+		translate([x - zxfs * 1.5, y + EPSILON, z / 2])
 			rotate([-90, -90, 0])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([fontSize * 1.5, y + EPSILON, z / 2])
+			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([zxfs * 1.5, y + EPSILON, z / 2])
 			rotate([-90, 90, 0])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
 
 		// z, -y view
-		translate([fontSize * 1.5, -EPSILON, z / 2])
+		translate([zxfs * 1.5, -EPSILON, z / 2])
 			rotate([90, -90, 0])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x - fontSize * 1.5, -EPSILON, z / 2])
+			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
+		translate([x - zxfs * 1.5, -EPSILON, z / 2])
 			rotate([90, 90, 0])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = fontSize, halign = "center", language = "kr", font = "NanumGothic");
+			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
 	}
 }
 module boardPattern(size = [128, 64, 4], degree = 60, stick = [THICK, THICK, 32]) {
