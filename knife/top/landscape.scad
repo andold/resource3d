@@ -1,7 +1,7 @@
 use <MCAD/boxes.scad>
 use <common.scad>
 use <../etc/corner-hole.scad>
-use <../etc/utils.scad>
+use <../../common/utils.scad>
 
 PALETTE = [
 	[0.3, 0.1, 0.0, 0.5],	//	갈색, 칼손잡이
@@ -22,8 +22,9 @@ module chefsKnife(p, q) {
 			note(p[0], p[1], p[2], true);
 		}
 		translate([0, 0, -p[2] / 1.8])
-			rotate([15, 0, 0])
-			cube([p[0] + 1, p[1], p[2] * 2], true);
+			rotate([15, 0, 0]) {
+				cube([p[0] + 1, p[1], p[2] * 2], true);
+			}
 	}
 	translate([0, (p[1] - q[1]) / 2, p[2] / 2 + q[2] / 2]) cube(q, true);
 }
@@ -52,6 +53,7 @@ module landscape(thick, margin, delta, prototype) {
 				y = base[1] / 2;
 				z = thick * 2;
 				roundedBoxNotCenter([x, y, z], 2, true);
+				note(x, y, z);
 			}
 		}
 		translate([margin, margin, -EPSILON])	punch(60, 16 + EPSILON * 2, 8);
