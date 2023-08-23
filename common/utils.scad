@@ -1,12 +1,26 @@
-// deprecated, use $HOME%/common/utils.scad
+// 유용한 것들, 검증된 것만
 use <MCAD/boxes.scad>
 
+ZERO = [0, 0, 0];
+HALF = [1/2, 1/2, 1/2];
+ONE = [1, 1, 1];
 BIG = [1024, 1024, 1024];
 EPSILON = 0.01;
+MINIMUM = 0.1;	//	0.1mm
 
+// 가장 긴 족의 2.1배
+function big(v) = [
+	max(v.x, v.y, v.z) * 2.1,
+	max(v.x, v.y, v.z) * 2.1,
+	max(v.x, v.y, v.z) * 2.1
+];
+
+// 임시
 module	roundedBoxNotCenter(size = [32, 64, 8], radius = 8, sidesonly = true) {
 	translate([size[0] / 2, size[1] / 2, size[2] / 2])		roundedBox(size, radius, sidesonly);
 }
+
+// 라이브러리 아닌가
 module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
 //	echo(x, y, z, dx, dy, countx, county);
 	w = (x + dx) / countx;
@@ -53,7 +67,7 @@ module line_sphere(start, end, thickness = 1) {
     }
 }
 
-// 치수 표시
+// 치수 표시, 라이브러리가 더 적합할 듯
 module note(x, y, z, centered = false, fs) {
 	mm = " mm";	//	"㎜";
 	center = centered ? [-x / 2, -y / 2, -z / 2] : [0, 0, 0];
@@ -169,17 +183,25 @@ module boardPattern(size = [128, 64, 4], degree = 60, stick = [THICK, THICK, 32]
 		}
 	}
 }
+
+// 제외 예정
 module mark(name, height, size = 2) {
 	linear_extrude(height, center = false)	text(name, size = size);
 }
+
+// 제외 예정
 module hole(w, h, z) {
 	translate([w / 2, h / 2, z / 2])		roundedBox(size=[w, h, z], radius = w / 4, sidesonly = true);
 }
+
+// 모호하다
 module ellipsis(w = 32, h = 16, z = 4) {
 	translate([w / 2, h / 2, 0])
 		resize([w, h, z])
 			cylinder(1024, 1024, 1024);
 }
+
+// 제외 예정
 module cornerHole(base, m, in, out, height) {
 	delta = (out - in) / 2;
 		translate([m,					m,					0])	ellipsis(in, in);
@@ -192,6 +214,8 @@ module cornerHole(base, m, in, out, height) {
 		translate([base[0] - m  - delta,	base[1] - m - delta,	height])	ellipsis(out, out);
 		translate([m - delta,					base[1] - m - delta,	height])	ellipsis(out, out);
 }
+
+// 제외 예정
 module lineBox(outter = [100, 100, 100], t = 2) {
 	size = outter - [t*2, t*2, t*2];
 	center = false;
@@ -217,6 +241,8 @@ module lineBox(outter = [100, 100, 100], t = 2) {
 	translate([0, size[1], 0])	rotate([0, 0, 0])				cylinder(h = size[2], r = t, center = center);
 	}
 }
+
+// 제외 예정
 module hide(show = 0) {
 	if (show > 0) children();
 	else scale([0, 0, 0])	children();
