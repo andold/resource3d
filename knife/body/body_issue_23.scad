@@ -23,8 +23,4 @@ module samples() {
 	translate([20, 20, 0])	joint_type_krs([16, 16, 4], 4, 2);
 	translate([0, 20, 0])	joint_type_krs([16, 16, 4], 4, 2);
 }
-
-module build(target) {
-}
-
 samples();
