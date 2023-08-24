@@ -28,8 +28,8 @@ module buttress(x, y, z) {
 
 // 본체와의 결합 부위
 function basis01Size(param, paramBody) = [
-	bodySize(paramBody[0], paramBody[1], paramBody[2])[0] + param[0] * 2 + param[1],
-	bodySize(paramBody[0], paramBody[1], paramBody[2])[1] + param[0] * 2 + param[1],
+	bodySize(param, paramBody)[0] + param[0] * 2 + param[1],
+	bodySize(param, paramBody)[1] + param[0] * 2 + param[1],
 	param[2]
 ];
 module basis01(param, paramBody) {
@@ -88,7 +88,7 @@ function basis02translate(param, paramBody) = [
 module basis02(param, paramBody) {
 	echo("basis02 처음: ", param, paramBody);
 
-	bodySize = bodySize(paramBody[0], paramBody[1], paramBody[2]);
+	bodySize = bodySize(paramBody, paramTop);
 	basis01Size = basis01Size(param, paramBody);
 
 	thick = param[0] * 2;
@@ -233,7 +233,7 @@ module basis02(param, paramBody) {
 module basis(param, paramBody) {
 	echo("basis start: ", param, paramBody);
 
-	bodySize = bodySize(paramBody[0], paramBody[1], paramBody[2]);
+	bodySize = bodySize(param, paramBody);
 
 	thick = param[0];
 	margin = param[1];
@@ -248,7 +248,7 @@ module basis(param, paramBody) {
 //		basis01(param, paramBody);
 		%translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
 			rotate([0, 0, 180])
-			assempleBody(paramBody[0], paramBody[1], paramBody[2], paramBody[3], paramBody[4], paramBody[5], 0);
+			assempleBody(paramBody, paramTop, 0);
 
 	basis02(param, paramBody);
 
@@ -290,6 +290,12 @@ module build(target, prototype, param, paramBody) {
 	echo("build basis done: ", target, prototype, param, paramBody);
 }
 
+paramTop = [
+	8,	//	thick = 8;	//	상판의 두께
+	12,	//	margin = 8;	//	상판의 가장자리 여유 거리
+	8,	//	delta = 8;	//	상판의 구멍 표준 간격
+	0	//	reserved
+];
 paramBody = [
 	4,	//thick
 	8,	// margin
@@ -303,10 +309,10 @@ target = 3;
 param = [
 	4,		//	thick = 4;
 	1,		//	margin = 1;		//	하층판 결합부위 여유 공간
-	bodySize(paramBody[0], paramBody[1], paramBody[2])[2],		//	overlap = 32;	//	하층판과 기초판이 겹치는 길이
+	32,		//	overlap = 32;	//	하층판과 기초판이 겹치는 길이
 	128,	//	height = 128;	//	기초판의 높이
 	-30,	//	anglex = -30;	//	앞으로 기울어지는 정도
-	-45,	//	anglez = -30;	//	옆으로 돌아가는 정도
+	-30,	//	anglez = -30;	//	옆으로 돌아가는 정도
 	0,		//	reserved
 ];
 
