@@ -1,53 +1,21 @@
 use <MCAD/boxes.scad>
+include	<../common/constants.scad>
 use <spider_web_generator.scad>
-
-ZERO = [0, 0, 0];
-// 상수
-SIZE = 24;
-
-module mark(name, height, size = 2) {
-	linear_extrude(height, center = true)	text(name, size = size);
-}
-//mark("010-6810-6479", 1);
-module lines2(first, second, height, size = 1) {
-	cube([size * 7.5, size * 3, height / 3]);
-	for (dx = [0:0.01:0.1]) {
-		translate([size / 2 + dx, size * 0.6, 0])	{
-			color([0, 0, 1, 1])	translate([0, size * 1.2, 0])	linear_extrude(height, center = false)	text(first, size = size / 2);
-			color([0, 0, 1, 1])	translate([0, 0, 0])				linear_extrude(height, center = false)	text(second, size = size);
-		}
-	}
-	translate([size / 2, size * 0.6, 0])	{
-		color([0, 0, 1, 1])	translate([0, size * 1.2, 0])	linear_extrude(height, center = false)	text(first, size = size / 2);
-		color([0, 0, 1, 1])	translate([0, 0, 0])				linear_extrude(height, center = false)	text(second, size = size);
-	}
-	translate([size / 2 + 0.05, size * 0.6, 0])	{
-		color([0, 0, 1, 1])	translate([0, size * 1.2, 0])	linear_extrude(height, center = false)	text(first, size = size / 2);
-		color([0, 0, 1, 1])	translate([0, 0, 0])				linear_extrude(height, center = false)	text(second, size = size);
-	}
-}
-
-module andold() {
-	base = [8, 3, 1];
-	lines2("010", "6810-6479", 1);
-}
-//andold();
 
 module textBold(title, size, font) {
 	for (cx = [0: 0.01: size / 10]) {
 		translate([cx, 0, 0])		text(title, size, font = font);
 	}
 }
-module themeCircle(number0, number1, number2, radius = 16, prototype = true) {
+module themeCircle(number0, number1, number2, radius = 16) {
 	thick = 2;
 	size = radius / 4 * 1.33;
 	font = "Sans Serif:style=Bold";
 	widthBaseline = 2;
 	slices = prototype ? 20 : thick * 16;
-	fn = prototype ? 32 : 256;
 
 	translate([radius, radius, 0]) {
-		linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1], $fn = fn) {
+		linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
 			//	원
 			difference() {
 				circle(radius);
@@ -76,22 +44,25 @@ module themeCircle(number0, number1, number2, radius = 16, prototype = true) {
 	translate([radius - thick / 4, -128 / 2 + thick, thick / 4])	roundedBox([thick * 2, 128, thick / 2], thick / 4, true);
 }
 
-module themeCircleCap(radius, thick, prototype) {
+module themeCircleCap(radius, thick) {
+	fn =  $preview ? 32 : 512;
+
 	margin = thick / 4;
 	inner = radius + margin;
+	inner2 = inner - thick;
+	overhangHeight = $preview ? thick + EPSILON : thick;
 	outter = radius + margin + thick;
 	padding = thick * 3;
-	fn = prototype ? 32 : 256;
 	difference() {
 		color("white", 0.8)
 			translate([0, 0, 0])
-			cylinder(h = thick * 2 + margin, r1 = outter, r2 = outter, center = false, $fn = fn);
+			cylinder(h = thick * 2.5 + margin, r1 = outter, r2 = outter, center = false, $fn = fn);
 		// 넣는 장소
 		translate([0, 0, thick / 2])
 			cylinder(h = thick + margin, r1 = inner, r2 = inner, center = false, $fn = fn);
 		// 가두는 테두리
 		translate([0, 0, thick / 2 * 3 + margin])
-			cylinder(h = thick / 2, r1 = inner, r2 = radius - thick / 4, center = false, $fn = fn);
+			cylinder(h = overhangHeight, r1 = inner, r2 = inner2, center = false, $fn = fn);
 
 		// 살짝 걸치는 곳
 		translate([-inner, -thick / 2, -thick / 2])
@@ -112,29 +83,31 @@ module themeCircleCap(radius, thick, prototype) {
 		roundedBox([stickx, sticky, stickz], thick, true);
 }
 
-module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
-	echo("themeCircleWeb start: ", number0, number1, number2, radius, thick, prototype);
+module themeCircleWeb(number0, number1, number2, radius, thick) {
+	echo("themeCircleWeb start: ", number0, number1, number2, radius, thick);
+
+	fn =  $preview ? 32 : 512;
+
 	size = (radius - thick) * 2 / 8.5;
 	font = "나눔고딕:style=Normal";
 	padding = thick * 2;
-	slices = prototype ? 20 : thick * 16;
-	fn = prototype ? 32 : 256;
+	slices = $preview ? 20 : thick * 16;
 
 	translate([radius, radius, 0]) {
-		linear_extrude(height = thick / 2, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1], $fn = fn) {
+		//	원
+		difference() {
+			cylinder(thick, radius, radius, $fn = fn);
+			translate([0, 0, -EPSILON])
+				cylinder(thick + EPSILON * 2, radius - padding, radius - padding, $fn = fn);
+		}
+		linear_extrude(height = thick / 2, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
 			intersection() {
 				circle(radius);
 				offset(0.1)
-					//resize([radius * 2, radius * 2])
 					import(file = "web.svg", dpi = 96, center = true);
 			}
 		}
-		linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1], $fn = fn) {
-			//	원
-			difference() {
-				circle(radius);
-				circle(radius - padding);
-			}
+		linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
 
 			//	전화번호
 			offset(0.4)
@@ -161,31 +134,37 @@ module themeCircleWeb(number0, number1, number2, radius, thick, prototype) {
 			cube([padding, thick, thick]);
 	}
 	
-	echo("themeCircleWeb done: ", number0, number1, number2, radius, thick, prototype);
+	echo("themeCircleWeb done: ", number0, number1, number2, radius, thick);
 }
 
-target = 1;
-radius = 32;
-thick = 2;
-prototype = true;
-module build(target, thick, prototype, radius) {
-	echo("build start: ", target, thick, prototype, radius);
+module build(target, step) {
+	echo("build parking number 처음: ", target, step);
 
 	if (target == 1) {
-		themeCircleCap(
-			(radius == undef) ? 32 : radius,
-			(thick == undef) ? 2 : thick,
-			(prototype == undef) ? true : prototype
-		);
+		themeCircleCap(radius, thick);
 	} else if (target == 2) {
-		themeCircleWeb("010", "6810 6479", "4240 6479",
-			(radius == undef) ? 32 : radius,
-			(thick == undef) ? 2 : thick,
-			(prototype == undef) ? true : prototype
-		);
+		themeCircleWeb("010", "6810 6479", "4240 6479", 32, 2);
+	} else if (target == 3) {
+			themeCircleCap(radius, thick);
+		translate([radius + thick, 0, 0])
+			themeCircleWeb("010", "6810 6479", "4240 6479", radius, thick);
+	} else if (target == 4) {
+		translate([0, 0, thick * 3])
+			rotate([0, 180, 0])
+			themeCircleCap(radius, thick);
+		translate([-radius, radius / 2 - (radius * 1.5) * (step), thick])
+			themeCircleWeb("010", "6810 6479", "4240 6479", radius, thick);
 	}
 
-	echo("build done: ", target, thick, prototype, radius);
+	echo("build parking number 끝: ", target, step);
 }
 
-build(target, thick, prototype, radius);
+target = 3;
+radius = 32;
+thick = 2;
+build(target, $t);
+/*
+# in HOME(project root, ie. .../resouce3d)
+C:\apps\openscad-2021.01\openscad.exe --export-format asciistl -o stl\parking-number-holder-#19.stl -D target=1 parking\6479.scad
+C:\apps\openscad-2021.01\openscad.exe --export-format asciistl -o stl\parking-number-#19.stl -D target=2 parking\6479.scad
+*/
