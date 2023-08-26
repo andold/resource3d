@@ -109,11 +109,6 @@ module basis02(param) {
 	anglex = param[4];
 	anglez = param[5];
 
-		rotate([anglex, 0, anglez]) {
-			translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
-				rotate([0, 0, 180])
-				bodyPrototype(PARAM_BODY, PARAM_TOP, 0);
-		}
 
 	// before
 	points = [
@@ -122,12 +117,21 @@ module basis02(param) {
 		[basis01Size[0] - thick / 2,	basis01Size[1] - thick / 2,	thick / 2],
 		[thick / 2,						basis01Size[1] - thick / 2,	thick / 2],
 	
-//		[thick / 2,						thick / 2,					basis01Size[2] - thick / 2],
-//		[basis01Size[0] - thick / 2,	thick / 2,					basis01Size[2] - thick / 2],
 		[basis01Size[0] - thick / 2,	basis01Size[1] - thick / 2,	basis01Size[2] - thick / 2],
 		[thick / 2,						basis01Size[1] - thick / 2,	basis01Size[2] - thick / 2],
+
+//		[thick / 2,						thick / 2,					basis01Size[2] - thick / 2],
+//		[basis01Size[0] - thick / 2,	thick / 2,					basis01Size[2] - thick / 2],
+
 		[0,								0,							0]	//	reserved
 	];
+//	rotate([anglex, 0, anglez])
+		translate([0, 0, height])
+			translate(points[0])
+	rotate([anglex, 0, anglez])
+				translate([bodySize[0] + thick / 2, bodySize[1] + thick / 2, 0])
+				rotate([0, 0, 180])
+				bodyPrototype(PARAM_BODY, PARAM_TOP);
 
 	rpoints = [for (cx = [0:len(points) - 1])	rotate_vector([anglex, 0, anglez], points[cx])];
 	translate([0, -rpoints[1][1], 0]) {
@@ -262,10 +266,11 @@ module basis(param) {
 	color("Pink", 0.5)
 		translate(basis02translate(param, PARAM_BODY))
 		rotate([anglex, 0, anglez]) {
-			basis01(param);
 			translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
-				rotate([0, 0, 180])
-				assempleBody(PARAM_BODY, PARAM_TOP, 0);
+				rotate([0, 0, 180]) {
+					basis01(param);
+					assempleBody(PARAM_BODY, PARAM_TOP, 0);
+				}
 		}
 
 	basis02(param);
