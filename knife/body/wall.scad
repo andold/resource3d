@@ -1,21 +1,21 @@
+include	<../../common/constants.scad>
+use <../../common/utils.scad>
+
 //	벽 모델링 자료
 module wall(x, y, z) {
-	points = [
-		[0,	0],
-		[0,	y],
-		[-1,	y],
-		[-1,	-1],
-		[x,	-1],
-		[x,	0],
-		[0,	0],
-
-		[0,	0],
-		[0,	70.7],	//	70.7
-		[180,	70.7],	//	180
-		[180,	57.7],	//	20
-		[167,	57.7],	//	13
-		[167,	0],		//	57.7
-		[0, 0]			//	167
-	];
-	translate([0, y / 2, 0])	rotate([90, 0, 0])	linear_extrude(x)	polygon(points);
+	translate([0, -y / 2, 0]) {
+		cube([167, y, 57.7]);
+		note(167, y, 57.7);
+		
+	}
+	translate([0, -y / 2, 57.7]) {
+		cube([180, y, 13]);
+		note(180, y, 13);
+	}
+	translate([-EPSILON, -y / 2, 0])	cube([EPSILON, y, z]);
 }
+
+module samples() {
+	wall(128, 128, 128);
+}
+samples();

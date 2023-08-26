@@ -26,7 +26,6 @@ module joint_males(r, z, x, count) {
 	dx = (x - r * 2) / (count - 1);
 	assert(dx > r * 2);
 	for (cx = [0: dx: x]) {
-		echo(r, z, x, count, dx, cx);
 		translate([cx, 0, 0])	joint_male(r, z);
 	}
 }
@@ -58,7 +57,7 @@ function bodySize(param, paramTop)  = [
 ];
 
 module bodyFront(param, paramTop) {
-	echo("bodyFront start: ", param, paramTop);
+//	echo("bodyFront start: ", param, paramTop);
 
 	thick = param[0];
 	marginy = param[1];
@@ -106,7 +105,7 @@ module bodyFront(param, paramTop) {
 		translate([(thick * 6) / 2, dy, 0])
 			windows(wx, wy, thick, 4, 4, 4, 2);
 	}
-	echo("bodyFront done: ", param, paramTop);
+//	echo("bodyFront done: ", param, paramTop);
 }
 
 // 조립시 안쪽
@@ -151,8 +150,26 @@ module bodySide(param, paramTop, step = 0) {
 //	echo("bodySide done: ", param, paramTop);
 }
 
+
+module bodyPrototype(param, paramTop) {
+	thick = param[0];
+	base = bodySize(param, paramTop);
+	
+	cube([base[0], thick, HEIGHT]);
+	note(base[0], thick, HEIGHT);
+	translate([0, base[1] - thick, 0])
+		cube([base[0], thick, HEIGHT]);
+	translate([0, 0, 0]) {
+		cube([thick, base[1], HEIGHT]);
+		note(thick, base[1], HEIGHT);
+	}
+	translate([base[0]- thick, 0, 0])
+		cube([thick, base[1], HEIGHT]);
+}
+//bodyPrototype(param, paramTop);
+
 module assempleBody(param, paramTop, help = 8) {
-//	echo("assempleBody start: ", param, paramTop, help);
+	echo("assempleBody 처음: ", param, paramTop, help);
 
 	thick = param[0];
 	marginy = param[1];
@@ -185,7 +202,8 @@ module assempleBody(param, paramTop, help = 8) {
 		%translate([thick + help, thick, HEIGHT - thick * 1.5])
 			landscape(paramTop[0], paramTop[1], paramTop[2]);
 	}
-//	echo("assempleBody done: ", param, paramTop, help);
+
+	echo("assempleBody 끝: ", param, paramTop, help);
 }
 
 module build(target = 1, renderMode = false, step = 0) {
@@ -231,15 +249,17 @@ module build(target = 1, renderMode = false, step = 0) {
 			bodySide(param, paramTop);
 	} else if (target == 5) {
 		assempleBody(param, paramTop, 0);
-	} else {
+	} else if (target == 6) {
 		joint_males(8, 4, 200, 5);
+	} else {
+		bodyPrototype(param, paramTop);
 	}
 
 	echo("build body 끝: ", target, renderMode, step);
 }
 
 renderMode = false;
-target = 5;
+target = 0;
 build(target, renderMode, $t);
 /*
 # in HOME(project root, ie. .../resouce3d)

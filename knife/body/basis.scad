@@ -1,13 +1,24 @@
 use <MCAD/boxes.scad>
+include	<../../common/constants.scad>
 use <wall.scad>
 use <body.scad>
 use <../etc/utils.scad>
 
 // 상수
-ZERO = [0, 0, 0];
-HALF = [1/2, 1/2, 1/2];
-ONE = [1, 1, 1];
-EPSILON = 0.01;
+PARAM_TOP = [
+	8,	//	thick = 8;	//	상판의 두께
+	12,	//	margin = 8;	//	상판의 가장자리 여유 거리
+	8,	//	delta = 8;	//	상판의 구멍 표준 간격
+	0	//	reserved
+];
+PARAM_BODY = [
+	4,	//thick
+	8,	// margin
+	8,	// delta
+	12,	// marginy
+	24,	// paddingx
+	12	// paddingy
+];
 
 // 지지대 모델링 자료
 module buttress(x, y, z) {
@@ -27,15 +38,15 @@ module buttress(x, y, z) {
 }
 
 // 본체와의 결합 부위
-function basis01Size(param, paramBody) = [
-	bodySize(param, paramBody)[0] + param[0] * 2 + param[1],
-	bodySize(param, paramBody)[1] + param[0] * 2 + param[1],
+function basis01Size(param) = [
+	bodySize(PARAM_BODY, PARAM_TOP)[0] + param[0] * 2 + param[1],
+	bodySize(PARAM_BODY, PARAM_TOP)[1] + param[0] * 2 + param[1],
 	param[2]
 ];
-module basis01(param, paramBody) {
-	echo("basis01 처음: ", param, paramBody);
+module basis01(param) {
+	echo("basis01 처음: ", param);
 
-	bodySize = bodySize(paramBody[0], paramBody[1], paramBody[2]);
+	bodySize = bodySize(PARAM_BODY, PARAM_TOP);
 	thick = param[0];
 	margin = param[1];
 	overlap = param[2];
@@ -53,43 +64,43 @@ module basis01(param, paramBody) {
 		overlap
 	];
 	inner2 = [
-		bodySize[0] - margin - paramBody[0] * 2,
-		bodySize[1] - margin - paramBody[0] * 2,
+		bodySize[0] - margin - PARAM_BODY[0] * 2,
+		bodySize[1] - margin - PARAM_BODY[0] * 2,
 		overlap
 	];
 	difference() {
 		cube(outter);
-		note(outter[0], outter[1], outter[2], fontSize = 4);
+		note(outter[0], outter[1], outter[2]);
 		translate([thick + margin / 2, thick + margin / 2, thick])
 			cube(inner);
 		translate([thick * 2 + margin / 2, thick * 2 + margin / 2, -thick])
 			cube(inner2);
 	}
-	%translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
+	translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
 		rotate([0, 0, 180])
-		assempleBody(paramBody[0], paramBody[1], paramBody[2], paramBody[3], paramBody[4], paramBody[5], 0);
+		bodyPrototype(PARAM_BODY, PARAM_TOP, 0);
 
-	echo("basis01 끝: ", param, paramBody);
+	echo("basis01 끝: ", param);
 }
 
 // 본체와의 결합 부위(basis01)를 받치는 기둥들
-function basis02translate(param, paramBody) = [
+function basis02translate(param, PARAM_BODY) = [
 	0,
 	-rotate_vector([
 		param[4],
 		0,
 		param[5]
 	], [
-		basis01Size(param, paramBody)[0] - param[0] / 2,
+		basis01Size(param, PARAM_BODY)[0] - param[0] / 2,
 		param[0] / 2,
 		param[0] / 2])[1],
 	param[3]
 ];
-module basis02(param, paramBody) {
-	echo("basis02 처음: ", param, paramBody);
+module basis02(param) {
+	echo("basis02 처음: ", param);
 
-	bodySize = bodySize(paramBody, paramTop);
-	basis01Size = basis01Size(param, paramBody);
+	bodySize = bodySize(PARAM_BODY, PARAM_TOP);
+	basis01Size = basis01Size(param);
 
 	thick = param[0] * 2;
 	margin = param[1];
@@ -97,6 +108,12 @@ module basis02(param, paramBody) {
 	height = param[3];
 	anglex = param[4];
 	anglez = param[5];
+
+		rotate([anglex, 0, anglez]) {
+			translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
+				rotate([0, 0, 180])
+				bodyPrototype(PARAM_BODY, PARAM_TOP, 0);
+		}
 
 	// before
 	points = [
@@ -159,7 +176,7 @@ module basis02(param, paramBody) {
 			], thick);
 
 			// 앞쪽위로
-			line_sphere([
+			#line_sphere([
 				rpoints[2][0],
 				rpoints[2][1],
 				rpoints[2][2] + height
@@ -228,12 +245,12 @@ module basis02(param, paramBody) {
 		}
 	}
 	
-	echo("basis02 끝: ", param, paramBody);
+	echo("basis02 끝: ", param, PARAM_BODY);
 }
-module basis(param, paramBody) {
-	echo("basis start: ", param, paramBody);
+module basis(param) {
+	echo("basis 시작: ", param);
 
-	bodySize = bodySize(param, paramBody);
+	bodySize = bodySize(PARAM_BODY, PARAM_TOP);
 
 	thick = param[0];
 	margin = param[1];
@@ -243,77 +260,58 @@ module basis(param, paramBody) {
 	anglez = param[5];
 
 	color("Pink", 0.5)
-		translate(basis02translate(param, paramBody))
-		rotate([anglex, 0, anglez])
-//		basis01(param, paramBody);
-		%translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
-			rotate([0, 0, 180])
-			assempleBody(paramBody, paramTop, 0);
+		translate(basis02translate(param, PARAM_BODY))
+		rotate([anglex, 0, anglez]) {
+			basis01(param);
+			translate([bodySize[0] + thick + margin, bodySize[1] + thick + margin, thick])
+				rotate([0, 0, 180])
+				assempleBody(PARAM_BODY, PARAM_TOP, 0);
+		}
 
-	basis02(param, paramBody);
+	basis02(param);
 
 
 	echo("basis ...ing: ", bodySize=bodySize);
 	full = [240, 128, bodySize[2] + 70.7];
 	nature = [32, 0, 0];		//	자연스럽게 놓여진 위치
 
-	*rotate([0, 0, 90])	color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
+	rotate([0, 0, 90])	color([0.8, 0.8, 0.8, 0.5])	wall(640, 640);
 
-	echo("basis done: ", param, paramBody);
+	echo("basis 끝: ", param);
 }
 
-module build(target, prototype, param, paramBody) {
-	echo("build basis start: ", target, prototype, param, paramBody);
+module build(target, step) {
+	echo("build basis 처음: ", target, step);
 
-	scale = prototype ? HALF : ONE;
-	$fn = prototype ? 16 : 128;
+	param = [
+		4,		//	thick = 4;
+		1,		//	margin = 1;		//	하층판 결합부위 여유 공간
+		200,	//	overlap = 32;	//	하층판과 기초판이 겹치는 길이
+		128,	//	height = 128;	//	기초판의 높이
+		-30,	//	anglex = -30;	//	앞으로 기울어지는 정도
+		-30,	//	anglez = -30;	//	옆으로 돌아가는 정도
+		0,		//	reserved
+	];
 
 	thick = param[0];
+	bodySize = bodySize(PARAM_BODY, PARAM_TOP);
 	if (target == 1) {
-		scale(scale)
-			basis01(param, paramBody);
+			basis01(param);
 	} else if (target == 2) {
-		scale(scale)
-			basis02(param, paramBody);
+			basis02(param);
 	} else if (target == 3) {
-		scale(scale)
-			basis(param, paramBody);
+			basis(param);
 	} else {
-		*rotate([0, 0, -$t * 360])
+		rotate([0, 0, -$t * 360])
 			rotate([-30, 0, 0])
 			translate([param[0], thick, thick])
-			translate([bodySize(paramBody[0], paramBody[1], paramBody[2])[0], bodySize(paramBody[0], paramBody[1], paramBody[2])[1], 0])
+			translate([bodySize[0], bodySize[1], 0])
 			rotate([0, 0, 180])
-			assempleBody(paramBody[0], paramBody[1], paramBody[2], paramBody[3], paramBody[4], paramBody[5], 0);
+			assempleBody(PARAM_BODY, PARAM_TOP, 0);
 	}
 
-	echo("build basis done: ", target, prototype, param, paramBody);
+	echo("build basis 끝: ", target, step);
 }
 
-paramTop = [
-	8,	//	thick = 8;	//	상판의 두께
-	12,	//	margin = 8;	//	상판의 가장자리 여유 거리
-	8,	//	delta = 8;	//	상판의 구멍 표준 간격
-	0	//	reserved
-];
-paramBody = [
-	4,	//thick
-	8,	// margin
-	8,	// delta
-	12,	// marginy
-	24,	// paddingx
-	12	// paddingy
-];
-prototype = true;
-target = 3;
-param = [
-	4,		//	thick = 4;
-	1,		//	margin = 1;		//	하층판 결합부위 여유 공간
-	32,		//	overlap = 32;	//	하층판과 기초판이 겹치는 길이
-	128,	//	height = 128;	//	기초판의 높이
-	-30,	//	anglex = -30;	//	앞으로 기울어지는 정도
-	-30,	//	anglez = -30;	//	옆으로 돌아가는 정도
-	0,		//	reserved
-];
-
-build(target, prototype, param, paramBody);
+target = 2;
+build(target, $t);

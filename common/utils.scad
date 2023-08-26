@@ -1,12 +1,6 @@
 // 유용한 것들, 검증된 것만
 use <MCAD/boxes.scad>
-
-ZERO = [0, 0, 0];
-HALF = [1/2, 1/2, 1/2];
-ONE = [1, 1, 1];
-BIG = [1024, 1024, 1024];
-EPSILON = 0.01;
-MINIMUM = 0.1;	//	0.1mm
+include	<constants.scad>
 
 // 가장 긴 족의 2.1배
 function big(v) = [
@@ -69,6 +63,7 @@ module line_sphere(start, end, thickness = 1) {
 
 // 치수 표시, 라이브러리가 더 적합할 듯
 module note(x, y, z, centered = false, fs, detail = false) {
+	echo("note", x, y, z, centered, fs, detail);
 	mm = " mm";	//	"㎜";
 	center = centered ? [-x / 2, -y / 2, -z / 2] : [0, 0, 0];
 	%color("Black")

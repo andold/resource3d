@@ -1,6 +1,7 @@
 // 라이브러리, 검증된 것만 이곳에
 use <MCAD/boxes.scad>
-include <utils.scad>
+include	<constants.scad>
+use <utils.scad>
 
 // 대칭 사다리꼴, xz 평면에서 보았을 때
 module cube_type_1(v, x) {

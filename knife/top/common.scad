@@ -56,6 +56,6 @@ module punch(height = 60, thick = 8, delta = 8) {
 	translate([chefsStart + 3 + 15, 0, 0])				roundedBoxNotCenter([4, height, thick], 1);
 	translate([chefsStart + (3 + 4) + (15 + 20), 0, 0])	roundedBoxNotCenter([5, height, thick], 1);
 	chefsLength = (3 + 4 + 5) + (15 + 20);
-	echo("last x position, ie width", delta, breadStart, breadLength, scissorStart, scissorLength, chefsStart, chefsLength);
+//	echo("last x position, ie width", delta, breadStart, breadLength, scissorStart, scissorLength, chefsStart, chefsLength);
 }
 punch();
