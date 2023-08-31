@@ -1,6 +1,6 @@
 use <MCAD/boxes.scad>
+use <../../common/library.scad>
 use <common.scad>
-use <../etc/corner-hole.scad>
 use <../../common/utils.scad>
 
 PALETTE = [
@@ -28,8 +28,10 @@ module chefsKnife(p, q) {
 	}
 	translate([0, (p[1] - q[1]) / 2, p[2] / 2 + q[2] / 2]) cube(q, true);
 }
-module landscape(thick, margin, delta, prototype) {
+module landscape(thick, margin, delta) {
 	base =  landscapeSize(thick, margin, delta);	//	상판
+	
+	height_back_of_knife = 32;
 
 	chefsInfo = chefsInfo();
 	difference() {
@@ -54,6 +56,11 @@ module landscape(thick, margin, delta, prototype) {
 				z = thick * 2;
 				roundedBoxNotCenter([x, y, z], 2, true);
 				note(x, y, z);
+				translate([0, 0, z])
+				{
+					roundedBoxNotCenter([x, thick, height_back_of_knife], 2, true);
+					note(x, thick, height_back_of_knife);
+				}
 			}
 		}
 		translate([margin, margin, -EPSILON])	punch(60, 16 + EPSILON * 2, 8);
@@ -66,19 +73,28 @@ module landscape(thick, margin, delta, prototype) {
 		chefsKnife(p, q);
 }
 
-thick = 8;
-margin = 12;
-delta = 8;
-prototype = false;
-module build(thick, margin, delta, prototype) {
-	echo("landscape build start: ", thick, margin, delta, prototype);
-
-	scale = prototype ? [1/2, 1/2, 1/2] : [1, 1, 1];
-	scale(scale) {
-		landscape(thick, margin, delta, prototype);
-	}
-
-	echo("landscape build done: ", thick, margin, delta, prototype);
+module landscapePrototype(param) {
+	size = landscapeSize(param[0], param[1], param[2]);
+	cube(size);
+	note_type_1(size);
 }
 
-build(thick, margin, delta, prototype);
+module build(target, step) {
+	echo("landscape build start: ", target, step);
+
+	thick = 8;
+	margin = 12;
+	delta = 8;
+	param = [thick, margin, delta];
+
+	if (target == 1) {
+		landscape(thick, margin, delta);
+	} else if (target == 2) {
+		landscapePrototype(param);
+	}
+
+	echo("landscape build done: ", target, step);
+}
+
+target = 1;
+build(target, $t);
