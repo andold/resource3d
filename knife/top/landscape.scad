@@ -44,9 +44,10 @@ module landscape(thick, margin, delta) {
 			}
 			
 			//	서명
-			color(c=PALETTE[1])
-				translate([base[0] - margin / 2 - 2, margin / 4, thick])
-				mark("andold", 0.2, 1);
+			color(c=PALETTE[2])
+				translate([base[0] - margin / 2 - 2, margin / 4, thick / 2])
+				text("andold", size = 4, halign = "right")
+			;
 
 			//	손잡이
 			translate([margin + chefsInfo[0] - thick, margin - thick, 0])
@@ -56,14 +57,39 @@ module landscape(thick, margin, delta) {
 				z = thick * 2;
 				roundedBoxNotCenter([x, y, z], 2, true);
 				note(x, y, z);
-				translate([0, 0, z])
+				// 손잡이 등받이
+				translate([0, thick / 2, z])
 				{
-					roundedBoxNotCenter([x, thick, height_back_of_knife], 2, true);
+					roundedBoxNotCenter([x, thick / 2, height_back_of_knife], 2, true);
 					note(x, thick, height_back_of_knife);
 				}
 			}
+
+			// 빵칼등의 등받이
+			translate([delta, margin - thick / 2, thick])
+			roundedBoxNotCenter([32, thick / 2, height_back_of_knife], 2, true);
 		}
+
+		// 칼구멍
 		translate([margin, margin, -EPSILON])	punch(60, 16 + EPSILON * 2, 8);
+
+		// 나사구멍
+		nut_radius = 3.2 /2;
+		nut_height = 25;
+		// 왼쪽
+		translate([-EPSILON, thick / 2, thick / 2])
+			rotate([0, 90, 0])
+			cylinder(nut_height, nut_radius, nut_radius);
+		translate([-EPSILON, base[1] - thick / 2, thick / 2])
+			rotate([0, 90, 0])
+			cylinder(nut_height, nut_radius, nut_radius);
+		//	오른쪽
+		translate([base[0] + EPSILON, thick / 2, thick / 2])
+			rotate([0, -90, 0])
+			cylinder(nut_height, nut_radius, nut_radius);
+		translate([base[0] + EPSILON, base[1] - thick / 2, thick / 2])
+			rotate([0, -90, 0])
+			cylinder(nut_height, nut_radius, nut_radius);
 	}
 
 	p = [4, 46, 235];
@@ -98,3 +124,7 @@ module build(target, step) {
 
 target = 1;
 build(target, $t);
+/*
+# in HOME(project root, ie. .../resouce3d)
+C:\apps\openscad-2021.01\openscad.exe --export-format asciistl -o C:\src\eclipse-workspace\resource3d\stl\landscape.stl -D target=1 C:\src\eclipse-workspace\resource3d\knife\top\landscape.scad
+*/
