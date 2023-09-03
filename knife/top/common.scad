@@ -1,6 +1,7 @@
 use <MCAD/boxes.scad>
-use <../etc/corner-hole.scad>
-use <../etc/utils.scad>
+
+include	<../../common/constants.scad>
+use <../../common/library.scad>
 
 PALETTE = [
 	[0.3, 0.1, 0.0, 1.0],	//	갈색, 칼손잡이
@@ -31,15 +32,20 @@ module test(delta = 4) {
 //test();
 
 module	roundedBoxNotCenter(size = [32, 64, 8], radius = 8, sidesonly = true) {
-	translate([size[0] / 2, size[1] / 2, size[2] / 2])		roundedBox(size, radius, sidesonly);
+	translate([size[0] / 2, size[1] / 2, size[2] / 2])		roundedBox(size, radius, sidesonly, $fn = FN);
 }
 
 // export
 module punch(height = 60, thick = 8, delta = 8) {
 	// 과도, 빵칼
 	breadStart = 0;
-	translate([breadStart, 0, 0])					roundedBoxNotCenter([3, height, thick], 1);
-	translate([breadStart + (3 + delta), 0, 0])		roundedBoxNotCenter([3, height, thick], 1);
+	translate([breadStart, 0, 0])					roundedBoxNotCenter([3, height / 3 - 2, thick], 1);
+	translate([breadStart, height / 3 + 1, 0])		roundedBoxNotCenter([3, height / 3 - 2, thick], 1);
+	translate([breadStart, height / 3 * 2 + 2, 0])	roundedBoxNotCenter([3, height / 3 - 2, thick], 1);
+
+	translate([breadStart + (3 + delta), 0, 0])					roundedBoxNotCenter([3, height / 2 - 2, thick], 1);
+	translate([breadStart + (3 + delta), height / 2 + 2, 0])	roundedBoxNotCenter([3, height / 2 - 2, thick], 1);
+
 	translate([breadStart + (3 + delta) * 2, 0, 0])	roundedBoxNotCenter([3, height, thick], 1);
 	breadLength = (3 + delta) * 2 + 3;
 
@@ -53,9 +59,9 @@ module punch(height = 60, thick = 8, delta = 8) {
 	//	식도
 	chefsStart = scissorStart + scissorLength + delta;
 	translate([chefsStart, 0, 0])						roundedBoxNotCenter([3, height, thick], 1);
-	translate([chefsStart + 3 + 15, 0, 0])				roundedBoxNotCenter([4, height, thick], 1);
-	translate([chefsStart + (3 + 4) + (15 + 20), 0, 0])	roundedBoxNotCenter([5, height, thick], 1);
-	chefsLength = (3 + 4 + 5) + (15 + 20);
+	translate([chefsStart + 5 + 15, 0, 0])				roundedBoxNotCenter([4, height, thick], 1);
+	translate([chefsStart + (5 + 4) + (15 + 18), 0, 0])	roundedBoxNotCenter([5, height, thick], 1);
+	chefsLength = (5 + 4 + 5) + (15 + 18);	//	3=>5 20=>18
 //	echo("last x position, ie width", delta, breadStart, breadLength, scissorStart, scissorLength, chefsStart, chefsLength);
 }
 punch();

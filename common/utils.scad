@@ -11,7 +11,7 @@ function big(v) = [
 
 // 임시
 module	roundedBoxNotCenter(size = [32, 64, 8], radius = 8, sidesonly = true) {
-	translate([size[0] / 2, size[1] / 2, size[2] / 2])		roundedBox(size, radius, sidesonly);
+	translate([size[0] / 2, size[1] / 2, size[2] / 2])		roundedBox(size, radius, sidesonly, $fn = FN);
 }
 
 // 라이브러리 아닌가
@@ -22,17 +22,13 @@ module windows(x, y, z, dx = 4, dy = 4, countx = 2, county = 2) {
 	for (cw = [0:w:x - dx]) {
 		for (ch = [0:h:y - dy]) {
 			translate([cw, ch, -1])
-				roundedBoxNotCenter([w - dx, h - z, z * 4], z / 2, true);
+				roundedBoxNotCenter([w - dx, h - z, z * 4], z / 2, true, $fn = FN);
 		}
 	}
 }
 
 // 벡터 회전 계산
-function rotate_vector(angle, vector) = [
-	rotatez_vector(angle[2], rotatey_vector(angle[1], rotatex_vector(angle[0], vector)))[0],
-	rotatez_vector(angle[2], rotatey_vector(angle[1], rotatex_vector(angle[0], vector)))[1],
-	rotatez_vector(angle[2], rotatey_vector(angle[1], rotatex_vector(angle[0], vector)))[2]
-];
+function rotate_vector(angle, vector) = rotatez_vector(angle[2], rotatey_vector(angle[1], rotatex_vector(angle[0], vector)));
 // x축 기준 회전 벡터 회전 계산
 function rotatex_vector(anglex, vector) = [
 	vector[0],
@@ -56,8 +52,8 @@ function rotatez_vector(anglez, vector) = [
 //	끝이 구인 선
 module line_sphere(start, end, thickness = 1) {
     hull() {
-        translate(start) sphere(thickness);
-        translate(end) sphere(thickness);
+        translate(start) sphere(thickness, $fn = FN);
+        translate(end) sphere(thickness, $fn = FN);
     }
 }
 
@@ -191,69 +187,6 @@ module boardPattern(size = [128, 64, 4], degree = 60, stick = [THICK, THICK, 32]
 	}
 }
 
-// 제외 예정
-module mark(name, height, size = 2) {
-	linear_extrude(height, center = false)	text(name, size = size);
-}
-
-// 제외 예정
-module hole(w, h, z) {
-	translate([w / 2, h / 2, z / 2])		roundedBox(size=[w, h, z], radius = w / 4, sidesonly = true);
-}
-
-// 모호하다
-module ellipsis(w = 32, h = 16, z = 4) {
-	translate([w / 2, h / 2, 0])
-		resize([w, h, z])
-			cylinder(1024, 1024, 1024);
-}
-
-// 제외 예정
-module cornerHole(base, m, in, out, height) {
-	delta = (out - in) / 2;
-		translate([m,					m,					0])	ellipsis(in, in);
-		translate([base[0] - m,	m,					0])	ellipsis(in, in);
-		translate([base[0] - m,	base[1] - m,		0])	ellipsis(in, in);
-		translate([m,					base[1] - m,		0])	ellipsis(in, in);
-
-		translate([m - delta,					m - delta,					height])	ellipsis(out, out);
-		translate([base[0] - m  - delta,	m - delta,					height])	ellipsis(out, out);
-		translate([base[0] - m  - delta,	base[1] - m - delta,	height])	ellipsis(out, out);
-		translate([m - delta,					base[1] - m - delta,	height])	ellipsis(out, out);
-}
-
-// 제외 예정
-module lineBox(outter = [100, 100, 100], t = 2) {
-	size = outter - [t*2, t*2, t*2];
-	center = false;
-
-	translate([t, t, t])	{
-		
-	// x
-	translate([0, 0, 0])						rotate([0, 90, 0])		cylinder(h = size[0], r = t, center = center);
-	translate([0, size[1], 0])			rotate([0, 90, 0])		cylinder(h = size[0], r = t, center = center);
-	translate([0, size[1], size[2]])	rotate([0, 90, 0])		cylinder(h = size[0], r = t, center = center);
-	translate([0, 0, size[2]])			rotate([0, 90, 0])		cylinder(h = size[0], r = t, center = center);
-
-	// y
-	translate([0, 0, 0])						rotate([270, 0, 0])		cylinder(h = size[1], r = t, center = center);
-	translate([size[0], 0, 0])			rotate([270, 0, 0])		cylinder(h = size[1], r = t, center = center);
-	translate([size[0], 0, size[2]])	rotate([270, 0, 0])		cylinder(h = size[1], r = t, center = center);
-	translate([0, 0, size[2]])			rotate([270, 0, 0])		cylinder(h = size[1], r = t, center = center);
-
-	// z
-	translate([0, 0, 0])						rotate([0, 0, 0])		cylinder(h = size[2], r = t, center = center);
-	translate([size[0], 0, 0])			rotate([0, 0, 0])		cylinder(h = size[2], r = t, center = center);
-	translate([size[0], size[1], 0])	rotate([0, 0, 0])		cylinder(h = size[2], r = t, center = center);
-	translate([0, size[1], 0])	rotate([0, 0, 0])				cylinder(h = size[2], r = t, center = center);
-	}
-}
-
-// 제외 예정
-module hide(show = 0) {
-	if (show > 0) children();
-	else scale([0, 0, 0])	children();
-}
 
 module samples() {
 	cube([32, 16, 4]);

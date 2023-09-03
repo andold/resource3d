@@ -1,5 +1,8 @@
 use <MCAD/boxes.scad>
+
+include	<../../common/constants.scad>
 use <../../common/library.scad>
+
 use <common.scad>
 use <../../common/utils.scad>
 
@@ -39,14 +42,14 @@ module landscape(thick, margin, delta) {
 			//	상판
 			translate([base[0] / 2, base[1] / 2, thick / 2])
 			{
-				roundedBox(base, 2, true);
+				roundedBox(base, 2, true, $fn = FN);
 				note(base[0], base[1], base[2], true);
 			}
 			
 			//	서명
 			color(c=PALETTE[2])
 				translate([base[0] - margin / 2 - 2, margin / 4, thick / 2])
-				text("andold", size = 4, halign = "right")
+				linear_extrude(0.4, center = false, slices = $preview ? 20 : 16 * 4)	text("andold", size = 4, halign = "right", $fn = FN)
 			;
 
 			//	손잡이
@@ -74,22 +77,22 @@ module landscape(thick, margin, delta) {
 		translate([margin, margin, -EPSILON])	punch(60, 16 + EPSILON * 2, 8);
 
 		// 나사구멍
-		nut_radius = 3.2 /2;
+		nut_radius = RADIUS_HOLE_NUT_25;
 		nut_height = 25;
 		// 왼쪽
 		translate([-EPSILON, thick / 2, thick / 2])
 			rotate([0, 90, 0])
-			cylinder(nut_height, nut_radius, nut_radius);
+			cylinder(nut_height, nut_radius, nut_radius, $fn = $preview ? 16 : 360);
 		translate([-EPSILON, base[1] - thick / 2, thick / 2])
 			rotate([0, 90, 0])
-			cylinder(nut_height, nut_radius, nut_radius);
+			cylinder(nut_height, nut_radius, nut_radius, $fn = $preview ? 16 : 360);
 		//	오른쪽
 		translate([base[0] + EPSILON, thick / 2, thick / 2])
 			rotate([0, -90, 0])
-			cylinder(nut_height, nut_radius, nut_radius);
+			cylinder(nut_height, nut_radius, nut_radius, $fn = $preview ? 16 : 360);
 		translate([base[0] + EPSILON, base[1] - thick / 2, thick / 2])
 			rotate([0, -90, 0])
-			cylinder(nut_height, nut_radius, nut_radius);
+			cylinder(nut_height, nut_radius, nut_radius, $fn = $preview ? 16 : 360);
 	}
 
 	p = [4, 46, 235];
@@ -107,6 +110,10 @@ module landscapePrototype(param) {
 
 module build(target, step) {
 	echo("landscape build start: ", target, step);
+
+	if (!$preview) {
+		$fn = 360;
+	}
 
 	thick = 8;
 	margin = 12;

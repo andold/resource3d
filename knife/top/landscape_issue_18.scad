@@ -28,7 +28,7 @@ module back_of_knife(thick = 2, step = 0) {
 	if ($preview) {
 		%translate([144 + thick, 48 + (8 - step), 8 + param[6]])
 			rotate([90, 180, 0])
-			landscape(8, 8, 12);
+			*landscape(8, 8, 12);
 	}
 	
 	// 구멍들
@@ -39,6 +39,7 @@ module back_of_knife(thick = 2, step = 0) {
 	
 	// 등받이
 	cube([base[0] + thick * 2, height, param[6]]);
+	note_type_1([base[0] + thick * 2, height, param[6]]);
 	
 	//	앞쪽까지
 	translate([thick, height - thick, thick])	cube([param[0], thick, param[2]]);
