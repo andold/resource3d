@@ -1,6 +1,7 @@
 // 유용한 것들, 검증된 것만
 use <MCAD/boxes.scad>
 include	<constants.scad>
+include	<library.scad>
 
 // 가장 긴 족의 2.1배
 function big(v) = [
@@ -58,123 +59,10 @@ module line_sphere(start, end, thickness = 1) {
 }
 
 // 치수 표시, 라이브러리가 더 적합할 듯
+// deprecated. use note_type_1 in library
 module note(x, y, z, centered = false, fs, detail = false) {
-	echo("note", x, y, z, centered, fs, detail);
-	mm = " mm";	//	"㎜";
-	center = centered ? [-x / 2, -y / 2, -z / 2] : [0, 0, 0];
-	%color("Black")
-	translate(center)
-	{
-		// x, z view
-		xyfs = is_undef(fs) ? max(1, min(min(x, y) / 16, 20)) : 1;
-		translate([x / 2, y - xyfs * 1.5, z + EPSILON])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x / 2, xyfs * 1.5, z + EPSILON])
-			rotate([0, 0, 180])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
-
-		// x, -z view
-		if (detail) {
-			translate([x / 2, xyfs * 1.5, -EPSILON])
-				rotate([180, 0, 0])
-				linear_extrude(EPSILON, center = true)	text(str(x, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
-			translate([x / 2, y - xyfs * 1.5, -EPSILON])
-				rotate([180, 0, 180])
-				linear_extrude(EPSILON, center = true)	text(str(x, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
-		}
-
-		zxfs = is_undef(fs) ? max(1, min(min(z, x) / 16, 20)) : 1;
-		// x, y view
-		if (detail) {
-			translate([x / 2, y + EPSILON, z - zxfs * 1.5])
-				rotate([90, 0, 180])
-				linear_extrude(EPSILON, center = true)	text(str(x, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
-			translate([x / 2, y + EPSILON, zxfs * 1.5])
-				rotate([90, 180, 180])
-				linear_extrude(EPSILON, center = true)	text(str(x, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
-		}
-
-		// x, -y view
-		translate([x / 2, -EPSILON, z - zxfs * 1.5])
-			rotate([90, 0, 0])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x / 2, -EPSILON, zxfs * 1.5])
-			rotate([90, 180, 0])
-			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
-
-		yzfs = is_undef(fs) ? max(1, min(min(y, z) / 16, 20)) : 1;
-		// y, x view
-		if (detail) {
-			translate([x + EPSILON, y / 2, z - yzfs * 1.5])
-				rotate([90, 0, 90])
-				linear_extrude(EPSILON, center = true)	text(str(y, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
-			translate([x + EPSILON, y / 2, yzfs * 1.5])
-				rotate([-90, 0, -90])
-				linear_extrude(EPSILON, center = true)	text(str(y, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
-		}
-
-		// y, -x view
-		translate([-EPSILON, y / 2, yzfs * 1.5])
-			rotate([-90, 0, 90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
-		translate([-EPSILON, y / 2, z - yzfs * 1.5])
-			rotate([90, 0, -90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
-
-		// y, z view
-		translate([xyfs * 1.5, y / 2, z + EPSILON])
-			rotate([0, 0, 90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x - xyfs * 1.5, y / 2, z + EPSILON])
-			rotate([0, 0, -90])
-			linear_extrude(EPSILON, center = true)	text(str(y, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
-
-		// y, -z view
-		if (detail) {
-			translate([x - xyfs * 1.5, y / 2, -EPSILON])
-				rotate([180, 0, 90])
-				linear_extrude(EPSILON, center = true)	text(str(y, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
-			translate([xyfs * 1.5, y / 2, -EPSILON])
-				rotate([180, 0, -90])
-				linear_extrude(EPSILON, center = true)	text(str(y, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
-		}
-
-		// z, x view
-		if (detail) {
-			translate([x + EPSILON, y - yzfs * 1.5, z / 2])
-				rotate([90, 90, 90])
-				linear_extrude(EPSILON, center = true)	text(str(z, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
-			translate([x + EPSILON, yzfs * 1.5, z / 2])
-				rotate([90, -90, 90])
-				linear_extrude(EPSILON, center = true)	text(str(z, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
-		}
-
-		// z, -x view
-		translate([-EPSILON, yzfs * 1.5, z / 2])
-			rotate([-90, 90, 90])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
-		translate([-EPSILON, y - yzfs * 1.5, z / 2])
-			rotate([-90, -90, 90])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
-
-		// z, y view
-		if (detail) {
-			translate([x - zxfs * 1.5, y + EPSILON, z / 2])
-				rotate([-90, -90, 0])
-				linear_extrude(EPSILON, center = true)	text(str(z, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
-			translate([zxfs * 1.5, y + EPSILON, z / 2])
-				rotate([-90, 90, 0])
-				linear_extrude(EPSILON, center = true)	text(str(z, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
-		}
-
-		// z, -y view
-		translate([zxfs * 1.5, -EPSILON, z / 2])
-			rotate([90, -90, 0])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
-		translate([x - zxfs * 1.5, -EPSILON, z / 2])
-			rotate([90, 90, 0])
-			linear_extrude(EPSILON, center = true)	text(str(z, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
-	}
+	note_type_1([x, y, z], [x, y, z], centered, fs, detail);
+	echo("WARNING! module note in utils.scad was DEPRECATED. USE note_type_1 in library. called by ", parent_module(1), $parent_modules);
 }
 module boardPattern(size = [128, 64, 4], degree = 60, stick = [THICK, THICK, 32]) {
 	intersection() {

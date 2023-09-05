@@ -107,6 +107,8 @@ module cube_type_3(vectors, radious) {
 
 // 치수 표시
 module note_type_1(vs, ve, centered = false, fs, detail = false) {
+	DEFAULT_MIN_FONT_SIZE = 0.5;
+
 	x = vs.x;
 	y = vs.y;
 	z = vs.z;
@@ -119,7 +121,7 @@ module note_type_1(vs, ve, centered = false, fs, detail = false) {
 	translate(center)
 	{
 		// x, z view
-		xyfs = is_undef(fs) ? max(1, min(min(x, y) / 16, 20)) : 1;
+		xyfs = is_undef(fs) ? max(DEFAULT_MIN_FONT_SIZE, min(min(x, y) / 16, 20)) : fs;
 		translate([x / 2, y - xyfs * 1.5, z + EPSILON])
 			linear_extrude(EPSILON, center = true)	text(str(ex, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
 		translate([x / 2, xyfs * 1.5, z + EPSILON])
@@ -136,7 +138,7 @@ module note_type_1(vs, ve, centered = false, fs, detail = false) {
 				linear_extrude(EPSILON, center = true)	text(str(x, mm), size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
 		}
 
-		zxfs = is_undef(fs) ? max(1, min(min(z, x) / 16, 20)) : 1;
+		zxfs = is_undef(fs) ? max(DEFAULT_MIN_FONT_SIZE, min(min(z, x) / 16, 20)) : fs;
 		// x, y view
 		if (detail) {
 			translate([x / 2, y + EPSILON, z - zxfs * 1.5])
@@ -155,7 +157,7 @@ module note_type_1(vs, ve, centered = false, fs, detail = false) {
 			rotate([90, 180, 0])
 			linear_extrude(EPSILON, center = true)	text(str(x, mm), size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
 
-		yzfs = is_undef(fs) ? max(1, min(min(y, z) / 16, 20)) : 1;
+		yzfs = is_undef(fs) ? max(DEFAULT_MIN_FONT_SIZE, min(min(y, z) / 16, 20)) : fs;
 		// y, x view
 		if (detail) {
 			translate([x + EPSILON, y / 2, z - yzfs * 1.5])

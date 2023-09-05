@@ -34,6 +34,7 @@ module chefsKnife(p, q) {
 module landscape(thick, margin, delta) {
 	base =  landscapeSize(thick, margin, delta);	//	상판
 	
+	THICK_BACK_OF_KNIFE = 2;
 	height_back_of_knife = 32;
 
 	chefsInfo = chefsInfo();
@@ -59,18 +60,21 @@ module landscape(thick, margin, delta) {
 				y = base[1] / 2;
 				z = thick * 2;
 				roundedBoxNotCenter([x, y, z], 2, true);
-				note(x, y, z);
+				note_type_1([x, y, z]);
 				// 손잡이 등받이
-				translate([0, thick / 2, z])
+				translate([0, margin - thick + THICK_BACK_OF_KNIFE, z])
 				{
-					roundedBoxNotCenter([x, thick / 2, height_back_of_knife], 2, true);
-					note(x, thick, height_back_of_knife);
+					roundedBoxNotCenter([x, THICK_BACK_OF_KNIFE, height_back_of_knife], 0.5, true);
+					note_type_1([x, THICK_BACK_OF_KNIFE, height_back_of_knife]);
 				}
 			}
 
 			// 빵칼등의 등받이
-			translate([delta, margin - thick / 2, thick])
-			roundedBoxNotCenter([32, thick / 2, height_back_of_knife], 2, true);
+			translate([delta, margin - thick / 2 + THICK_BACK_OF_KNIFE, thick])
+			{
+				roundedBoxNotCenter([32, THICK_BACK_OF_KNIFE, height_back_of_knife], 0.5, true);
+				note_type_1([32, THICK_BACK_OF_KNIFE, height_back_of_knife]);
+			}
 		}
 
 		// 칼구멍
