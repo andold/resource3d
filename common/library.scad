@@ -43,11 +43,25 @@ function	vectors_from_cube(size) = [
 
 // 끝에 반구가 더달린 실린더형태의 3차원 라인
 module line_type_1(start, end, r1, r2) {
+	r22 = is_undef(r2) ? r1 : r2;
     hull() {
         translate(start) sphere(r1, $fn = FN);
-        translate(end) sphere(is_undef(r2) ? r1 : r2, $fn = FN);
+        translate(end) sphere(r22, $fn = FN);
     }
+
+	dx = end.x - start.x;
+	dy = end.y - start.y;
+	dz = end.z - start.z;
+	rx = dy == 0 ? 0 : atan(dz / dy);
+	ry = dz == 0 ? 0 : 90 + atan(dx / dz);
+	rz = dx == 0 ? 0 : atan(dy / dx);
+	d = sqrt(dx * dx + dy * dy + dz * dz);
+	fs = max(0.5, min(d / 32, 20));
+	%translate([(start.x + end.x) / 2 + max(r1, r22), (start.y + end.y) / 2 + max(r1, r22), (start.z + end.z) / 2 + max(r1, r22)])
+		rotate([rx, ry, rz])
+		linear_extrude(EPSILON, center = true)	text(str(d, " mm"), size = fs, halign = "center", language = "kr", font = "NanumGothic");
 }
+*line_type_1([0, 0, 0], [4, 8, 0], 1);
 
 // 밑둥이 잘린 구
 module sphere_type_1(r) {
@@ -232,6 +246,69 @@ module note_type_1(vs, ve, centered = false, fs, detail = false) {
 	}
 }
 
+// 치수 표시 with name
+module note_type_2(name, vs, ve, centered = false, fs, detail = false) {
+	DEFAULT_MIN_FONT_SIZE = 0.5;
+
+	x = vs.x;
+	y = vs.y;
+	z = vs.z;
+	ex = is_undef(ve) ? vs.x : ve.x;
+	ey = is_undef(ve) ? vs.y : ve.y;
+	ez = is_undef(ve) ? vs.z : ve.z;
+	mm = " mm";	//	"㎜";
+	center = centered ? [-vs.x / 2, -vs.y / 2, -vs.z / 2] : [0, 0, 0];
+	xyfs = is_undef(fs) ? max(DEFAULT_MIN_FONT_SIZE, min(min(x, y) / 16, 20)) : fs;
+	zxfs = is_undef(fs) ? max(DEFAULT_MIN_FONT_SIZE, min(min(z, x) / 16, 20)) : fs;
+	yzfs = is_undef(fs) ? max(DEFAULT_MIN_FONT_SIZE, min(min(y, z) / 16, 20)) : fs;
+	note_type_1(vs, ve, centered, fs, detail);
+	%color("Black")
+	translate(center)
+	{
+		// x, z view
+		translate([x / 2, y / 2, z + EPSILON])
+			rotate([0, 0, 180])
+			rotate([0, 0, x < y ? 90 : 0])
+			linear_extrude(EPSILON, center = true)	text(name, size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
+
+		// x, -z view
+		if (detail) {
+			translate([x / 2, y / 2, -EPSILON])
+				rotate([180, 0, 180])
+				rotate([0, 0, x < y ? 90 : 0])
+				linear_extrude(EPSILON, center = true)	text(name, size = xyfs, halign = "center", language = "kr", font = "NanumGothic");
+		}
+
+		// x, y view
+		if (detail) {
+			translate([x / 2, y + EPSILON, z / 2])
+				rotate([90, 0, 180])
+				rotate([0, 0, x < z ? 90 : 0])
+				linear_extrude(EPSILON, center = true)	text(name, size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
+		}
+
+		// x, -y view
+		translate([x / 2, -EPSILON, z / 2])
+			rotate([90, 0, 0])
+			rotate([0, 0, x < z ? 90 : 0])
+			linear_extrude(EPSILON, center = true)	text(name, size = zxfs, halign = "center", language = "kr", font = "NanumGothic");
+
+		// y, x view
+		if (detail) {
+			translate([x + EPSILON, y / 2, z / 2])
+				rotate([-90, 180, -90])
+				rotate([0, 0, y < z ? 90 : 0])
+				linear_extrude(EPSILON, center = true)	text(name, size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
+		}
+
+		// y, -x view
+		translate([-EPSILON, y / 2, z / 2])
+			rotate([90, 0, -90])
+			rotate([0, 0, y < z ? 90 : 0])
+			linear_extrude(EPSILON, center = true)	text(name, size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
+	}
+}
+
 //	튜브형태의 네모 박스, 사방 벽면만 있는 형태
 //	size: 외경
 module box_type_1(size, thick) {
@@ -392,5 +469,18 @@ module samples() {
 		casting_black_25(8, true);
 		translate([-4, -8, 0])	text("casting_black_25(8)", size = 1);
 	}
+	x11 = 16 + 4;
+
+	//	cube_type_1
+	translate([x11, 64, 0])
+	{
+		color("white", 1.0)	cube_type_1([16, 32, 4], 12);
+		//	module note_type_2(name, vs, ve, centered = false, fs, detail = false) {
+		note_type_2("note_type_2", [16, 32, 4], [12, 32, 4], false, undef, true);
+	}
+	x12 = x11 + 16 + 4;
+
+	translate([x12, 64, 0])
+	line_type_1([0, 0, 0], [4, 8, 12], 1);
 }
 samples();

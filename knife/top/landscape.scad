@@ -73,7 +73,7 @@ module landscape(thick, margin, delta) {
 			translate([delta, margin - thick / 2 + THICK_BACK_OF_KNIFE, thick])
 			{
 				roundedBoxNotCenter([32, THICK_BACK_OF_KNIFE, height_back_of_knife], 0.5, true);
-				note_type_1([32, THICK_BACK_OF_KNIFE, height_back_of_knife]);
+				note_type_2("빵칼 등받이", [32, THICK_BACK_OF_KNIFE, height_back_of_knife]);
 			}
 		}
 
@@ -109,7 +109,7 @@ module landscape(thick, margin, delta) {
 module landscapePrototype(param) {
 	size = landscapeSize(param[0], param[1], param[2]);
 	cube(size);
-	note_type_1(size);
+	note_type_2("Prototype", size);
 }
 
 module build(target, step) {
