@@ -73,6 +73,7 @@ module basis01_type_3(type = 2) {
 	ps = type == 1 ? [for (cx = [0:len(tps) - 1]) rotate_vector([0, 180, 0], tps[cx])] : tps;
 
 	if (type == 0 || type == 1) {
+		translate([radious, radious, radious])
 		difference() {
 			union() {
 				line_type_1(ps[0], ps[1], radious);
@@ -96,13 +97,20 @@ module basis01_type_3(type = 2) {
 				}
 			}
 		}
-	} else if (type == 2) {
+	} else if (type == 2 || type == 4) {
 		dyCasting = radious * 2 - 3 - depth_bolt;
+		translate([radious, 0, radious])
 		for (cx = [0:3]) {
 			translate([cx * radious * 3, 0, 0])
 				rotate([-90, 0, 0])
 					difference() {
-						cylinder(x, radious, radious, $fn = FN);
+						if (type == 2) {
+							cylinder(x, radious, radious, $fn = FN);
+						} else if (type == 4) {
+							translate([-radious, -radious, 0])	cube([radious * 2, radious * 2, x]);
+						} else {
+							echo("ERROR!!! ----------------------- 없는 요청입니다");
+						}
 						translate([0, 0, -dyCasting - 3])
 							casting_black_25(dyCasting);
 						translate([0, 0, x + dyCasting + 3])
@@ -110,7 +118,11 @@ module basis01_type_3(type = 2) {
 								casting_black_25(dyCasting);
 					}
 		}
-	} else {
+		// 가이드
+		guide = [40, 1.6, 0.28];
+		cube(guide);
+		translate([0, x - guide.y, 0])	cube(guide);
+	} else if (type == 3) {
 		outter = radious * 4;
 		h = 57.7 + 13;
 		inner = radious * 1.05;
@@ -125,6 +137,8 @@ module basis01_type_3(type = 2) {
 				translate([0, 0, radious * 8])	line_type_1([0, 0, h], [0, radious * 8, h], inner);
 			}
 		}
+	} else {
+		echo("ERROR!!! ----------------------- 없는 요청입니다");
 	}
 
 	echo("basis01_type_3 끝: ", DEFAULT_PARAM, type);
@@ -145,10 +159,10 @@ module prototype_basis01_type_3() {
 
 	difference() {
 		union() {
-			line_type_1(tps[0], tps[1], radious);
-			line_type_1(tps[1], tps[2], radious);
-			line_type_1(tps[2], tps[3], radious);
-			line_type_1(tps[3], tps[0], radious);
+			translate([-radious, -radious, -radious])	cube([radious * 2, y + radious * 2, radious * 2]);
+			translate([-radious, y -radious, -radious])	cube([x + radious * 2, radious * 2, radious * 2]);
+			translate([x-radious, -radious, -radious])	cube([radious * 2, y + radious * 2, radious * 2]);
+			translate([-radious, -radious, -radious])	cube([x + radious * 2, radious * 2, radious * 2]);
 
 			for (cx = [0:len(tps) - 1]) {
 				translate(tps[cx] - [0, 0, radious])
@@ -159,7 +173,9 @@ module prototype_basis01_type_3() {
 			for (cx = [0:len(tps) - 1]) {
 				translate(tps[cx] + [0, 0, depth_bolt])
 					rotate([0, 180, 0])
-					casting_black_25(radious * 2 - 3 - depth_bolt);
+					{
+						casting_black_25(radious * 2 - 3 - depth_bolt);
+					}
 			}
 		}
 	}
@@ -168,7 +184,10 @@ module prototype_basis01_type_3() {
 	translate([topSize.y + radious * 4, topSize.y / 2, 0])
 		rotate([-90, 0, 90])
 			difference() {
-				cylinder(topSize.y, radious, radious, $fn = FN);
+				union()
+				{
+					translate([-radious, radious, -0])	rotate([90, 0, 0])	cube([radious * 2, topSize.y, radious * 2]);
+				}
 				translate([0, 0, -dyCasting - 3])
 					casting_black_25(dyCasting);
 				translate([0, 0, topSize.y + dyCasting + 3])
@@ -188,6 +207,8 @@ module samples() {
 }
 
 module build(target, step) {
+	*translate([0, 0, -EPSILON])	cube([220, 220, EPSILON]);
+
 	if (target == 0) {
 		basis01_type_3(0);
 	} else if (target == 1) {
@@ -198,13 +219,15 @@ module build(target, step) {
 		basis01_type_3(3);
 	} else if (target == 4) {
 		prototype_basis01_type_3();
+	} else if (target == 5) {
+		basis01_type_3(4);
 	} else {
 		samples();
 	}
 }
 
 
-target = 4;
+target = 5;
 build(target, $t);
 
 /*
@@ -214,4 +237,5 @@ C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#27-stick.stl -D target=2 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#27.scad
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#27-foot.stl -D target=3 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#27.scad
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#27-prototype.stl -D target=4 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#27.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#27-cstick.stl -D target=5 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#27.scad
 */
