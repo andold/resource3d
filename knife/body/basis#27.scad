@@ -122,6 +122,15 @@ module basis01_type_3(type = 2) {
 		guide = [40, 1.6, 0.28];
 		cube(guide);
 		translate([0, x - guide.y, 0])	cube(guide);
+	} else if (type == 5) {
+		dyCasting = radious * 2 - 3 - depth_bolt;
+		translate([radious, 0, radious])
+			rotate([-90, 0, 0])
+			difference() {
+				cylinder(x, radious, radious, $fn = FN);
+				translate([0, 0, -dyCasting - 3])							casting_black_25(dyCasting);
+				translate([0, 0, x + dyCasting + 3])	rotate([180, 0, 0])	casting_black_25(dyCasting);
+			}
 	} else if (type == 3) {
 		outter = radious * 4;
 		h = 57.7 + 13;
@@ -196,6 +205,18 @@ module prototype_basis01_type_3() {
 			}
 }
 
+module assemble() {
+	translate([0, 0, 0])										rotate([90, 0, 0])		basis01_type_3(0);
+	translate([DEFAULT_PARAM[0] * 2, topSize(PARAM_TOP).x, 0])	rotate([90, 0, 180])	basis01_type_3(1);
+	translate([0, 0, 0])																basis01_type_3(5);
+	translate([DEFAULT_PARAM[2] * sin(DEFAULT_PARAM[4]), 0, 0])							basis01_type_3(5);
+	translate([DEFAULT_PARAM[2] * sin(DEFAULT_PARAM[4]) + (topSize(PARAM_TOP).y  - DEFAULT_PARAM[0] * 2) * cos(DEFAULT_PARAM[4]), 0, 0])	basis01_type_3(5);
+	translate([DEFAULT_PARAM[2] * sin(DEFAULT_PARAM[4]) + (topSize(PARAM_TOP).y  - DEFAULT_PARAM[0] * 2) * cos(DEFAULT_PARAM[4]), 0, (topSize(PARAM_TOP).y  - DEFAULT_PARAM[0] * 2) * sin(DEFAULT_PARAM[4])])	basis01_type_3(5);
+
+	%translate([0, topSize(PARAM_TOP).x, DEFAULT_PARAM[2] * cos(DEFAULT_PARAM[4])])
+		rotate([DEFAULT_PARAM[4], 0, -90])
+		landscape(PARAM_TOP[0], PARAM_TOP[1], PARAM_TOP[2]);
+}
 module samples() {
 	translate([0, 0, 0])											rotate([90, 0, 0])		basis01_type_3(0);
 	translate([0, topSize(PARAM_TOP).x + DEFAULT_PARAM[0] * 2, 0])	rotate([90, 0, 180])	basis01_type_3(1);
@@ -221,13 +242,17 @@ module build(target, step) {
 		prototype_basis01_type_3();
 	} else if (target == 5) {
 		basis01_type_3(4);
+	} else if (target == 6) {
+		basis01_type_3(5);
+	} else if (target == 7) {
+		assemble();
 	} else {
 		samples();
 	}
 }
 
 
-target = 5;
+target = 7;
 build(target, $t);
 
 /*
@@ -238,4 +263,5 @@ C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#27-foot.stl -D target=3 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#27.scad
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#27-prototype.stl -D target=4 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#27.scad
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#27-cstick.stl -D target=5 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#27.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#27-1stick.stl -D target=6 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#27.scad
 */
