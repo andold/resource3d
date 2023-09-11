@@ -3,6 +3,7 @@ use <MCAD/boxes.scad>
 include	<../../common/constants.scad>
 use <../../common/library.scad>
 use <../top/landscape.scad>
+use <foot#28.scad>
 use <wall.scad>
 
 // 상수
@@ -37,8 +38,11 @@ function topSize(param) = landscapeSize(param[0], param[1], param[2]);
 	type
 		0: 오른쪽 지지대
 		1: 왼쪽 지지대
-		2: 연결 막대
+		2: 연결 막대 원형
 		3: 높이 받침대
+		4: 연결 막대 육면체형
+		5: 원형 연결 막대 1개
+		6: 
 */
 module basis01_type_3(type = 2) {
 	echo("basis01_type_3 처음: ", DEFAULT_PARAM, type);
@@ -72,7 +76,7 @@ module basis01_type_3(type = 2) {
 	tps = [p0, p1, p2, p3, p4, p5];
 	ps = type == 1 ? [for (cx = [0:len(tps) - 1]) rotate_vector([0, 180, 0], tps[cx])] : tps;
 
-	if (type == 0 || type == 1) {
+	if (type == 0 || type == 1) {	//	왼쪽 오른쪽 지지대
 		translate([radious, radious, radious])
 		difference() {
 			union() {
@@ -97,7 +101,7 @@ module basis01_type_3(type = 2) {
 				}
 			}
 		}
-	} else if (type == 2 || type == 4) {
+	} else if (type == 2 || type == 4) {	//	원형 육면체형 연결 막대
 		dyCasting = radious * 2 - 3 - depth_bolt;
 		translate([radious, 0, radious])
 		for (cx = [0:3]) {
@@ -122,7 +126,7 @@ module basis01_type_3(type = 2) {
 		guide = [40, 1.6, 0.28];
 		cube(guide);
 		translate([0, x - guide.y, 0])	cube(guide);
-	} else if (type == 5) {
+	} else if (type == 5) {	//	원형 연결 막대 1개
 		dyCasting = radious * 2 - 3 - depth_bolt;
 		translate([radious, 0, radious])
 			rotate([-90, 0, 0])
@@ -131,7 +135,7 @@ module basis01_type_3(type = 2) {
 				translate([0, 0, -dyCasting - 3])							casting_black_25(dyCasting);
 				translate([0, 0, x + dyCasting + 3])	rotate([180, 0, 0])	casting_black_25(dyCasting);
 			}
-	} else if (type == 3) {
+	} else if (type == 3) {	//	높이 받침대
 		outter = radious * 4;
 		h = 57.7 + 13;
 		inner = radious * 1.05;
@@ -206,12 +210,16 @@ module prototype_basis01_type_3() {
 }
 
 module assemble() {
+	h = 57.7 + 13;
+	inner = DEFAULT_PARAM[0] * 1.05;
+
 	translate([0, 0, 0])										rotate([90, 0, 0])		basis01_type_3(0);
 	translate([DEFAULT_PARAM[0] * 2, topSize(PARAM_TOP).x, 0])	rotate([90, 0, 180])	basis01_type_3(1);
 	translate([0, 0, 0])																basis01_type_3(5);
 	translate([DEFAULT_PARAM[2] * sin(DEFAULT_PARAM[4]), 0, 0])							basis01_type_3(5);
 	translate([DEFAULT_PARAM[2] * sin(DEFAULT_PARAM[4]) + (topSize(PARAM_TOP).y  - DEFAULT_PARAM[0] * 2) * cos(DEFAULT_PARAM[4]), 0, 0])	basis01_type_3(5);
 	translate([DEFAULT_PARAM[2] * sin(DEFAULT_PARAM[4]) + (topSize(PARAM_TOP).y  - DEFAULT_PARAM[0] * 2) * cos(DEFAULT_PARAM[4]), 0, (topSize(PARAM_TOP).y  - DEFAULT_PARAM[0] * 2) * sin(DEFAULT_PARAM[4])])	basis01_type_3(5);
+	translate([inner, -inner, -h])	basis01_type_3_foot();
 
 	%translate([0, topSize(PARAM_TOP).x, DEFAULT_PARAM[2] * cos(DEFAULT_PARAM[4])])
 		rotate([DEFAULT_PARAM[4], 0, -90])
@@ -228,8 +236,6 @@ module samples() {
 }
 
 module build(target, step) {
-	*translate([0, 0, -EPSILON])	cube([220, 220, EPSILON]);
-
 	if (target == 0) {
 		basis01_type_3(0);
 	} else if (target == 1) {

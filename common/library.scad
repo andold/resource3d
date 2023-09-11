@@ -3,6 +3,10 @@ use <MCAD/boxes.scad>
 include	<constants.scad>
 use <utils.scad>
 
+// 적정한 fn 값
+function fnRound(radious) = $preview ? FN : 2 * PI * radious / 0.4;
+//function fnRound(radious) = 2 * PI * radious / 0.4;
+
 // z축 0로로
 function set_z(v, z) = [v.x, v.y, z];
 
@@ -117,6 +121,27 @@ module cube_type_3(vectors, radious) {
 	line_type_1(vectors[1], vectors[5], radious);
 	line_type_1(vectors[2], vectors[6], radious);
 	line_type_1(vectors[3], vectors[7], radious);
+}
+
+// x 축으로의 모서리의 일부 각을 제거한 것
+module cube_type_4(v, c) {
+	r = is_undef(c) ? min(v.y, v.z) / 16 : c;
+	stiffen = r * sqrt(2);
+
+	translate([0, r, 0])		cube(v - [0, r * 2, 0]);
+	translate([0, 0, r])		cube(v - [0, 0, r * 2]);
+	translate([0, r, 0])				rotate([45, 0, 0])	cube([v.x, r, r]);
+	translate([0, r, v.z - r * 2])		rotate([45, 0, 0])	cube([v.x, stiffen, stiffen]);
+	translate([0, v.y - r, v.z - r * 2])		rotate([45, 0, 0])	cube([v.x, stiffen, stiffen]);
+	translate([0, v.y - r, 0])		rotate([45, 0, 0])	cube([v.x, stiffen, stiffen]);
+}
+
+// 상하 모서리의 일부 각을 제거한 것
+module cylinder_type_1(height, radious, cut) {
+	fn = fnRound(radious);
+	translate([0, 0, 0])			cylinder(cut,				radious - cut,	radious,		$fn = fn);
+	translate([0, 0, cut])			cylinder(height - cut * 2,	radious,		radious,		$fn = fn);
+	translate([0, 0, height - cut])	cylinder(cut,				radious,		radious - cut,	$fn = fn);
 }
 
 // 치수 표시
@@ -349,14 +374,13 @@ module ellipsis(x, y, z) {
 
 // 검은색 나사못을 박을 자리를 위한 주물, ref) https://github.com/andold/resource3d/blob/main/README.md
 module casting_black_25(y, legend = false) {
-//	color("Black", 0.5)
-		translate([0, 0, -8])
-		cylinder(8, 7.9 / 2, 7.9 / 2, $fn = FN);
+	translate([0, 0, -8])
+		cylinder(8, 7.9 / 2, 7.9 / 2, $fn = fnRound(4));
 //	color("Lavender", 0.5)
 	{
-		cylinder(3, 7.9 / 2, 3.8 / 2, $fn = FN);
-		translate([0, 0, 3])	cylinder(y, 3.8 / 2, 3.8 / 2, $fn = FN);
-		translate([0, 0, 3 + y])	cylinder(25 - 3 - y, 3.4 / 2, 3.4 / 2, $fn = FN);
+		cylinder(3, 7.9 / 2, 3.8 / 2, $fn = fnRound(4));
+		translate([0, 0, 3])	cylinder(y, 3.8 / 2, 3.8 / 2, $fn = fnRound(2));
+		translate([0, 0, 3 + y])	cylinder(25 - 3 - y, 3.4 / 2, 3.4 / 2, $fn = fnRound(2));
 	}
 	%if (legend) {
 		translate([0, -5, -2])	rotate([90, 0, 0])	text("extra for space", 1, halign="center");
@@ -482,5 +506,20 @@ module samples() {
 
 	translate([x12, 64, 0])
 	line_type_1([0, 0, 0], [4, 8, 12], 1);
+	x13 = x12 + 24;
+	
+	translate([x13, 64, 0])
+	{
+		cube_type_4([16, 4, 8]);
+		note_type_2("cube_type_4([16, 4, 8])", [16, 4, 8]);
+	}
+	x14 = x13 + 24;
+
+	translate([x14, 64, 0])
+	{
+		cylinder_type_1(8, 4, 1);
+		note_type_2("cylinder_type_1(8, 4, 1)", [8, 8, 8], [8, 8, 8], true, undef, true);
+	}
+
 }
 samples();

@@ -4,6 +4,7 @@ include	<../../common/constants.scad>
 use <../../common/library.scad>
 use <../top/landscape.scad>
 use <../etc/utils.scad>
+use <basis#27.scad>
 use <wall.scad>
 use <body.scad>
 
@@ -269,99 +270,6 @@ module basis01_type_2(param) {
 	echo("basis01_type_2 끝: ", param);
 }
 
-// 실린더 모양의 라인 구조체
-module basis01_type_3(param, type = 2) {
-	echo("basis01_type_3 처음: ", param, type);
-
-	topSize = topSize(PARAM_TOP);
-	HEIGHT = 180;
-
-	thick = param[0];
-	margin = param[1];
-	overlap = param[2];
-	height = param[3];
-	anglex = 0;
-	angley = param[4];
-	anglez = param[5];
-
-	radious = thick;
-
-	x = topSize.x;
-	y = topSize.y - radious * 2;
-	z = HEIGHT;
-
-	// 연결점 추가
-	height_joint_top = thick * 2;
-	depth_bolt = radious / 4 * 3;
-
-	p0 = [0, 0, 0];
-	p1 = [0, cos(angley) * z, 0];
-	p2 = [cos(angley) * y, p1.y + sin(angley) * y, 0];
-	p3 = [p2.x + sin(angley) * z, sin(angley) * y, 0];
-	p4 = [p3.x, 0, 0];
-	p5 = [sin(angley) * z, 0, 0];
-	tps = [p0, p1, p2, p3, p4, p5];
-	ps = type == 1 ? [for (cx = [0:len(tps) - 1]) rotate_vector([0, 180, 0], tps[cx])] : tps;
-
-	if (type == 0 || type == 1) {
-		difference() {
-			union() {
-				line_type_1(ps[0], ps[1], radious);
-				line_type_1(ps[1], ps[2], radious);
-				line_type_1(ps[2], ps[3], radious);
-				line_type_1(ps[3], ps[4], radious);
-				line_type_1(ps[4], ps[0], radious);
-
-				line_type_1(ps[1], ps[5], radious);
-				line_type_1(ps[5], ps[3], radious);
-				for (cx = [0:len(ps) - 1]) {
-					translate(ps[cx] - [0, 0, radious])
-						cylinder(radious, radious, radious);
-				}
-			}
-			union() {
-				for (cx = [0:len(ps) - 1]) {
-					translate(ps[cx] + [0, 0, depth_bolt])
-						rotate([0, 180, 0])
-						casting_black_25(radious * 2 - 3 - depth_bolt);
-				}
-			}
-		}
-	} else if (type == 2) {
-		dyCasting = radious * 2 - 3 - depth_bolt;
-		for (cx = [0:len(ps) - 1]) {
-			translate([cx * radious * 3, 0, 0])
-				rotate([-90, 0, 0])
-					difference() {
-						cylinder(x, radious, radious, $fn = FN);
-						translate([0, 0, -dyCasting - 3])
-							casting_black_25(dyCasting);
-						translate([0, 0, x + dyCasting + 3])
-							rotate([180, 0, 0])
-								casting_black_25(dyCasting);
-					}
-		}
-	} else {
-		outter = radious * 4;
-		h = 57.7 + 13;
-		inner = radious * 1.05;
-		difference() {
-			translate([inner, inner, 0])	line_type_1([0, 0, 0], [0, 0, h], radious, outter);
-			hull() {
-				line_type_1([0, 0, h], [radious * 8, 0, h], inner);
-				translate([0, 0, radious * 8])	line_type_1([0, 0, h], [radious * 8, 0, h], inner);
-			}
-			hull() {
-				line_type_1([0, 0, h], [0, radious * 8, h], inner);
-				translate([0, 0, radious * 8])	line_type_1([0, 0, h], [0, radious * 8, h], inner);
-			}
-		}
-	}
-
-	echo("basis01_type_3 끝: ", param, type);
-}
-*basis01_type_3(DEFAULT_PARAM);
-
 // 본체와의 결합 부위(basis01)를 받치는 기둥들
 function basis02translate(param, PARAM_BODY) = [
 	0,
@@ -591,15 +499,17 @@ module build(target, step) {
 		translate([0, 0, 0])	metric_bolt(headtype="countersunk", size=10, l=16, shank=8, details=true, phillips="#2", $fn=32);
 		#translate([10, 0, 0])	metric_nut(size=10, hole=true, pitch=1.5, details=true, $fn=32);
 	} else if (target == 6) {
-			basis01_type_3(param, 0);
+			basis01_type_3(0);
 	} else if (target == 7) {
-			basis01_type_3(param, 1);
+			basis01_type_3(1);
 	} else if (target == 8) {
-			basis01_type_3(param, 2);
+			basis01_type_3(2);
 	} else if (target == 9) {
-			basis01_type_3(param, 3);
+			basis01_type_3(3);
 	} else if (target == 10) {
 			basis(param);
+	} else if (target == 11) {
+			basis01_type_3_assemble();
 	} else {
 		rotate([0, 0, -$t * 360])
 			rotate([-30, 0, 0])
@@ -612,7 +522,7 @@ module build(target, step) {
 	echo("build basis 끝: ", target, step);
 }
 
-target = 6;
+target = 11;
 build(target, $t);
 /*
 # in HOME(project root, ie. .../resouce3d)
