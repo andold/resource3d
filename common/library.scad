@@ -65,7 +65,6 @@ module line_type_1(start, end, r1, r2) {
 		rotate([rx, ry, rz])
 		linear_extrude(EPSILON, center = true)	text(str(d, " mm"), size = fs, halign = "center", language = "kr", font = "NanumGothic");
 }
-*line_type_1([0, 0, 0], [4, 8, 0], 1);
 
 // 밑둥이 잘린 구
 module sphere_type_1(r) {
