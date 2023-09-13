@@ -31,13 +31,16 @@ module container() {
 	translate([MEASURE[0], 0, 0])	cube([MEASURE[2],				y,				MEASURE[1]]);
 }
 module fridge(type) {
-	*translate([32, MEASURE[0] + MEASURE[2], 0])	rotate([0, 0, -90])	container();
+	%translate([0, MEASURE[0] + MEASURE[2], 0])	rotate([0, 0, -90])	container();
 
-	//	칸막이
-	cube([DEFINE[0], MEASURE[0], MEASURE[1]]);
-	translate([DEFINE[1], 0, 0])		cube([DEFINE[0], MEASURE[0], MEASURE[1]]);
-	//	칸막이 반으로 나누기
-	translate([-DEFINE[1] / 4, MEASURE[0] / 2, 0])		cube([220, DEFINE[0], MEASURE[1]]);
+	translate([DEFINE[1] / 2, MEASURE[2], 0])
+	{
+		//	칸막이
+		cube([DEFINE[0], MEASURE[0], MEASURE[1]]);
+		translate([DEFINE[1], 0, 0])		cube([DEFINE[0], MEASURE[0], MEASURE[1]]);
+		//	칸막이 반으로 나누기
+		translate([-DEFINE[1] / 4, MEASURE[0] / 2, 0])		cube([220, DEFINE[0], MEASURE[1]]);
+	}
 }
 
 target = 0;
