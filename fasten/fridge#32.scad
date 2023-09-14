@@ -1,15 +1,11 @@
 /*
 	냉장고 칸막이
-- 내경 기준
-- 높이: 90 mm
-- 깊이: 155 mm
-- 앞판 두께: 11.5+ mm
 */
 include	<../common/constants.scad>
 use <../common/library.scad>
 
 MEASURE = [
-	155,	//	내경 기준 깊이
+	152,	//	내경 기준 깊이
 	90,		//	높이
 	11.5,	//	앞판 두께
 	0		//	reserved
@@ -52,12 +48,17 @@ module fridge(type) {
 		//	긴쪽
 		difference() {
 			// 기본판
-			cube([MAX.x, MEASURE[1], DEFINE[0]]);
+			union() {
+				cube([MAX.x, MEASURE[1], DEFINE[0]]);
+				note_type_1([MAX.x, MEASURE[1], DEFINE[0]]);
+			}
 
 			//	조립
 			for (cx = [1:7]) {
 				// 칸막이들간의 조립 구멍
-				translate([MAX.x / 8 * cx - DEFINE[0] / 2, 0, -EPSILON])	cube([DEFINE[0], MEASURE[1] / 2, DEFINE[0] + EPSILON2]);
+				translate([MAX.x / 8 * cx - DEFINE[0] / 2, 0, -EPSILON]) {
+					cube([DEFINE[0], MEASURE[1] / 2, DEFINE[0] + EPSILON2]);
+				}
 				// 고정용 하단
 				translate([MAX.x / 8 * cx - DEFINE[3] / 2, MEASURE[1] - DEFINE[0], -EPSILON])
 					cube([DEFINE[3], DEFINE[0] + EPSILON, DEFINE[0] + EPSILON2]);
@@ -70,7 +71,10 @@ module fridge(type) {
 		//짧은쪽
 		difference() {
 			// 기본판
-			cube([MEASURE[0], MEASURE[1], DEFINE[0]]);
+			union() {
+				cube([MEASURE[0], MEASURE[1], DEFINE[0]]);
+				note_type_1([MEASURE[0], MEASURE[1], DEFINE[0]]);
+			}
 
 			//	조립
 			for (cx = [1:7]) {
