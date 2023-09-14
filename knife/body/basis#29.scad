@@ -178,15 +178,16 @@ module assemble() {
 	translate([maxx + DEFAULT_PARAM[0] * 2, 0, 0])
 	rotate([0, 0, 180]) {
 		translate([0, 0, 0])										rotate([90, 0, 0])		basis01_type_3(0);
-		translate([DEFAULT_PARAM[0] * 2, size.x, 0])				rotate([90, 0, 180])	basis01_type_3(1);
+		translate([DEFAULT_PARAM[0] * 2 + maxx, size.x, 0])			rotate([90, 0, 180])	basis01_type_3(1);
 		translate([0, 0, 0])																basis01_type_3(5);
 		translate([DEFAULT_PARAM[2] * sin(DEFAULT_PARAM[4]), 0, 0])							basis01_type_3(5);
 		translate([DEFAULT_PARAM[2] * sin(DEFAULT_PARAM[4]) + (topSize(PARAM_TOP).y  - DEFAULT_PARAM[0] * 2) * cos(DEFAULT_PARAM[4]), 0, 0])	basis01_type_3(5);
 		translate([DEFAULT_PARAM[2] * sin(DEFAULT_PARAM[4]) + (topSize(PARAM_TOP).y  - DEFAULT_PARAM[0] * 2) * cos(DEFAULT_PARAM[4]), 0, (topSize(PARAM_TOP).y  - DEFAULT_PARAM[0] * 2) * sin(DEFAULT_PARAM[4])])	basis01_type_3(5);
 		translate([inner, -inner, -h])	basis01_type_3_foot();
 
-		%translate([0, topSize(PARAM_TOP).x, DEFAULT_PARAM[2] * cos(DEFAULT_PARAM[4])])
+		translate([PARAM_TOP[0] / 2, topSize(PARAM_TOP).x, PARAM_TOP[0] / 2 + DEFAULT_PARAM[2] * cos(DEFAULT_PARAM[4])])
 			rotate([DEFAULT_PARAM[4], 0, -90])
+			translate([0, -PARAM_TOP[0] / 2, -PARAM_TOP[0] / 2])
 			landscape(PARAM_TOP[0], PARAM_TOP[1], PARAM_TOP[2]);
 	}
 
@@ -222,7 +223,7 @@ module build(target, step) {
 }
 
 
-target = 2;
+target = 7;
 build(target, $t);
 
 /*
@@ -232,4 +233,5 @@ C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#29-stick.stl -D target=2 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#29.scad
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#29-foot.stl -D target=3 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#29.scad
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#29-1stick.stl -D target=6 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#29.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\basis#29-assemble.stl -D target=7 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#29.scad
 */
