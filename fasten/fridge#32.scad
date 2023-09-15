@@ -31,21 +31,45 @@ module assemble() {
 	// 냉장고
 	%translate([0, MEASURE[0] + MEASURE[2], 0])	rotate([0, 0, -90])	container();
 
+	start = 50;
 	// 칸막이 가로
-	translate([50, MEASURE[2] + MEASURE[0] / 2 + DEFINE[0] / 2, 0])	rotate([90, 0, 0])	fridge(0);
-	translate([50 + MAX.x / 2 + DEFINE[0] / 2, MEASURE[2], MEASURE[1]])	rotate([-90, 0, 90])	fridge(1);
-	
-	// 고정용 하단
-	translate([50 + MAX.x / 2 - DEFINE[3] / 2, MEASURE[2] + MEASURE[0] / 2 - DEFINE[3] / 2, 0])
-	fridge(2);
-	// 고정용 상단
-	translate([50 + MAX.x / 2 - DEFINE[3] / 2, MEASURE[2] + MEASURE[0] / 2 + DEFINE[3] / 2, MEASURE[1]])
-	rotate([180, 0, 0])
-	fridge(2);
+	translate([start, MEASURE[2] + MEASURE[0] / 2 + DEFINE[0] / 2, 0])	rotate([90, 0, 0])	fridge(0);
+
+	translate([start + MAX.x / 8 * 3, MEASURE[2], 0])
+	{
+		// 칸막이 세로
+		translate([DEFINE[0] / 2, 0, MEASURE[1]])
+			rotate([-90, 0, 90])
+			fridge(1);
+		
+		// 고정용 하단
+		translate([- DEFINE[3] / 2, MEASURE[0] / 2 - DEFINE[3] / 2, 0])
+			fridge(2);
+		// 고정용 상단
+		translate([- DEFINE[3] / 2, MEASURE[0] / 2 + DEFINE[3] / 2, MEASURE[1]])
+			rotate([180, 0, 0])
+			fridge(2);
+	}
+	translate([start + MAX.x / 8 * 7, MEASURE[2], 0])
+	{
+		// 칸막이 세로
+		translate([DEFINE[0] / 2, 0, MEASURE[1]])
+			rotate([-90, 0, 90])
+			fridge(1);
+		
+		// 고정용 하단
+		translate([- DEFINE[3] / 2, MEASURE[0] / 2 - DEFINE[3] / 2, 0])
+			fridge(2);
+		// 고정용 상단
+		translate([- DEFINE[3] / 2, MEASURE[0] / 2 + DEFINE[3] / 2, MEASURE[1]])
+			rotate([180, 0, 0])
+			fridge(2);
+	}
 }
 module fridge(type) {
 	if (type == 0) {
 		//	긴쪽
+		color("Green", 0.8)
 		difference() {
 			// 기본판
 			union() {
@@ -69,6 +93,7 @@ module fridge(type) {
 		}
 	} else if (type == 1) {
 		//짧은쪽
+		color("Blue", 0.8)
 		difference() {
 			// 기본판
 			union() {
@@ -90,6 +115,7 @@ module fridge(type) {
 			}
 		}
 	} else if (type == 2) {
+		color("Red", 0.8)
 		difference() {
 			// 기본판
 			cube([DEFINE[3], DEFINE[3], DEFINE[3]]);
@@ -112,4 +138,5 @@ fridge(target);
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\fridge#32-long.stl -D target=0 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\fridge#32.scad
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\fridge#32-short.stl -D target=1 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\fridge#32.scad
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\fridge#32-connect.stl -D target=2 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\fridge#32.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\fridge#32-assemble.stl -D target=3 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\fridge#32.scad
 */
