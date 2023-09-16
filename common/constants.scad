@@ -8,6 +8,7 @@ BIG = [1024, 1024, 1024];
 EPSILON = 0.01;
 EPSILON2 = EPSILON * 2;
 MINIMUM = 0.1;	//	0.1mm
+OVERHANG_THRESHOLD = 30;
 
 FN = $preview ? 16 : 360;
 
