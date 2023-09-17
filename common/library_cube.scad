@@ -1,5 +1,6 @@
 // 라이브러리, 검증된 것만 이곳에
 include	<constants.scad>
+use <library_function.scad>
 use <library_text.scad>
 use <library_line.scad>
 
@@ -75,14 +76,46 @@ module cube_type_4(v, c) {
 }
 
 // xy평면에 격자 모형, 45도
-module cube_type_5(size, wall) {
+module cube_type_5(size, wall, distance) {
+	w = is_undef(wall) ? size.z : wall;
+	dx = is_undef(distance) ? w * 4 : distance;
 	intersection() {
 		cube(size);
-		for(cx = [0: wall * 4: size.x + size.y]) {
-			translate([cx, - wall * sqrt(2), 0])	rotate([0, 0, 45])	cube([wall, size.y * 2, size.z]);
-			translate([cx - size.y, - wall * sqrt(2), 0])	rotate([0, 0, -45])	cube([wall, size.y * 2, size.z]);
+		for(cx = [0: dx: size.x + size.y]) {
+			translate([cx, - w * sqrt(2), 0])	rotate([0, 0, 45])	cube([w, size.y * 2, size.z]);
+			translate([cx - size.y, - w * sqrt(2), 0])	rotate([0, 0, -45])	cube([w, size.y * 2, size.z]);
 		}
 	}
+}
+
+// xy평면에 격자 모형, 45도
+module cube_type_5(size, wall, distance) {
+	w = is_undef(wall) ? size.z : wall;
+	dx = is_undef(distance) ? w * 4 : distance;
+	intersection() {
+		cube(size);
+		for(cx = [0: dx: size.x + size.y]) {
+			translate([cx, - w * sqrt(2), 0])	rotate([0, 0, 45])	cube([w, size.y * 2, size.z]);
+			translate([cx - size.y, - w * sqrt(2), 0])	rotate([0, 0, -45])	cube([w, size.y * 2, size.z]);
+		}
+	}
+}
+
+// xy평면에 테두리만 있는, 바깥쪽만 모서리 둥근 처리된된
+module cube_type_6(size, width, radious) {
+	w = is_undef(width) ? size.z : width;
+	r = is_undef(radious) ? 0 : radious;
+	r2 = r * 2;
+	
+	translate([0, r, 0])			cube([w, size.y - r2, size.z]);
+	translate([size.x - w, r, 0])	cube([w, size.y - r2, size.z]);
+	translate([r, 0, 0])			cube([size.x - r2, w, size.z]);
+	translate([r, size.y - w, 0])	cube([size.x - r2, w, size.z]);
+
+	translate([r, r, 0])	cylinder(size.z, r, r, $fn = fnRound(size.z));
+	translate([size.x - r, r, 0])	cylinder(size.z, r, r, $fn = fnRound(size.z));
+	translate([r, size.y - r, 0])	cylinder(size.z, r, r, $fn = fnRound(size.z));
+	translate([size.x - r, size.y - r, 0])	cylinder(size.z, r, r, $fn = fnRound(size.z));
 }
 
 module cube_types() {
@@ -92,16 +125,18 @@ module cube_types() {
 	translate([4, 24, 4])	text("cube_type_1", size = 1);
 	translate([4, 22, 4])	text("[16, 32, 4], 12", size = 1);
 	translate([4, 20, 4])	text("note_type_1", size = 1);
-	x1 = 16 + 4;
+	x1 = 24;
 	
 	//	cube_type_2
-	translate([x1, 0, 0]) {
-		color("yellow", 1.0)	cube_type_2([16, 32, 4], 20);
-		note_type_1([16, 32, 4], [12, 32, 4]);
-		translate([4, 24, 4])	text("cube_type_2", size = 1);
-		translate([4, 22, 4])	text("[16, 32, 4], 20", size = 1);
+	let (size = [8, 32, 4]) {
+		translate([x1, 0, 0]) {
+			color("yellow", 1.0)	cube_type_2(size, 12);
+			note_type_1(size, [12, 32, 4]);
+			translate([2, 24, 4])	text("cube_type_2", size = 1);
+			translate([2, 22, 4])	text(str(size, ", 20"), size = 1);
+		}
 	}
-	x2 = x1 + 16 + 4;
+	x2 = x1 + 24;
 
 	//	box_type_1: 튜브형태의 네모 박스, 사방 벽면만 있는 형태
 	translate([x2, 8, 0])
@@ -134,32 +169,46 @@ module cube_types() {
 		translate([-r, -r, -r])	note_type_1([x, y, z] + [r * 2, r * 2, r * 2]);
 		translate([0, -4, 0])	text("cube_type_3(v, 1)", size = 1);
 	}
-	x7 = x5 + 16;
+	x7 = x5 + 24;
 
 	//	cube_type_1
-	translate([x7, 64, 0])
+	translate([x7, 0, 0])
 	{
 		color("white", 1.0)	cube_type_1([16, 32, 4], 12);
 		//	module note_type_2(name, vs, ve, centered = false, fs, detail = false) {
 		note_type_2("note_type_2", [16, 32, 4], [12, 32, 4], false, undef, true);
 	}
-	x12 = x7 + 16 + 4;
+	x12 = x7 + 24;
 
 	//	cube_type_4
-	translate([x12, 64, 0])
+	translate([x12, 0, 0])
 	{
-		cube_type_4([16, 4, 8]);
+		color("yellow", 1.0)	cube_type_4([16, 4, 8]);
 		note_type_2("cube_type_4([16, 4, 8])", [16, 4, 8]);
 	}
 	x14 = x12 + 24;
 
 	//	cube_type_5
-	translate([x14, 64, 0])
-	{
-		cube_type_5([32, 64, 2], 2);
-		note_type_2("cube_type_5([32, 64, 2], 2)", [32, 64, 2]);
+	let (size = [16, 64, 2]) {
+		translate([x14, 0, 0])
+		{
+			color("white", 1.0)
+				cube_type_5(size, 2, 8);
+			note_type_2(str("cube_type_5(", size, ", 2, 8)"), size);
+		}
 	}
 	x15 = x14 + 24;
+
+	//	cube_type_6
+	let (size = [16, 32, 4]) {
+		translate([x15, 0, 0])
+		{
+			color("yellow", 1.0)
+				cube_type_6(size, 4, 2);
+			note_type_2(str("cube_type_6(", size, ", 4, 2)"), size);
+		}
+	}
+	x16 = x15 + 24;
 
 }
 cube_types();
