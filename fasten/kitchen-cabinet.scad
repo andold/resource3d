@@ -69,7 +69,6 @@ module container() {
 }
 module assemble() {
 	y_start = 64;
-//	sx = 24 + (MEASURE[2] + MEASURE[3]) * 6 - (MEASURE[4] / 2 + DEFINE[4]) - 200 / 2;
 	sx = MEASURE[2] / 2 + (MEASURE[0] - (DEFINE[6] * (MEASURE[3] - 1) + MEASURE[4])) / 2;
 	sz = trimmer_type_1_height(MEASURE[4] / 2, MINIMUM, DEFINE[5] + EPSILON2, DEFINE[4]);
 
@@ -77,14 +76,15 @@ module assemble() {
 		container();
 
 	translate([sx + DEFINE[6] * 1 - (MEASURE[4] / 2 + DEFINE[4]), y_start, 0])
-		kitchen(2);
+		connecter_type_2(2);
 	translate([sx + DEFINE[6] * 5 - (MEASURE[4] / 2 + DEFINE[4]), y_start, 0])
-		kitchen(2);
+		connecter_type_2(2);
 	translate([sx + DEFINE[6] * 9 - (MEASURE[4] / 2 + DEFINE[4]), y_start, 0])
-		kitchen(2);
+		connecter_type_2();
 
-	#translate([sx, y_start + DEFINE[5] / 2, sz])
-		cube([DEFINE[1], DEFINE[2], DEFINE[2] * 2]);
+	translate([sx, y_start + DEFINE[5] / 2 * 1 + DEFINE[4] / 2, sz])
+		rotate([90, 0, 0])
+		board_type_1();
 }
 
 //	큰 칸막이
@@ -132,8 +132,17 @@ module connecter_type_2() {
 	difference() {
 		union() {
 			cube([x, y, z]);
-			translate([0, (y - DEFINE[4] * 3) / 2, z])
-				cube([x, DEFINE[4] * 3, DEFINE[4] * 2]);
+			let(
+				cx = x,
+				cy = DEFINE[4] * 3,
+				cz = DEFINE[4] * 2,
+
+				reserved = 0
+			) {
+				translate([cx, (y - cy * 2) / 2, z])
+					rotate([0, 0, 90])
+					cube_type_1([cy * 2, cx, cz], cy);
+			}
 		}
 		translate([DEFINE[4], -EPSILON, -EPSILON])
 			trimmer_type_1(MEASURE[4] / 2, MINIMUM, DEFINE[5] + EPSILON2, DEFINE[4]);
@@ -145,9 +154,10 @@ module connecter_type_2() {
 // connecter_type_2를 여러개 프린트
 module connecter_type_2_set(ea) {
 	count = is_undef(ea) ? 8 : ea;
+	space = 0.4 * 2;	//	노즐지름의 두배
 	
 	for (cx = [1:count]) {
-		translate([cx * (MEASURE[4] + DEFINE[4] * 2 + 0.4), 0, 0])
+		translate([cx * (MEASURE[4] + DEFINE[4] * 2 + space), 0, 0])
 			connecter_type_2();
 	}
 }
@@ -185,12 +195,12 @@ module kitchen(type) {
 	}
 }
 
-target = 5;
+target = 9;
 kitchen(target);
 /*
 # in HOME(project root, ie. .../resouce3d)
-C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\kitchen-cabinet#34-tall.stl -D target=0 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\kitchen-cabinet.scad
-C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\kitchen-cabinet#34-small.stl -D target=1 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\kitchen-cabinet.scad
-C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\kitchen-cabinet#34-connector2s.stl -D target=4 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\kitchen-cabinet.scad
-C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\kitchen-cabinet#34-board1.stl -D target=5 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\kitchen-cabinet.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\kc#34-tall.stl -D target=0 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\kitchen-cabinet.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\kc#34-small.stl -D target=1 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\kitchen-cabinet.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\kc#36-connector2s.stl -D target=4 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\kitchen-cabinet.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\kc#34-board1.stl -D target=5 --export-format asciistl C:\src\eclipse-workspace\resource3d\fasten\kitchen-cabinet.scad
 */
