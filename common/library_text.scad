@@ -7,7 +7,6 @@ use <library_function.scad>
 */
 // 치수 표시
 module note_type_1(vs, ve, centered = false, fs, detail = false) {
-	echo("note_type_1", vs, ve, centered, fs, detail);
 	DEFAULT_MIN_FONT_SIZE = 0.2;
 
 	x = vs.x;

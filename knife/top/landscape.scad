@@ -2,6 +2,7 @@ use <MCAD/boxes.scad>
 
 include	<../../common/constants.scad>
 use <../../common/library.scad>
+use <../../common/library_text.scad>
 
 use <common.scad>
 use <../../common/utils.scad>
@@ -22,7 +23,7 @@ module chefsKnife(p, q) {
 	difference() {
 		union() {
 			color("White", 1.0)	cube(p, true);
-			note(p[0], p[1], p[2], true);
+			note_type_1([p[0], p[1], p[2]]);
 		}
 		translate([0, 0, -p[2] / 1.8])
 			rotate([15, 0, 0]) {
@@ -44,8 +45,8 @@ module landscape(thick, margin, delta) {
 			translate([base[0] / 2, base[1] / 2, thick / 2])
 			{
 				roundedBox(base, 2, true, $fn = FN);
-				note(base[0], base[1], base[2], true);
 			}
+			note_type_1([base[0], base[1], base[2]]);
 			
 			//	서명
 			color(c=PALETTE[2])

@@ -5,6 +5,8 @@ use <MCAD/boxes.scad>
 
 include	<../../common/constants.scad>
 use <../../common/library.scad>
+use <../../common/library_cube.scad>
+
 use <../top/landscape.scad>
 use <foot#28.scad>
 use <wall.scad>
@@ -140,7 +142,9 @@ module basis01_type_3(type = 2) {
 		translate([radious, 0, radious])
 			rotate([-90, 0, 0])
 					difference() {
-						translate([radious, -radious, 0])	rotate([0, -90, 0])	cube_type_4([x, radious * 2, radious * 2]);
+						translate([radious, -radious, 0])
+							rotate([0, -90, 0])
+							cube_type_4([x, radious * 2, radious * 2]);
 						translate([0, 0, -dyCasting - 3])
 							casting_black_25(dyCasting);
 						translate([0, 0, x + dyCasting + 3])
@@ -169,7 +173,7 @@ module basis01_type_3(type = 2) {
 	echo("basis01_type_3 끝: ", DEFAULT_PARAM, type);
 }
 
-module assemble() {
+module basis01_type_3_assemble() {
 	size = topSize(PARAM_TOP);
 	h = 57.7 + 13;
 	inner = DEFAULT_PARAM[0] * 1.05;
@@ -216,7 +220,7 @@ module build(target, step) {
 	} else if (target == 6) {
 		basis01_type_3(5);
 	} else if (target == 7) {
-		assemble();
+		basis01_type_3_assemble();
 	} else {
 		samples();
 	}

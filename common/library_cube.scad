@@ -62,14 +62,14 @@ module cube_type_3(vectors, radious) {
 	line_type_1(vectors[3], vectors[7], radious);
 }
 
-// x 축으로의 모서리의 일부 각을 제거한 것
+// x 축으로의 모서리의 일부 각(x축으로 평행한 모서리)을 제거한 것
 module cube_type_4(v, c) {
-	r = is_undef(c) ? min(v.y, v.z) / 16 : c;
+	r = is_undef(c) ? min(v.x, v.y, v.z) / 16 : c;
 	stiffen = r * sqrt(2);
 
 	translate([0, r, 0])		cube(v - [0, r * 2, 0]);
 	translate([0, 0, r])		cube(v - [0, 0, r * 2]);
-	translate([0, r, 0])				rotate([45, 0, 0])	cube([v.x, r, r]);
+	translate([0, r, 0])				rotate([45, 0, 0])	cube([v.x, stiffen, stiffen]);
 	translate([0, r, v.z - r * 2])		rotate([45, 0, 0])	cube([v.x, stiffen, stiffen]);
 	translate([0, v.y - r, v.z - r * 2])		rotate([45, 0, 0])	cube([v.x, stiffen, stiffen]);
 	translate([0, v.y - r, 0])		rotate([45, 0, 0])	cube([v.x, stiffen, stiffen]);
@@ -117,6 +117,68 @@ module cube_type_6(size, width, radious) {
 	translate([r, size.y - r, 0])	cylinder(size.z, r, r, $fn = fnRound(size.z));
 	translate([size.x - r, size.y - r, 0])	cylinder(size.z, r, r, $fn = fnRound(size.z));
 }
+
+// 모든 모서리를 45도 각도로 잘라낸 것
+module cube_type_7(v, c) {
+	r = is_undef(c) ? min(v.x, v.y, v.z) / 16 : c;
+	stiffen = r * sqrt(2);
+
+	difference() {
+		cube(v);
+
+		// 아래 앞쪽
+		translate([0, 0, -r])
+			rotate([45, 0, 0])
+			cube([v.x, stiffen, stiffen]);
+		// 앞쪽 위
+		translate([0, 0, v.z - r])
+			rotate([45, 0, 0])
+			cube([v.x, stiffen, stiffen]);
+		// 뒤쪽 위
+		translate([0, v.y, v.z - r])
+			rotate([45, 0, 0])
+			cube([v.x, stiffen, stiffen]);
+		// 뒤쪽 아래
+		translate([0, v.y, -r])
+			rotate([45, 0, 0])
+			cube([v.x, stiffen, stiffen]);
+
+		// 왼쪽 아래
+		translate([-r, 0, 0])
+			rotate([0, 45, 0])
+			cube([stiffen, v.y, stiffen]);
+		// 오른쪽 아래
+		translate([v.x - r, 0, 0])
+			rotate([0, 45, 0])
+			cube([stiffen, v.y, stiffen]);
+		// 오른쪽 위
+		translate([v.x - r, 0, v.z])
+			rotate([0, 45, 0])
+			cube([stiffen, v.y, stiffen]);
+		// 왼쪽 위
+		translate([-r, 0, v.z])
+			rotate([0, 45, 0])
+			cube([stiffen, v.y, stiffen]);
+
+		// 왼쪽 앞
+		translate([0, -r, 0])
+			rotate([0, 0, 45])
+			cube([stiffen, stiffen, v.z]);
+		// 오른쪽 앞
+		translate([v.x, -r, 0])
+			rotate([0, 0, 45])
+			cube([stiffen, stiffen, v.z]);
+		// 오른쪽 뒤
+		translate([v.x, v.y - r, 0])
+			rotate([0, 0, 45])
+			cube([stiffen, stiffen, v.z]);
+		// 왼쪽 뒤
+		translate([0, v.y - r, 0])
+			rotate([0, 0, 45])
+			cube([stiffen, stiffen, v.z]);
+	}
+}
+!cube_type_7([32, 16, 8], 1);
 
 module cube_types() {
 	//	cube_type_1
