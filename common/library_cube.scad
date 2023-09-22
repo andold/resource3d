@@ -178,24 +178,18 @@ module cube_type_7(v, c) {
 			cube([stiffen, stiffen, v.z]);
 	}
 }
-!cube_type_7([32, 16, 8], 1);
 
 module cube_types() {
 	//	cube_type_1
 	color("white", 1.0)	cube_type_1([16, 32, 4], 12);
-	note_type_1([16, 32, 4], [12, 32, 4]);
-	translate([4, 24, 4])	text("cube_type_1", size = 1);
-	translate([4, 22, 4])	text("[16, 32, 4], 12", size = 1);
-	translate([4, 20, 4])	text("note_type_1", size = 1);
+	note_type_2("cube_type_1", [16, 32, 4], [12, 32, 4]);
 	x1 = 24;
 	
 	//	cube_type_2
 	let (size = [8, 32, 4]) {
 		translate([x1, 0, 0]) {
 			color("yellow", 1.0)	cube_type_2(size, 12);
-			note_type_1(size, [12, 32, 4]);
-			translate([2, 24, 4])	text("cube_type_2", size = 1);
-			translate([2, 22, 4])	text(str(size, ", 20"), size = 1);
+			note_type_2("cube_type_2", size, [12, 32, 4]);
 		}
 	}
 	x2 = x1 + 24;
@@ -204,8 +198,7 @@ module cube_types() {
 	translate([x2, 8, 0])
 	{
 		color("blue", 0.5)	box_type_1([8, 16, 32], 2);
-		color("white", 0.5)	note_type_1([8, 16, 32]);
-		translate([-4, -2, 0])	text("box_type_1([8, 16, 32], 2)", size = 1);
+		color("white", 0.5)	note_type_2("box_type_1", [8, 16, 32]);
 	}
 	x5 = x2 + 24;
 
@@ -228,8 +221,7 @@ module cube_types() {
 		];
 		cube_type_3(v, r);
 		color("white", 1.0)	
-		translate([-r, -r, -r])	note_type_1([x, y, z] + [r * 2, r * 2, r * 2]);
-		translate([0, -4, 0])	text("cube_type_3(v, 1)", size = 1);
+		translate([-r, -r, -r])	note_type_2("cube_type_3(v, 1)", [x, y, z] + [r * 2, r * 2, r * 2]);
 	}
 	x7 = x5 + 24;
 
@@ -272,5 +264,19 @@ module cube_types() {
 	}
 	x16 = x15 + 24;
 
+	//	cube_type_7
+	let (size = [32, 16, 8]) {
+		translate([x16, 0, 0])
+		{
+			color("yellow", 1.0)
+				cube_type_7(size, 1);
+			note_type_2(str("cube_type_7(", size, ", 1)"), size);
+		}
+	}
+	x17 = x16 + 24;
 }
 cube_types();
+/*
+# in HOME(project root, ie. .../resouce3d)
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\common\library_cube.stl --export-format asciistl C:\src\eclipse-workspace\resource3d\common\library_cube.scad
+*/
