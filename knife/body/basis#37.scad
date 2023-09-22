@@ -106,26 +106,28 @@ module basis01_type_4_left() {
 		mirror([1, 0, 0])	basis01_type_4_right();
 }
 module	basis01_type_4_assemble() {
-	rotate([90, 0, 0])
-	translate([0, 200, 0])
-	rotate([0, 0, 45 + 180])
-		basis01_type_4_left();
-
 	top = topSize(PARAM_TOP);
 	x = 200;
 	y = 200;
+	angle = 45;
 
 	dy = y - top.y;
 	degree = atan(dy / (x - dy));
 
-	translate([-y / sqrt(2), top.x - DEFAULT_PARAM[0] * 0, 0])
-	translate([0, 0, sqrt(2) * top.y / 2])
-	rotate([0, 180 - 45, 0])
-	rotate([0, 0, 180])
-	rotate([90, 0, 0])
+	translate([y * cos(angle), 0, 0])
+		rotate([90, 0, 0])
+		translate([0, 200, 0])
+		rotate([0, 0, 45 + 180])
+		basis01_type_4_left();
+
+	translate([0, top.x - DEFAULT_PARAM[0] * 0, 0])
+		translate([0, 0, sqrt(2) * top.y / 2])
+		rotate([0, 180 - 45, 0])
+		rotate([0, 0, 180])
+		rotate([90, 0, 0])
 		basis01_type_4_right();
 
-	translate([0, 0, 200])
+	translate([y * cos(angle), 0, 200])
 		rotate([0, 45, 0])
 		translate([top.y, 0, 0])
 		rotate([0, 0, 90])
@@ -144,7 +146,7 @@ module build(target, step) {
 
 target = 7;
 build(target, $t);
-
+echo(topSize(PARAM_TOP));
 /*
 # in HOME(project root, ie. .../resouce3d)
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\#37-left.stl -D target=0 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#37.scad
