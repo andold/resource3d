@@ -9,18 +9,21 @@ use <../common/library_cube.scad>
 use <../common/library_trimmer.scad>
 
 MEASURE = [
-	52,
-	54,
-	2.4,
-	6.7,
-	59,
-	18,
+//	52,		//	1. 외경 1 - 최소 지름
+	52.5,	//	7. 외경 1 - 최소 지름, 병뚜껑에서 잰 거
+	54,		//	2. 외경 2 - 나사선을 포함한 지름
+	2.4,	//	3. 나사선의 두께
+	6.7,	//	4. 나사선간의 간격 - 2개의 나사선의 외경
+	59,		//	5. 외경 3 - 두껑이 더이상 진행하지 못하게 하는 막는 부분의 지름
+	18,		//	6. 최상에서 외경 3까지의 거리 - 뚜껑의 깊이
+
 	0		//	reserved
 ];
 
 DEFINE = [
-	3,	//	두께
-	0		//	reserved
+	2,	//	두께
+	4,	//	나사선이 아예 없는 부분
+	0	//	reserved
 ];
 
 /*
@@ -54,21 +57,32 @@ module cap() {
 		conchoid();
 	}
 }
-module conchoid1() {
-	trapezoidal_threaded_rod(l=250, d=10, pitch=2, thread_angle=15, starts=3, $fa=1, $fs=1, orient=ORIENT_X, align=V_UP);
-}
 module conchoid() {
 	t = DEFINE[0];
 	x1 = MEASURE[0];
 	x2 = MEASURE[1];
 	dx = x2 - x1;
 	h = MEASURE[5];
+	h1 = DEFINE[1];
+	p = MEASURE[3] - MEASURE[2];
 
-	translate([0, 0, t])
-	acme_threaded_rod(d=x2, thread_depth = dx, thread_angle=30, l = h, pitch = MEASURE[3] - MEASURE[2], $fn = fnRound(x2), orient=ORIENT_Z, align=V_ABOVE);
+	translate([0, 0, t]) {
+		//	나사선
+		acme_threaded_rod(d=x2, thread_depth = dx, thread_angle=30, l = h - h1, pitch = p, $fn = fnRound(x2), orient=ORIENT_Z, align=V_ABOVE);
 
-	//projection(cut=true)
-	//acme_threaded_rod(d=x2 - EPSILON, thread_depth = dx, thread_angle=30, l=h, pitch=MEASURE[3] - MEASURE[2], $fn=fnRound(x2), orient=ORIENT_X, align=V_CENTER);
+		//	나사선이 아예 없는 부분
+		let(
+			r = x2 / 2,
+
+			reserved = 0
+		) {
+			translate([0, 0, h - h1])
+				cylinder(h1, r, r, $fn = fnRound(r));
+		}
+	}
+
+	*projection(cut=true)
+	acme_threaded_rod(d=x2, thread_depth = dx, thread_angle=30, l = h, pitch = p, $fn = fnRound(x2), orient=ORIENT_X, align=V_CENTER);
 }
 module cap_assemble() {
 	cap();
@@ -78,5 +92,5 @@ cap_assemble();
 
 /*
 # in HOME(project root, ie. .../resouce3d)
-C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\water1liter.stl --export-format asciistl C:\src\eclipse-workspace\resource3d\bottle-cap\water1liter.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\water1liter#41.stl --export-format asciistl C:\src\eclipse-workspace\resource3d\bottle-cap\water1liter.scad
 */

@@ -3,7 +3,7 @@ use <MCAD/boxes.scad>
 include	<constants.scad>
 
 // 적정한 fn 값
-function fnRound(radious) = $preview ? FN : 2 * PI * radious / 0.4;
+function fnRound(radious) = $preview ? FN : floor(2 * PI * radious / 0.4) - floor(2 * PI * radious / 0.4) % 4;
 //function fnRound(radious) = 2 * PI * radious / 0.4;
 
 // z축 0로로
