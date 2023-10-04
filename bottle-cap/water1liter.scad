@@ -10,12 +10,12 @@ use <../common/library_trimmer.scad>
 
 MEASURE = [
 //	52,		//	1. 외경 1 - 최소 지름
-	52.5,	//	7. 외경 1 - 최소 지름, 병뚜껑에서 잰 거
-	54,		//	2. 외경 2 - 나사선을 포함한 지름
-	2.4,	//	3. 나사선의 두께
-	6.7,	//	4. 나사선간의 간격 - 2개의 나사선의 외경
-	59,		//	5. 외경 3 - 두껑이 더이상 진행하지 못하게 하는 막는 부분의 지름
-	18,		//	6. 최상에서 외경 3까지의 거리 - 뚜껑의 깊이
+	53,		//	7. 외경 1 - 최소 지름, 병뚜껑에서 잰 거+
+	55,		//	2. 외경 2 - 나사선을 포함한 지름+
+	2.2,	//	3. 나사선의 두께
+	6.6,	//	4. 나사선간의 간격 - 2개의 나사선의 외경
+	60,		//	5. 외경 3 - 두껑이 더이상 진행하지 못하게 하는 막는 부분의 지름
+	16,		//	6. 최상에서 외경 3까지의 거리 - 뚜껑의 깊이
 
 	0		//	reserved
 ];
@@ -42,7 +42,9 @@ module cap() {
 			reserved = 0
 		) {
 			color("Yellow", 0.5)
-			cylinder(h, r, r, $fn = fnRound(r));
+				cylinder(h, r, r, $fn = fnRound(r));
+
+
 		}
 
 		let(
@@ -53,6 +55,8 @@ module cap() {
 		) {
 			translate([0, 0, t])
 				cylinder(h + EPSILON, r, r, $fn = fnRound(r));
+			translate([0, 0, NOZZLE + 0.4 / 2]) rotate([180, 0, 0])
+				linear_extrude(0.4, center = true, slices = $preview ? 20 : 16 * 4)	text("andold", size = 4, halign = "center", $fn = fnRound(r));
 		}
 		conchoid();
 	}
