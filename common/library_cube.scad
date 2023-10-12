@@ -39,6 +39,7 @@ module cube_type_2(v, x) {
 		[v.z,	0],
 		[0,		0]
 	]);
+	note_type_2("cube_type_2", v, [x, v.y, v.z]);
 }
 
 // 벡터들을 이용하여 꼭지점을 직각으로만 연결하는 육면체
@@ -188,8 +189,9 @@ module cube_types() {
 	//	cube_type_2
 	let (size = [8, 32, 4]) {
 		translate([x1, 0, 0]) {
-			color("yellow", 1.0)	cube_type_2(size, 12);
-			note_type_2("cube_type_2", size, [12, 32, 4]);
+		//	color("yellow", 1.0)
+			cube_type_2(size, 12);
+//			note_type_2("cube_type_2", size, [12, 32, 4]);
 		}
 	}
 	x2 = x1 + 24;
