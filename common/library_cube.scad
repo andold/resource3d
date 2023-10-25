@@ -14,6 +14,11 @@ module box_type_1(size, thick) {
 	translate([size[0] - thick, 0, 0])	cube([thick, size[1], size[2]]);	//	오른쪽
 }
 
+module cube_type_0(size, center) {
+	cube(size, center);
+	note_type_2("", size, size, center);
+}
+
 // 끝에 반구가 더달린 실린더형태의 3차원 라인
 // 대칭 사다리꼴, xz 평면에서 보았을 때
 module cube_type_1(v, x) {
@@ -39,7 +44,7 @@ module cube_type_2(v, x) {
 		[v.z,	0],
 		[0,		0]
 	]);
-	note_type_2("cube_type_2", v, [x, v.y, v.z]);
+	note_type_2("", v, [x, v.y, v.z]);
 }
 
 // 벡터들을 이용하여 꼭지점을 직각으로만 연결하는 육면체
