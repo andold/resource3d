@@ -10,8 +10,8 @@ use <../common/library_trimmer.scad>
 
 MEASURE = [
 //	52,		//	1. 외경 1 - 최소 지름
-	53,		//	7. 외경 1 - 최소 지름, 병뚜껑에서 잰 거+
-	55,		//	2. 외경 2 - 나사선을 포함한 지름+
+	53 + 1,		//	7. 외경 1 - 최소 지름, 병뚜껑에서 잰 거+
+	55 + 1,		//	2. 외경 2 - 나사선을 포함한 지름+
 	2.2,	//	3. 나사선의 두께
 	6.6,	//	4. 나사선간의 간격 - 2개의 나사선의 외경
 	60,		//	5. 외경 3 - 두껑이 더이상 진행하지 못하게 하는 막는 부분의 지름
@@ -96,5 +96,5 @@ cap_assemble();
 
 /*
 # in HOME(project root, ie. .../resouce3d)
-C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\water1liter#41.stl --export-format asciistl C:\src\eclipse-workspace\resource3d\bottle-cap\water1liter.scad
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\bottle-cap\water1liter#41.stl --export-format asciistl C:\src\eclipse-workspace\resource3d\bottle-cap\water1liter.scad
 */
