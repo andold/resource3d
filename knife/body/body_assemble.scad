@@ -147,10 +147,10 @@ module assempleBody(help = 8) {
 	translate([THICK, THICK, HEIGHT])	assempleBodyTop(help);
 	translate([THICK * 2, THICK* 2, HEIGHT + HEIGHT_TOP + 8])	landscape();
 }
-assempleBody(0);
+assempleBody(8);
 
-//scale(HALF)	bodyTop();
-//bodyBottomFront();
-//bodyBottomSide();
-//halfBodyTop();
-//assempleBody();
+scale(HALF)	bodyTop();
+bodyBottomFront();
+bodyBottomSide();
+halfBodyTop();
+assempleBody();
