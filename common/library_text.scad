@@ -2,9 +2,12 @@
 include	<constants.scad>
 use <library_function.scad>
 
+function fsproper(x, y, title) = min(x / len(title) / 4, y / 2);
+
 /*
 	모듈 섹션
 */
+
 // 치수 표시
 module note_type_1(vs, ve, centered = false, fs, detail = false) {
 	DEFAULT_MIN_FONT_SIZE = 0.2;
@@ -168,8 +171,20 @@ module note_type_2(name, vs, ve, centered = false, fs, detail = false) {
 	ez = is_undef(ve) ? vs.z : ve.z;
 	mm = " mm";	//	"㎜";
 	center = centered ? [-vs.x / 2, -vs.y / 2, -vs.z / 2] : [0, 0, 0];
-	xyfs = is_undef(fs) ? max(DEFAULT_MIN_FONT_SIZE, min(min(x, y) / 16, 20)) : fs;
-	zxfs = is_undef(fs) ? max(DEFAULT_MIN_FONT_SIZE, min(min(z, x) / 16, 20)) : fs;
+	xyfs = is_undef(fs)
+			? max(	DEFAULT_MIN_FONT_SIZE,
+					(x > y && y >= z)
+						? fsproper(x, y, name)
+						: min(min(x, y) / 16, 20)
+			)
+			: fs;
+	zxfs = is_undef(fs)
+			? max(	DEFAULT_MIN_FONT_SIZE,
+					(z > x && x >= y)
+						? fsproper(z, x, name)
+						: min(min(z, x) / 16, 20)
+			)
+			: fs;
 	yzfs = is_undef(fs) ? max(DEFAULT_MIN_FONT_SIZE, min(min(y, z) / 16, 20)) : fs;
 	note_type_1(vs, ve, centered, fs, detail);
 	%color("Black")
