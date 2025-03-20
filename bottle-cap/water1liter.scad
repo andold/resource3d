@@ -1,6 +1,6 @@
 // water1liter.scad
-include <BOSL/constants.scad>
-use <BOSL/threading.scad>
+include <../openscad/libraries/BOSL/constants.scad>
+use <../openscad/libraries/BOSL/threading.scad>
 
 include	<../common/constants.scad>
 use <../common/library_function.scad>
@@ -21,7 +21,7 @@ MEASURE = [
 ];
 
 DEFINE = [
-	2,	//	두께
+	3,	//	두께
 	4,	//	나사선이 아예 없는 부분
 	0	//	reserved
 ];
@@ -43,8 +43,7 @@ module cap() {
 		) {
 			color("Yellow", 0.5)
 				cylinder(h, r, r, $fn = fnRound(r));
-
-
+				cylinder(t + t, r + t, r, $fn = fnRound(r));
 		}
 
 		let(
@@ -90,6 +89,7 @@ module conchoid() {
 }
 module cap_assemble() {
 	cap();
+//	conchoid();
 }
 
 cap_assemble();
