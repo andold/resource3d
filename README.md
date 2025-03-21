@@ -1,186 +1,70 @@
-# resource3d
-- 3d 모델링 자료
-- Ender-3 프린터 사용
-	- Modeling Dimensions: 220mm x 220mm x 250mm
-	- Printing Material: PLA/ABS/PETG
-	- 사용 필라멘트: PLA 투명 1.75mm
+# Getting Started with Create React App
 
-## 자원
-### 나사
-| 설명 | 길이 | 대가리 지름 | 대가리 숨기는 깊이 | 나사선 지름 최대 | 나사선 지름 최소 | 적정 구멍 지름 |
-|---|---:|---:|---:|---:|---:|---:|
-| 검은색 볼트 | 25 | 7.9 | 3.0 | 3.8 | 2.1 | 3.4
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Tip, Know How
-### 나사 볼트 너트
-- 나사산을 수용할 정도의 정밀도를 지원하지 못한다
-	- 크기: 4mm
-	- Quality: Low Quality, super Quality
-	- 재료: PLA, eSUN
+## Available Scripts
 
-- PLA+는 아직 검증하지 않았다
+In the project directory, you can run:
 
-#### 결론: 원통형 구멍만 만들고, 볼트는 철제 볼트를 사용한다
+### `npm start`
 
-### PLA 특성
-- 딱딱함의 정도가 낮다.
-	- 두께를 3mm 정도는 해야할 듯하다. 1mm는 너무 많이 휘어진다.
-	- 2mm로 타협을 봐 본다.
-	- 2mm는 띠기 어렵다. 3mm로 다시 타협한다.
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-- 상품 설명에 프린터 설정값이 있다. 적용해 보자.
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-#### 결론: 8mm
-- 4mm 정도는 되어야 견고하다는 느낌이 온다.
-- 벽의 두께는 그 두배인 8mm가 적당해 보인다.
-- 10% 채움밀도, low quality로 프린트 조건이긴하다, 고품질인 경우는 아직 모른다.
+### `npm test`
 
-### Ender 3
-- 레벨링(영점조절)의 중요성
-	- 너무 높으면, 출력중에 출력물이 바닥에서 떨어져서 밀려다닌다.
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-- 팁
-	- 바닥과 노즐사에 종이를 집어 넣고 흔들어 본다.
+### `npm run build`
 
-### 모델링
-- 껍질/막: difference를 사용하기 보다는 2d line을 사용하는게 좋을 듯하다.
-	- 현재는 구멍 뚫는 것이 대부분이라 아직 적용해보지는 못했지만,
-	- 기회가 되면 해봐야 할것 같다. 난이도와 집중력은 필요해 보인다.
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-- 외곽원이 각질 경우에는 linear_extrude에 $fn값 및 slices값을 늘린다.
-	- fn: 256
-	- 글자의 경우에는 slices: mm당 16
-	
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-## trouble shooting
-### 압출불량 - 초반부터
-- 현상
-	- PLA를 새로운 것을 사용하니, 시작은 괞찬으나, 레이어 1 중간부터 압출 불량 발생
-	- 턱턱 소리가 빠르게 (1초에 1회 정도로) 발생한다
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-- 가설: PLA의 무른 정도에 따라 뭔가 바뀌어야 하는 것 같다
+### `npm run eject`
 
-- done
-	- [x] 노즐 분해 및 청소 청보해 보았으나, 동일하다
-	- [x] 노즐 교체까지 해보았으나, 동일하다
-	- [x] 테프론 튜브에 식용유 칠을 해보았으나, 동일하다
-	- [x] PLA 입력 각도를 평행하게(아무 저항없게) 해보았으나, 동일하다
-	- [ ] 집게 장력을 높이거나 낮추어 보았으나, 동일하다
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-- todo: 설정 값을 바꾸어 본다
-	- 참조: https://m.blog.naver.com/dukuby/221409810405
-	- 플렉시블이란 것을 출력하면서 해결하고 있는 블로그 글
-	- [x] 노즐온도를 높인다, 240도
-	- [x] 리트렉션을 줄인다, 2mm
-	- [x] 인쇄속도를 줄인다, 20mm/s
-	- 다음은 내가 생각해 보는 것
-	- [x] jerk가 뭔지 알아보고 조정해 본다
-	- [x] 가속도가 어떤 영향을 미칠지 추측해 보고 조정해 본다
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-- 실패담
-	- 0.28mm 220도 2mm 20mm/s 실패
-	- 0.28mm 240도 2mm 20mm/s 실패
-	- 0.28mm 190도 0mm 20mm/s 실패
-	- 0.28mm 190도 0mm 20mm/s 120% ?
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-#### 결론) 이전에 사용했던 필라멘트를 구매한다, eSUN. => 해결되었다
-- 필라멘트는 많은 사람들이 사용하는 대중적인 것을 사용하자
-- 더 싼 것은 위험성이 있다, 검증이 덜된 것이다
-- 참조) https://all3dp.com/1/best-pla-filament/
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-### 모서리 들뜸 현상이 발생한다
-- 칼꽂이 앞판의 한쪽 모서리에서 발생
-- 수축현상 때문이라고 한다
-- 어쩌지?
+## Learn More
 
-#### work around) 큰문제가 되지 않아 관심을 접는다. 베드를 바꾸어 보고 있다 렉산으로.
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-### 변수가 없다
-- openscad에는 변수를 찾을 수 없다
-- 변수로 보이는 것들은 모두 const-상수-이다
-- 변수로 쓰이는 것은 for 안에 있는 변수가 유일해 보인다
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-### 높이 3.7mm 근처에서부터 무너진다
-- 다리 형태의 물체라 매우 불안정한 형태이긴 하다
-- z축 이동시에 장력이 불규칙하긴하다, 이부분인지는 확인 필요, 어떻게?
-- TODO
-	- [x] z축 이동 및 장력이 일정한지 확인 필요
-	- [ ] 불안정한 물체가 아닌 경우에도 그런지 확인 필요
+### Code Splitting
 
-#### 결론) z축 나사 조임이 부족했었다
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### 참고
-- 3D 프린터 : 프린팅 불량유형 및 해결책
-	- https://blog.naver.com/technics3d/220778796667
+### Analyzing the Bundle Size
 
-- [삼디불량사전] 3D 프린터 압출불량 (Under Extrusion)
-	- https://youtu.be/TUpwlxeG4qU
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-- Ender3 압출불량 없는 노즐목 조립 2 (Ender 3 clog Zero making)
-	- https://youtu.be/6MH1XWbQdtw
+### Making a Progressive Web App
 
-### 모서리 부분이 깔끔하지 못하다
-- 현상: 결합부위를 격자 형태로 하였는데, 모서리 부분이 뭉개진다.
-- [x] 외벽/내벽 설정과 관련되어 있는 것 같다, 공부해 보자
-	- 벽두께 설정과 관련있다
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-#### 결론: 벽두께를 4mm로 설정, 0.4mm 10회
+### Advanced Configuration
 
-### 후반부에 아예 프린팅되지 않는다
-- 참고: [삼디불량사전] 3D 프린터 압출불량 (Under Extrusion)
-	- 7번 아얘 안나오는 압출불량
-	- https://youtu.be/TUpwlxeG4qU
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-- 실패: 노즐온도 190도, 3mm retraction distance로 해보았으나 동일 현상 발생
-	- 원복한다
+### Deployment
 
-- 날씨가 더워서 냉각이 안되는게 아닐까?
-	- 상당히 설득력 있다. 에어컨을 켜주어야 하나?
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-- 참고: [북리지의 삼디 Life] 압출불량 해결을 위한 16가지 가이드
-	- https://bookledge.tistory.com/982
-	- 날씨가 더워서 그럴수도 있다는 군
-	- 정말 에어컨을 켜줘야 하나?
+### `npm run build` fails to minify
 
-- 실패: 에어컨을 켜주어도 해결이 안된다.
-	- 노즐쪽 냉각팬이 약해서 그런것 같다. 또는 이상 동작하든지. 분해해 보아야겠다.
-	- 모터 부분을 분해해 보았으나, 육안으로 보기엔 이상이 없다. 노즐 분해는 해보지 않았다.
-
-- 해결을 위한 TODO
-	- [x] 노즐목에 부품 추가: 위의 노즐목 조립 유튜브 영상 참조
-		- 부품 추가는 하지 않고, 부품 분해 조립해 보았다. 테프론 튜브 끝을 잘라냈고 유격없이 조립하였다.
-	- [ ] 필라멘트 교체: 현재 PLA에서 열에 잘 변형되지 않는 것으로, 뭔지는 찾아 보아야 한다
-	- [x] retraction distance를 줄여본다
-		- 1mm ~ 1.5mm가 적당하다는 의견이 있다. 디폴트값은 5mm 이다
-		- 1.5mm에서 거미줄이 나타난다. 3mm로 타협해 본다
-		- retraction을 줄이는 형태로 모델링해 본다. 원형은 리트랙션이 많이 발생하는 모델이다
-		- 리트랙션 빈도를 최대한 줄여서 프린트했더니, 호전되는 듯 하다. 1mm로 해보아야 겠다. 거미줄은 예상한다, 정료한 레벨링으로 거미줄은 해소해 본다.
-		- 호전되는 듯 하였으나, 역시 리트랙션이 많아 발생하고 나면, 압출불량이 발생한다. 거미줄도 발생했다.
-		- 리트랙션 원인은 아닌듯하다, 노즐목을 건드려 봐야 겠다.
-
-#### 결론 1) 리트랙션 거리 원인은 아닌 듯하다
-#### 결론) 노즐목에 부품 추가하니 해결되었다, 게시자에게 감사를!!!
-	- 완성도에 자신감을 갖게 되었다. 통짜로 크게 설계해 보아야 곘다
-	- 부품 추가 후, 리트랙션 거리를 3mm로 줄여보았으나 일부 거미줄이 발생한다. 역시 기본값인 5mm가 정답인듯 하다.
-
-
-## firmware update
-- 시작지점
-	- 10 Ways How to Fix Ender 3/Pro/V2 Not Printing or Starting
-	- https://3dprinterly.com/how-to-fix-ender-3-not-printing-or-starting/
-
-- Ender-3(엔더3) 소프트웨어 업그레이드 #1 - 펌웨어(Marlin) 빌드 하기 by 아두이노 IDE
-	- https://blog.naver.com/chandong83/221758014172
-
-- Ender-3 순정 펌웨어 올리기
-	- https://m.blog.naver.com/rtbo02/221827886562
-
-- The Creality3D Ender-3, a fully Open Source 3D printer perfect for new users on a budget.
-	- https://github.com/Creality3DPrinting/Ender-3/tree/master
-
-- 아두이노 IDE 다운로드
-	- https://www.arduino.cc/en/software
-
-### 결론: Creality 사이트에 가면, 바이너리 다운로드 링크가 있다
-	- 다운받아서 카드에 복사하면 된다.
-
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
