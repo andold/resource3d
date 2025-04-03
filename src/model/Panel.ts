@@ -1,12 +1,18 @@
 //	Panel.ts
-export default interface Panel {
-	id?: number;
-	title?: string;
-	description?: string;
-	
+interface Size {
 	width: number;
 	height: number;
 	thick: number;
+}
+interface Position {
+	x?: number;
+	y?: number;
+	z?: number;
+}
+export default interface Panel extends Size, Position {
+	id?: number;
+	title?: string;
+	description?: string;
 	
 	pose: number;
 

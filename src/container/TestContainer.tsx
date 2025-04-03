@@ -82,7 +82,7 @@ function BoxContainer(props: any) {
 		cameraControlRef.current.getTarget(t);
 		const dp = store.calculate(event.code, p, t);
 		const _refresh: boolean = store.testGeometryRotate(data, event.code);
-		console.log(dp, data);
+
 		if (event.shiftKey) {
 			cameraControlRef.current.setTarget(t.x + dp.x, t.y + dp.y, t.z + dp.z, true);
 		} else {
@@ -115,9 +115,9 @@ function BoxContainer(props: any) {
 		<Row className="mx-0 py-0 bg-dark" style={{height: height}}>
 			<Col>
 				<Canvas>
-					<CameraControls ref={cameraControlRef} target={[0, 0, 0]} position={[-30, 30, -30]} />
+					<CameraControls ref={cameraControlRef} distance={30} />
 					<OrbitControls autoRotate={true} />
-					<Basis show={true} />
+					<Basis show={!!true} />
 					<BoxMesh show={false} rotate={false} />
 					{
 						data.map((panel: any) => (
@@ -133,21 +133,38 @@ function BoxContainer(props: any) {
 function Basis(props: any) {
 	const { show } = props;
 
-	const v = [1000, 1, 1000];
+	const v: any[] = [1000, 0.1, 1000];
 	const texture = useLoader(TextureLoader, "/texture/인조화강암블럭.jpg");
 	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 	texture.offset.set(0, 0);
 	texture.repeat.set(64, 128);
 
 	if (!show) {
-		return (<></>);
+		return (<>
+			<mesh position={[0, 0, 0]}>
+				<boxGeometry args={[1, 1, 1]} />
+				<meshStandardMaterial
+					opacity={0.5}
+					color={"red"}
+					transparent
+				/>
+			</mesh>
+			<mesh position={[100, 100, 100]}>
+				<boxGeometry args={[1, 1, 1]} />
+				<meshStandardMaterial
+					opacity={0.5}
+					color={"yellow"}
+					transparent
+				/>
+			</mesh>
+		</>);
 	}
 
 	return (<>
 		<mesh position={[0, -v[1] / 2 , 0]}>
 			<ambientLight intensity={1.0} />
 			<directionalLight position={[-10,0,10]} intensity={1.0} />
-			<boxGeometry args={v} />
+			<boxGeometry args={[v[0], v[1], v[2]]} />
 			<meshStandardMaterial
 				map={texture}
 				opacity={0.9}
@@ -176,7 +193,7 @@ function Basis(props: any) {
 function BoxMesh(props: any) {
 	const { show, rotate } = props;
 	
-	const meshRef = useRef();
+	const meshRef = useRef<any>(null);
 	useEffect(() => {
 	}, []);
 	useFrame(() => {

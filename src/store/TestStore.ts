@@ -110,8 +110,8 @@ class TestStore {
 				break;
 			case "PageDown":
 			case "PageUp":
-				dp.x = (distance) * Math.cos(radian) - p.x;
-				dp.z = (distance) * Math.sin(radian) - p.z;
+				dp.x = (distance) * Math.cos(radian) - (position.x - target.x);
+				dp.z = (distance) * Math.sin(radian) - (position.z - target.z);
 				break;
 			default:
 				break;
@@ -121,4 +121,5 @@ class TestStore {
 	}
 }
 
-export default new TestStore();
+const store = new TestStore();
+export default store;

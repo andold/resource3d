@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import * as THREE from "three";
 import { Euler, TextureLoader, Vector3 } from "three";
 import { useLoader } from "@react-three/fiber";
+import { Text, Text3D } from "@react-three/drei";
 
 // domain
 import Panel from "../model/Panel.ts";
@@ -12,58 +13,71 @@ import store from "../store/TestStore.ts";
 
 // view
 
+const SCALE: number = 10;
+
 // PanelView.tsx
 const PanelView = ((props: any) => {
 	const panel: Panel = props.panel;
 	
-	const texture = useLoader(TextureLoader, "/texture/엘더.jpg");
+	const [position, setPosition] = useState<Vector3>();
+	useEffect(() => {
+		const p: Vector3 = store.position(panel);
+		setPosition(p);
+	}, [panel]);
+
+	const texture = useLoader(TextureLoader, "/texture/자작나무.jpg");
 	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 	texture.offset.set( 0, 0.5 );
 	texture.repeat.set(1, 1);
 
-	console.log(panel);
+	console.log(panel, position);
+
+	if (!position) {
+		return (<></>);
+	}
 
 	return (<>
-		<mesh position={store.position(panel)} rotation={store.rotation(panel)}>
+		<mesh position={position} rotation={store.rotation(panel)}>
 			<boxGeometry args={[panel.width, panel.thick, panel.height]} />
 			<meshStandardMaterial
 				map={texture}
-				opacity={0.8}
+				opacity={0.9}
 				transparent
+			/>
+			<Information
+				panel={panel}
+				show={true}
 			/>
 		</mesh>
 	</>);
 });
 export default PanelView;
 
-export function PanelView0(props: any) {
-	const { panel } = props;
+function Information(props: any) {
+	const { show } = props;
+	const panel: Panel = props.panel;
 
-	let p = {
-		x: panel[6],
-		y: panel[7],
-		z: panel[8],
-	};
-	//p = {x: 0, y: panel[0] / 2, z: 0};
-	let r = {
-		x: panel[3],
-		y: panel[4],
-		z: panel[5],
-	};
-	//r = {x: Math.PI / 2, y: 0, z: 0};
-	const texture = useLoader(TextureLoader, "/texture/아카시아.jpg");
-	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-	texture.offset.set( 0, 0.5 );
-	texture.repeat.set(1, 1);
+	if (!show) {
+		return (<></>);
+	}
 
 	return (<>
-		<mesh position={[p.x, p.y, p.z]} rotation={[r.x, r.y, r.z]}>
-			<boxGeometry args={[panel[0], panel[1], panel[2]]} />
-			<meshStandardMaterial
-				map={texture}
-				opacity={0.8}
-				transparent
-			/>
-		</mesh>
+		<Text
+			//font={"나눔고딕"}
+			fontSize={8}
+			textAlign={"left"}
+			anchorX={"left"}
+			anchorY={"top"}
+			outlineWidth={0.1}
+			outlineOffsetX={0.1}
+			outlineOffsetY={0.1}
+			position-x={panel.width / -2}
+			position-y={panel.thick / 2 + SCALE / 100}
+			position-z={panel.height / -2}
+			rotation={new Euler(-Math.PI / 2, 0, 0)}
+		>
+			<meshStandardMaterial color={"yellow"} />
+			{panel.width * SCALE}㎜ x {panel.height * SCALE}㎜ x {panel.thick * SCALE}㎜
+	    </Text>
 	</>);
 }
