@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import * as THREE from "three";
 import { Euler, TextureLoader, Vector3 } from "three";
 import { useLoader } from "@react-three/fiber";
-import { Text, Text3D } from "@react-three/drei";
+import { Text } from "@react-three/drei";
 
 // domain
-import Panel from "../model/Panel.ts";
+import Panel from "../model/Panel";
 
 // store
-import store from "../store/TestStore.ts";
+import store from "../store/TestStore";
 
 // view
 
@@ -30,7 +30,7 @@ const PanelView = ((props: any) => {
 	texture.offset.set( 0, 0.5 );
 	texture.repeat.set(1, 1);
 
-	console.log(panel, position);
+	//console.log(panel, position);
 
 	if (!position) {
 		return (<></>);
@@ -56,6 +56,7 @@ export default PanelView;
 function Information(props: any) {
 	const { show } = props;
 	const panel: Panel = props.panel;
+	const FONT_SIZE = 4;
 
 	if (!show) {
 		return (<></>);
@@ -64,20 +65,21 @@ function Information(props: any) {
 	return (<>
 		<Text
 			//font={"나눔고딕"}
-			fontSize={8}
+			fontSize={FONT_SIZE}
 			textAlign={"left"}
 			anchorX={"left"}
 			anchorY={"top"}
 			outlineWidth={0.1}
 			outlineOffsetX={0.1}
 			outlineOffsetY={0.1}
-			position-x={panel.width / -2}
+			position-x={panel.width / -2 + FONT_SIZE / 2}
 			position-y={panel.thick / 2 + SCALE / 100}
 			position-z={panel.height / -2}
 			rotation={new Euler(-Math.PI / 2, 0, 0)}
 		>
 			<meshStandardMaterial color={"yellow"} />
 			{panel.width * SCALE}㎜ x {panel.height * SCALE}㎜ x {panel.thick * SCALE}㎜
+			({panel.x}, {panel.y}, {panel.z})
 	    </Text>
 	</>);
 }

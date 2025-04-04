@@ -3,7 +3,7 @@ import { Vector3 } from "three";
 import { Euler } from "three";
 
 // domain
-import Panel from "../model/Panel.ts";
+import Panel from "../model/Panel";
 
 // TestStore.ts
 class TestStore {

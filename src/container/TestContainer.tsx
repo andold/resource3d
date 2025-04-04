@@ -8,13 +8,13 @@ import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { CameraControls, OrbitControls } from "@react-three/drei";
 
 // domain
-import Panel from "../model/Panel.ts";
+import Panel from "../model/Panel";
 
 // store
-import store from "../store/TestStore.ts";
+import store from "../store/TestStore";
 
 // view
-import PanelView from "../view/PanelView.tsx";
+import PanelView from "../view/PanelView";
 
 // TestContainer.tsx
 const TestContainer = ((props: any) => {
@@ -43,7 +43,6 @@ const TestContainer = ((props: any) => {
 		console.log(AxBC);
 	}, []);
 
-	console.log(props);
 	return (<>
 		<BoxContainer
 			show={true}
@@ -62,6 +61,9 @@ function BoxContainer(props: any) {
 	            height: 120,
 	            thick: 1.8,
 	            pose: 0,
+				x: 0,
+				y: 0,
+				z: 0,
 	        }]);
 
 	useEffect(() => {
@@ -69,6 +71,16 @@ function BoxContainer(props: any) {
 		window.addEventListener("keydown", handleOnKeydown, true);
 	});
 
+	const handleOnClickReset2 = (event: React.MouseEvent<HTMLButtonElement>): void => {
+		if (!cameraControlRef.current) {
+			return;
+		}
+		cameraControlRef.current.setTarget(0, 0, 0);
+		if (!event.shiftKey) {
+			cameraControlRef.current.setPosition(-100, 100, -100, true);
+		}
+	}
+   
 	function handleOnKeydown(event: KeyboardEvent) {
 		if (!cameraControlRef.current) {
 			return;
@@ -92,7 +104,7 @@ function BoxContainer(props: any) {
 			setData([...data]);
 		}
 	}
-	function handleOnClickReset(event: MouseEvent) {
+	function handleOnClickReset(event: React.MouseEvent<HTMLButtonElement>) {
 		if (!cameraControlRef.current) {
 			return;
 		}

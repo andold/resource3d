@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useLayoutEffect, } from "react";
 
 // container
-import TestContainer from "./container/TestContainer.tsx";
+import TestContainer from "./container/TestContainer";
 
 function App() {
 	useLayoutEffect(() => {
