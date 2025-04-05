@@ -153,11 +153,6 @@ module themeCircleWeb(number1 = "6810 6479", number2 = "4240 6479", radius, thic
 }
 
 //themeCircleWeb("010", "6810 6479", "4240 6479", 32, 2);	//	과헌
-themeCircleWeb("2320 4016", "2520 8070", 32, 2);	//	호창
-//themeCircleWeb("7564 4567", "3993 8802", 32, 2);	//	장희
+//themeCircleWeb("2320 4016", "2520 8070", 32, 2);	//	호창
+themeCircleWeb("7564 4567", "3993 8802", 32, 2);	//	장희
 //themeCircleWeb("2425 4821", "", 32, 2);	//	장희
-/*
-# in HOME(project root, ie. .../resouce3d)
-C:\apps\openscad-2021.01\openscad.exe --export-format asciistl -o stl\parking-number-holder-#19.stl -D target=1 parking\6479.scad
-C:\apps\openscad-2021.01\openscad.exe --export-format asciistl -o stl\parking-number-#19.stl -D target=2 parking\6479.scad
-*/
