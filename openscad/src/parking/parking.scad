@@ -7,7 +7,7 @@ module textBold(title, size, font) {
 		translate([cx, 0, 0])		text(title, size, font = font);
 	}
 }
-module themeCircle(number0, number1, number2, radius = 16) {
+module themeCircle(number1, number2, radius = 16) {
 	thick = 2;
 	size = radius / 4 * 1.33;
 	font = "Sans Serif:style=Bold";
@@ -27,7 +27,7 @@ module themeCircle(number0, number1, number2, radius = 16) {
 			}
 			
 			//	전화번호
-			translate([size / 2 - radius + size, size + widthBaseline / 2, 0])		textBold(number0, size / 3 * 2, font);
+			translate([size / 2 - radius + size, size + widthBaseline / 2, 0])		textBold("010", size / 3 * 2, font);
 			translate([size / 2 - radius + size, -size / 2 + widthBaseline / 2, 0])	textBold(number1, size, font);
 			translate([size / 2 - radius + size, -size * 2 + widthBaseline / 2, 0])	textBold(number2, size, font);
 		}
@@ -83,7 +83,7 @@ module themeCircleCap(radius, thick) {
 		roundedBox([stickx, sticky, stickz], thick, true);
 }
 
-module themeCircleWebNumber(number0, number1, number2, radius, thick) {
+module themeCircleWebNumber(number1, number2, radius, thick) {
 	size = (radius - thick) * 2 / 8.5;
 	textSizeSmall010 = radius * 0.1;
 	textSizeSmall6479 = radius * 0.175;
@@ -96,7 +96,7 @@ module themeCircleWebNumber(number0, number1, number2, radius, thick) {
 		{
 			offset(0.4)
 				translate([-radius + textSizeSmall6479 * 2,	textSizeSmall6479 * 3, 0])
-				text(number0, textSizeSmall010 * 2, font);
+				text("010", textSizeSmall010 * 2, font);
 			offset(0.6)
 				translate([-radius + textSizeSmall010 * 1.6, textSizeSmall010 * 1.5, 0])
 				text(number1, textSizeSmall010 * 2.4, font);
@@ -107,7 +107,7 @@ module themeCircleWebNumber(number0, number1, number2, radius, thick) {
 		{
 			offset(0.3)
 				translate([-radius + textSizeSmall010 * 2,	textSizeSmall010 * 5.5, 0])
-				text(number0, textSizeSmall010, font);
+				text("010", textSizeSmall010, font);
 			offset(0.3)
 				translate([-radius + textSizeSmall010 * 1.75, size / 2 * 1.5 * 2, 0])
 				text(number2, textSizeSmall6479, font);
@@ -115,8 +115,8 @@ module themeCircleWebNumber(number0, number1, number2, radius, thick) {
 	}
 }
 
-module themeCircleWeb(number0, number1, number2, radius, thick) {
-	echo("themeCircleWeb start: ", number0, number1, number2, radius, thick);
+module themeCircleWeb(number1 = "6810 6479", number2 = "4240 6479", radius, thick) {
+	echo("themeCircleWeb start: ", number1, number2, radius, thick);
 
 	fn =  $preview ? 32 : 512;
 
@@ -142,22 +142,20 @@ module themeCircleWeb(number0, number1, number2, radius, thick) {
 		}
 		color("red", 1.0)
 		translate([0, 0, thick * 0.25])
-		themeCircleWebNumber(number0, number1, number2, radius, thick * 0.75);
-
-		color("blue", 1.0)
-		translate([0, 0, thick * 0.75])
-		rotate([0, 180, 0])
-		themeCircleWebNumber(number0, number2, number1, radius, thick * 0.75);
+		themeCircleWebNumber(number1, number2, radius, thick * 0.75);
 
 		color("blue", 1.0)
 		translate([0, thick-64, thick / 2])
 		roundedBox([thick * 2, 64, thick], 1, true);
 	}
 	
-	echo("themeCircleWeb done: ", number0, number1, number2, radius, thick);
+	echo("themeCircleWeb done: ", number1, number2, radius, thick);
 }
 
-themeCircleWeb("010", "6810 6479", "4240 6479", 32, 2);
+//themeCircleWeb("010", "6810 6479", "4240 6479", 32, 2);	//	과헌
+themeCircleWeb("2320 4016", "2520 8070", 32, 2);	//	호창
+//themeCircleWeb("7564 4567", "3993 8802", 32, 2);	//	장희
+//themeCircleWeb("2425 4821", "", 32, 2);	//	장희
 /*
 # in HOME(project root, ie. .../resouce3d)
 C:\apps\openscad-2021.01\openscad.exe --export-format asciistl -o stl\parking-number-holder-#19.stl -D target=1 parking\6479.scad
