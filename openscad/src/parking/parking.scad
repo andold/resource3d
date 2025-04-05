@@ -83,6 +83,27 @@ module themeCircleCap(radius, thick) {
 		roundedBox([stickx, sticky, stickz], thick, true);
 }
 
+module themeCircleWebNumberOne(number1, radius, thick) {
+	size = (radius - thick) * 2 / 8.5;
+	textSizeSmall010 = radius * 0.1;
+	textSizeSmall6479 = radius * 0.175;
+	font = "나눔고딕:style=Normal";
+	slices = $preview ? 20 : thick * 16;
+	linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
+
+		//	전화번호
+		translate([0, -size * 1, 0])
+		{
+			offset(0.4)
+				translate([-radius + textSizeSmall6479 * 2,	textSizeSmall6479 * 3, 0])
+				text("010", textSizeSmall010 * 2, font);
+			offset(0.6)
+				translate([-radius + textSizeSmall010 * 1.6, textSizeSmall010 * 1.5, 0])
+				text(number1, textSizeSmall010 * 2.4, font);
+		}
+	}
+}
+
 module themeCircleWebNumber(number1, number2, radius, thick) {
 	size = (radius - thick) * 2 / 8.5;
 	textSizeSmall010 = radius * 0.1;
@@ -151,8 +172,44 @@ module themeCircleWeb(number1 = "6810 6479", number2 = "4240 6479", radius, thic
 	
 	echo("themeCircleWeb done: ", number1, number2, radius, thick);
 }
+module themeCircleWebOne(number1 = "6810 6479", radius, thick) {
+	echo("themeCircleWebOne start: ", number1, radius, thick);
+
+	fn =  $preview ? 32 : 512;
+
+	size = (radius - thick) * 2 / 8.5;
+	font = "나눔고딕:style=Normal";
+	padding = thick * 2;
+	slices = $preview ? 20 : thick * 16;
+
+	translate([radius, radius, 0]) {
+		//	원
+		difference() {
+			cylinder(thick, radius, radius, $fn = fn);
+			translate([0, 0, -EPSILON])
+				cylinder(thick + EPSILON * 2, radius - padding, radius - padding, $fn = fn);
+		}
+		translate([0, 0, thick / 4])
+		linear_extrude(height = thick / 2, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
+			intersection() {
+				circle(radius);
+				offset(0.1)
+					import(file = "web.svg", dpi = 96, center = true);
+			}
+		}
+		color("red", 1.0)
+		translate([1, -6, thick * 0.25])
+		themeCircleWebNumberOne(number1, radius, thick * 0.75);
+
+		color("blue", 1.0)
+		translate([0, thick-64, thick / 2])
+		roundedBox([thick * 2, 64, thick], 1, true);
+	}
+	
+	echo("themeCircleWebOne done: ", number1, radius, thick);
+}
 
 //themeCircleWeb("010", "6810 6479", "4240 6479", 32, 2);	//	과헌
 //themeCircleWeb("2320 4016", "2520 8070", 32, 2);	//	호창
-themeCircleWeb("7564 4567", "3993 8802", 32, 2);	//	장희
-//themeCircleWeb("2425 4821", "", 32, 2);	//	장희
+//themeCircleWeb("7564 4567", "3993 8802", 32, 2)//	장희
+themeCircleWebOne("2425 4821", 32, 2);	//	홍석
