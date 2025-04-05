@@ -153,8 +153,8 @@ module themeCircleWeb(number1 = "6810 6479", number2 = "4240 6479", radius, thic
 			translate([0, 0, -EPSILON])
 				cylinder(thick + EPSILON * 2, radius - padding, radius - padding, $fn = fn);
 		}
-		translate([0, 0, thick / 4])
-		linear_extrude(height = thick / 2, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
+		translate([0, 0, 0])
+		linear_extrude(height = thick / 4 * 3, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
 			intersection() {
 				circle(radius);
 				offset(0.1)
@@ -162,8 +162,8 @@ module themeCircleWeb(number1 = "6810 6479", number2 = "4240 6479", radius, thic
 			}
 		}
 		color("red", 1.0)
-		translate([0, 0, thick * 0.25])
-		themeCircleWebNumber(number1, number2, radius, thick * 0.75);
+		translate([0, 0, 0])
+		themeCircleWebNumber(number1, number2, radius, thick);
 
 		color("blue", 1.0)
 		translate([0, thick-64, thick / 2])
@@ -189,8 +189,8 @@ module themeCircleWebOne(number1 = "6810 6479", radius, thick) {
 			translate([0, 0, -EPSILON])
 				cylinder(thick + EPSILON * 2, radius - padding, radius - padding, $fn = fn);
 		}
-		translate([0, 0, thick / 4])
-		linear_extrude(height = thick / 2, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
+		translate([0, 0, 0])
+		linear_extrude(height = thick / 4 * 3, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
 			intersection() {
 				circle(radius);
 				offset(0.1)
@@ -198,8 +198,8 @@ module themeCircleWebOne(number1 = "6810 6479", radius, thick) {
 			}
 		}
 		color("red", 1.0)
-		translate([1, -6, thick * 0.25])
-		themeCircleWebNumberOne(number1, radius, thick * 0.75);
+		translate([1, -6, 0])
+		themeCircleWebNumberOne(number1, radius, thick);
 
 		color("blue", 1.0)
 		translate([0, thick-64, thick / 2])
@@ -211,5 +211,5 @@ module themeCircleWebOne(number1 = "6810 6479", radius, thick) {
 
 //themeCircleWeb("010", "6810 6479", "4240 6479", 32, 2);	//	과헌
 //themeCircleWeb("2320 4016", "2520 8070", 32, 2);	//	호창
-//themeCircleWeb("7564 4567", "3993 8802", 32, 2)//	장희
+//themeCircleWeb("7564 4567", "3993 8802", 32, 2);//	장희
 themeCircleWebOne("2425 4821", 32, 2);	//	홍석
