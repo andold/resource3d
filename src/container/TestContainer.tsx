@@ -71,16 +71,6 @@ function BoxContainer(props: any) {
 		window.addEventListener("keydown", handleOnKeydown, true);
 	});
 
-	const handleOnClickReset2 = (event: React.MouseEvent<HTMLButtonElement>): void => {
-		if (!cameraControlRef.current) {
-			return;
-		}
-		cameraControlRef.current.setTarget(0, 0, 0);
-		if (!event.shiftKey) {
-			cameraControlRef.current.setPosition(-100, 100, -100, true);
-		}
-	}
-   
 	function handleOnKeydown(event: KeyboardEvent) {
 		if (!cameraControlRef.current) {
 			return;
@@ -146,10 +136,10 @@ function Basis(props: any) {
 	const { show } = props;
 
 	const v: any[] = [1000, 0.1, 1000];
-	const texture = useLoader(TextureLoader, "/texture/인조화강암블럭.jpg");
+	const texture = useLoader(TextureLoader, "/texture/잔디.png");
 	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 	texture.offset.set(0, 0);
-	texture.repeat.set(64, 128);
+	texture.repeat.set(8, 8);
 
 	if (!show) {
 		return (<>
