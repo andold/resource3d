@@ -6,11 +6,25 @@ import { Euler } from "three";
 import Panel from "../model/Panel";
 
 // TestStore.ts
+export const SCALE: number = 1 / 1000;
 class TestStore {
 	constructor() {
 		makeAutoObservable(this);
 	}
 
+	scaleGeometry(p: Panel): [width?: number | undefined, height?: number | undefined, depth?: number | undefined, widthSegments?: number | undefined, heightSegments?: number | undefined, depthSegments?: number | undefined]
+	{
+		return [p.width * SCALE, p.thick * SCALE, p.height * SCALE];
+	}
+	scaleVector3(p: Vector3, t?: Panel): Vector3 {
+		return new Vector3((p.x + (t?.x ?? 0)) * SCALE, (p.y + (t?.y ?? 0)) * SCALE, (p.z + (t?.z ?? 0)) * SCALE);
+	}
+	scaleEuler(p: Euler|undefined): Euler|undefined {
+		if(!p) {
+			return p;
+		}
+		return new Euler(p.x * SCALE, p.y * SCALE, p.z * SCALE, p.order);
+	}
 	testGeometryRotate(panels: Panel[], code: any): boolean {
 		switch (code) {
 			case "KeyW":
@@ -120,6 +134,5 @@ class TestStore {
 		return dp;
 	}
 }
-
 const store = new TestStore();
 export default store;

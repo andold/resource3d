@@ -3,6 +3,7 @@
     "outDir": "./build",
     "rootDir": "./src",
     "experimentalDecorators": true,
+	"exactOptionalPropertyTypes": false,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,

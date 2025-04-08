@@ -13,58 +13,49 @@ import store, { SCALE } from "../store/TestStore";
 
 // view
 
-// PanelView.tsx
-const PanelView = ((props: any) => {
-	const panel: Panel = props.panel;
+// WallView.tsx
+const WallView = ((props: any) => {
+	const wall: Panel = props.wall;
 	
 	const [position, setPosition] = useState<Vector3>();
-	const [rotation, setRotation] = useState<Euler>();
+	const [rotation, setRotation] = useState<Euler|undefined>();
 	useEffect(() => {
-		const p: Vector3 = store.position(panel);
+		const p: Vector3 = store.position(wall);
 		setPosition(p);
-		const r: Euler = store.rotation(panel);
+		const r: Euler = store.rotation(wall);
 		setRotation(r);
-	}, [panel]);
+	}, [wall]);
 
 	const texture = useLoader(TextureLoader, "/texture/자작나무.jpg");
 	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 	texture.offset.set(0, 0.5);
 	texture.repeat.set(1, 1);
 
-	//console.log(panel, position);
-
 	if (!position) {
 		return (<></>);
 	}
 
 	return (<>
-		<mesh position={store.scaleVector3(position, panel)} rotation={rotation}>
-			<boxGeometry args={store.scaleGeometry(panel)} />
+		<mesh position={store.scaleVector3(position, wall)} rotation={rotation}>
+			<boxGeometry args={store.scaleGeometry(wall)} />
 			<meshStandardMaterial
-				map={texture}
-				opacity={0.9}
+				color={"#F0F0F0"}
+				opacity={0.5}
 				transparent
 			/>
 			<Information
-				panel={panel}
+				panel={wall}
 				show={true}
 			/>
 		</mesh>
 	</>);
 });
-export default PanelView;
+export default WallView;
 
 function Information(props: any) {
 	const { show } = props;
 	const panel: Panel = props.panel;
-	const FONT_SIZE = 0.05;
-
-	const [position, setPosition] = useState<Vector3>();
-	useEffect(() => {
-		const before = new Vector3(panel.width / -2 + FONT_SIZE, panel.thick / 2 + SCALE * 100, panel.height / -2);
-		const p: Vector3 = store.scaleVector3(before);
-		setPosition(p);
-	}, [panel]);
+	const FONT_SIZE = 1;
 
 	if (!show) {
 		return (<></>);
@@ -72,21 +63,20 @@ function Information(props: any) {
 
 	return (<>
 		<Text
-			//font={"나눔고딕"}
 			fontSize={FONT_SIZE}
 			textAlign={"left"}
 			anchorX={"left"}
 			anchorY={"top"}
-			outlineWidth={FONT_SIZE / 10}
-			outlineOffsetX={FONT_SIZE / 20}
-			outlineOffsetY={FONT_SIZE / 20}
-			position-x={position?.x}
-			position-y={position?.y}
-			position-z={position?.z}
+			outlineWidth={0.1}
+			outlineOffsetX={0.1}
+			outlineOffsetY={0.1}
+			position-x={panel.width / -2 + FONT_SIZE / 2}
+			position-y={panel.thick / 2 + SCALE / 100}
+			position-z={panel.height / -2}
 			rotation={new Euler(-Math.PI / 2, 0, 0)}
 		>
 			<meshStandardMaterial color={"yellow"} />
-			{panel.width}㎜ x {panel.height}㎜ x {panel.thick}㎜
+			{panel.width * SCALE}㎜ x {panel.height * SCALE}㎜ x {panel.thick * SCALE}㎜
 			({panel.x}, {panel.y}, {panel.z})
 	    </Text>
 	</>);
