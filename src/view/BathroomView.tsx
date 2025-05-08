@@ -44,6 +44,7 @@ function outter(p: Panel): Panel[] {
 		y: -p.thick + 1,
 		z: -p.thick,
 	});
+	/*
 	walls.push({	//	천정
 		width: p.width + p.thick * 2,
 		height: p.height + p.thick * 2,
@@ -62,6 +63,7 @@ function outter(p: Panel): Panel[] {
 		y: 0,
 		z: -p.thick,
 	});
+	*/
 	walls.push({	//	측면12
 		width: p.width + p.thick * 1,
 		height: height,
