@@ -20,3 +20,7 @@ module line_type_1(start, end, r1, r2) {
 		rotate([rx, ry, rz])
 		linear_extrude(EPSILON, center = true)	text(str(d, " mm"), size = fs, halign = "center", language = "kr", font = "NanumGothic");
 }
+module samples() {
+	line_type_1([0, 0, 0], [16, 16, 16], 1);
+}
+samples();

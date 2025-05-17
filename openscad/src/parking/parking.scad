@@ -1,215 +1,164 @@
 use <MCAD/boxes.scad>
 include	<../common/constants.scad>
-use <spider_web_generator.scad>
+use <spider_web.scad>
 
-module textBold(title, size, font) {
-	for (cx = [0: 0.01: size / 10]) {
-		translate([cx, 0, 0])		text(title, size, font = font);
-	}
-}
-module themeCircle(number1, number2, radius = 16) {
-	thick = 2;
-	size = radius / 4 * 1.33;
-	font = "Sans Serif:style=Bold";
-	widthBaseline = 2;
-	slices = prototype ? 20 : thick * 16;
+fn =  $preview ? 16 : 128;
 
-	translate([radius, radius, 0]) {
-		linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
-			//	원
-			difference() {
-				circle(radius);
-				circle(radius - 4);
-			}
-			intersection() {
-				circle(radius);
-				import(file = "web.svg", dpi = 96 * 2, center = true);
-			}
-			
-			//	전화번호
-			translate([size / 2 - radius + size, size + widthBaseline / 2, 0])		textBold("010", size / 3 * 2, font);
-			translate([size / 2 - radius + size, -size / 2 + widthBaseline / 2, 0])	textBold(number1, size, font);
-			translate([size / 2 - radius + size, -size * 2 + widthBaseline / 2, 0])	textBold(number2, size, font);
-		}
-		
-		//	베이스라인
-		scale(ZERO)	linear_extrude(thick / 2, true) {
-			translate([-radius * 0.85,	size, 1 / 2])			square([radius * 2 * 0.85, widthBaseline], false);
-			translate([-radius * 0.90,	-size / 2, 1 / 2])		square([radius * 2 * 0.90, widthBaseline], false);
-			translate([-radius * 0.70,	-size / 2 * 4, 1 / 2])	square([radius * 2 * 0.70, widthBaseline], false);
-		}
-	}
-	
-	//	손잡이?
-	translate([radius - thick / 4, -128 / 2 + thick, thick / 4])	roundedBox([thick * 2, 128, thick / 2], thick / 4, true);
-}
+FONT = "나눔고딕:style=Bold";
 
-module themeCircleCap(radius, thick) {
-	fn =  $preview ? 32 : 512;
-
-	margin = thick / 4;
-	inner = radius + margin;
-	inner2 = inner - thick;
-	overhangHeight = $preview ? thick + EPSILON : thick;
-	outter = radius + margin + thick;
-	padding = thick * 3;
-	difference() {
-		color("white", 0.8)
-			translate([0, 0, 0])
-			cylinder(h = thick * 2.5 + margin, r1 = outter, r2 = outter, center = false, $fn = fn);
-		// 넣는 장소
-		translate([0, 0, thick / 2])
-			cylinder(h = thick + margin, r1 = inner, r2 = inner, center = false, $fn = fn);
-		// 가두는 테두리
-		translate([0, 0, thick / 2 * 3 + margin])
-			cylinder(h = overhangHeight, r1 = inner, r2 = inner2, center = false, $fn = fn);
-
-		// 살짝 걸치는 곳
-		translate([-inner, -thick / 2, -thick / 2])
-			cube([padding, thick, thick * 2]);
-		translate([inner - padding, -thick / 2, -thick / 2])
-			cube([padding, thick, thick * 2]);
-
-		// 반원으로 자르기
-		translate([-outter, 0, -thick / 2])
-			cube([outter * 2, outter * 2, thick * 4]);
-	}
-	
-	// 손잡이
-	stickx = thick * 4;
-	sticky = 128;
-	stickz = thick;
-	translate([0, -sticky / 2 - radius - thick / 2, stickz / 2])
-		roundedBox([stickx, sticky, stickz], thick, true);
-}
+function slices(thick) = $preview ? 20 : thick * 8;
+function textWidth(radius, thick) = (radius - thick) * 2 / 8.5;
 
 module themeCircleWebNumberOne(number1, radius, thick) {
-	size = (radius - thick) * 2 / 8.5;
+	echo("themeCircleWebNumberOne start: ", number1, radius, thick);
+
 	textSizeSmall010 = radius * 0.1;
 	textSizeSmall6479 = radius * 0.175;
-	font = "나눔고딕:style=Normal";
-	slices = $preview ? 20 : thick * 16;
-	linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
-
+	linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices(thick), scale=[1, 1]) {
 		//	전화번호
-		translate([0, -size * 1, 0])
+		translate([0, -textWidth(radius, thick) * 1, 0])
 		{
 			offset(0.4)
-				translate([-radius + textSizeSmall6479 * 2,	textSizeSmall6479 * 3, 0])
-				text("010", textSizeSmall010 * 2, font);
+				translate([-radius + textSizeSmall6479 * 2,	textSizeSmall6479 * 3.5, 0])
+				text("010", textSizeSmall010 * 1.5, FONT);
 			offset(0.6)
+				scale([1.0, 1.2, 1.0])
 				translate([-radius + textSizeSmall010 * 1.6, textSizeSmall010 * 1.5, 0])
-				text(number1, textSizeSmall010 * 2.4, font);
+				text(number1, textSizeSmall010 * 2.4, FONT);
 		}
 	}
 }
 
-module themeCircleWebNumber(number1, number2, radius, thick) {
-	size = (radius - thick) * 2 / 8.5;
+module themeCircleWebNumber(number1, number2, radius, thick, type = 0) {
 	textSizeSmall010 = radius * 0.1;
 	textSizeSmall6479 = radius * 0.175;
-	font = "나눔고딕:style=Normal";
-	slices = $preview ? 20 : thick * 16;
-	linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
 
+	linear_extrude(height = thick, center = false, convexity = 10, twist = 0, slices = slices(thick), scale=[1, 1], $fn = fn) {
 		//	전화번호
-		translate([0, -size * 1, 0])
+		translate([0, -textWidth(radius, thick) * 1, 0])
 		{
 			offset(0.4)
-				translate([-radius + textSizeSmall6479 * 2,	textSizeSmall6479 * 3, 0])
-				text("010", textSizeSmall010 * 2, font);
+				translate([-radius + textSizeSmall6479 * 2,	textSizeSmall6479 * 3.5, 0])
+				text("010", textSizeSmall010 * 1.5, FONT);
 			offset(0.6)
+			scale([1.0, 1.2, 1.0])
 				translate([-radius + textSizeSmall010 * 1.6, textSizeSmall010 * 1.5, 0])
-				text(number1, textSizeSmall010 * 2.4, font);
+				text(number1, textSizeSmall010 * 2.4, FONT);
 		}
 
 		//rotate([0, 0, 180])
-		translate([size, -size * 4, 0])
+		translate([textWidth(radius, thick), -textWidth(radius, thick) * 4, 0])
 		{
-			offset(0.3)
-				translate([-radius + textSizeSmall010 * 2,	textSizeSmall010 * 5.5, 0])
-				text("010", textSizeSmall010, font);
-			offset(0.3)
-				translate([-radius + textSizeSmall010 * 1.75, size / 2 * 1.5 * 2, 0])
-				text(number2, textSizeSmall6479, font);
-		}
-	}
-}
-
-module themeCircleWeb(number1 = "6810 6479", number2 = "4240 6479", radius, thick) {
-	echo("themeCircleWeb start: ", number1, number2, radius, thick);
-
-	fn =  $preview ? 32 : 512;
-
-	size = (radius - thick) * 2 / 8.5;
-	font = "나눔고딕:style=Normal";
-	padding = thick * 2;
-	slices = $preview ? 20 : thick * 16;
-
-	translate([radius, radius, 0]) {
-		//	원
-		difference() {
-			cylinder(thick, radius, radius, $fn = fn);
-			translate([0, 0, -EPSILON])
-				cylinder(thick + EPSILON * 2, radius - padding, radius - padding, $fn = fn);
-		}
-		translate([0, 0, 0])
-		linear_extrude(height = thick / 4 * 3, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
-			intersection() {
-				circle(radius);
-				offset(0.1)
-					import(file = "web.svg", dpi = 96, center = true);
+			if (type != 0) {
+				offset(0.3)
+					translate([-radius + textSizeSmall010 * 2,	textSizeSmall010 * 5.5, 0])
+					text("010", textSizeSmall010, FONT);
 			}
+			offset(0.3)
+				scale([1.0, 1.2, 1.0])
+				translate([-radius + textSizeSmall010 * 1.75, textWidth(radius, thick) / 2 * 1.5 * 2, 0])
+				text(number2, textSizeSmall6479, FONT);
 		}
-		color("red", 1.0)
-		translate([0, 0, 0])
-		themeCircleWebNumber(number1, number2, radius, thick);
-
-		color("blue", 1.0)
-		translate([0, thick-64, thick / 2])
-		roundedBox([thick * 2, 64, thick], 1, true);
 	}
-	
-	echo("themeCircleWeb done: ", number1, number2, radius, thick);
 }
-module themeCircleWebOne(number1 = "6810 6479", radius, thick) {
+
+module themeCircleWebOne(number1 = "6810 6479", radius = 40, thick = 4, height = 4, thickSpiderWeb = 0.8, stick = [5, 64, 2.5]) {
 	echo("themeCircleWebOne start: ", number1, radius, thick);
 
-	fn =  $preview ? 32 : 512;
-
-	size = (radius - thick) * 2 / 8.5;
-	font = "나눔고딕:style=Normal";
-	padding = thick * 2;
-	slices = $preview ? 20 : thick * 16;
-
 	translate([radius, radius, 0]) {
 		//	원
+		color("yellow", 1.0)
 		difference() {
-			cylinder(thick, radius, radius, $fn = fn);
+			cylinder(height, radius, radius, $fn = fn);
 			translate([0, 0, -EPSILON])
-				cylinder(thick + EPSILON * 2, radius - padding, radius - padding, $fn = fn);
+				cylinder(height + EPSILON * 2, radius - thick, radius - thick, $fn = fn);
 		}
-		translate([0, 0, 0])
-		linear_extrude(height = thick / 4 * 3, center = false, convexity = 10, twist = 0, slices = slices, scale=[1, 1]) {
-			intersection() {
-				circle(radius);
-				offset(0.1)
-					import(file = "web.svg", dpi = 96, center = true);
-			}
-		}
-		color("red", 1.0)
-		translate([1, -6, 0])
-		themeCircleWebNumberOne(number1, radius, thick);
 
-		color("blue", 1.0)
-		translate([0, thick-64, thick / 2])
-		roundedBox([thick * 2, 64, thick], 1, true);
+		color("yellow", 0.5)
+		spider_web(radius, height - 1, thick = thickSpiderWeb);
+
+		color("yellow", 1.0)
+		translate([1, -6, 0])
+		themeCircleWebNumberOne(number1, radius, height);
+
+		color("yellow", 1.0)
+		translate([0, -stick[1] / 2 - radius + thick, stick[2] / 2])
+		roundedBox(stick, 1, true);
 	}
 	
 	echo("themeCircleWebOne done: ", number1, radius, thick);
 }
 
-//themeCircleWeb("010", "6810 6479", "4240 6479", 32, 2);	//	과헌
-//themeCircleWeb("2320 4016", "2520 8070", 32, 2);	//	호창
-//themeCircleWeb("7564 4567", "3993 8802", 32, 2);//	장희
-themeCircleWebOne("2425 4821", 32, 2);	//	홍석
+module themeCircleWeb(number1 = "6810 6479", number2 = "4240 6479", radius = 40, thick = 4, thickSpiderWeb = 0.8, height = 4, stick = [5, 64, 2.5]) {
+	echo("themeCircleWeb start: ", number1, number2, radius, thick, thickSpiderWeb, height, stick);
+
+	if (number1 == undef || len(number1) == 0) {
+		echo("INVALID: number1은 필수입니다", number1, number2, radius, thick);
+	} else if (number2 == undef || len(number2) == 0) {
+		echo("하나의 전화번호만 출력합니다.", number1, radius, thick, height, thickSpiderWeb, stick);
+		themeCircleWebOne(number1, radius, thick, height, thickSpiderWeb, stick);
+	} else {
+		echo("두개의 전화번호를 출력합니다.", number1, number2, radius, thick, height, thickSpiderWeb, stick);
+		translate([radius, radius, 0]) {
+			echo("최외곽원을 출력합니다.", height, radius, radius - thick, fn);
+			//	최외곽원
+			color("white", 1.0)
+			difference() {
+				cylinder(height, radius, radius, $fn = fn);
+				translate([0, 0, -EPSILON])
+					cylinder(height + EPSILON * 2, radius - thick, radius - thick, $fn = fn);
+			}
+
+			color("white", 0.5)
+			translate([0, 0, 0])
+			spider_web(radius, height - 1, thick = thickSpiderWeb);
+
+			color("white", 1.0)
+			translate([0, 0, 0])
+			themeCircleWebNumber(number1, number2, radius, height);
+
+			color("white", 0.5)
+			translate([0, -stick[1] / 2 - radius + thick, stick[2] / 2])
+			roundedBox(stick, 1, true);
+		}
+	}
+
+	echo("themeCircleWeb done: ", number1, number2, radius, thick, thickSpiderWeb, height, stick);
+}
+
+module samples(data, size = 9) {
+	for (cx = [0:size - 1]) {
+		translate([cx * 85, 0, 0])
+		themeCircleWeb(data[cx][1], data[cx][2]);
+	}
+}
+
+module build(command = 0) {
+	echo(command);
+
+	COMMANDS = [
+		["샘플", "첫번째 전화", "두번째 전화"],
+		["박영선 권과헌", "4240 6479", "6810 6479"],
+		["권과헌 박영선", "6810 6479", "4240 6479"],
+		["이호창", "2320 4016"],
+		["조제욱", "2520 8070"],
+		["한장희", "7564 4567"],
+		["김은주", "3993 8802"],
+		["송홍석", "2425 4821"],
+		["마지막", " RESEVED"]
+	];
+	stick = [8, 64, 2.5];
+
+	if (command < 0) {
+		cube([1, 1, 1]);
+	} else if (command == 0) {
+		//samples(COMMANDS);
+		themeCircleWeb(COMMANDS[1][1], COMMANDS[1][2], stick = stick);
+	} else {
+		themeCircleWeb(COMMANDS[command][1], COMMANDS[command][2], stick = stick);
+	}
+
+	echo(command, COMMANDS[command][0], COMMANDS[command][1], COMMANDS[command][2], stick = stick);
+}
+
+build(command == undef ? 0 : command);
