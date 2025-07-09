@@ -6,6 +6,13 @@ use <../common/library_text.scad>
 use <../common/library_cube.scad>
 use <../common/utils.scad>
 
+OUTLINE = [170.20, 111.20, 0.91];
+ACTIVE_AREA = [160.00, 96.00];
+MARGIN_ONE = [5.10, 4.70];
+
+function PART_01() = [OUTLINE.x, OUTLINE.y, OUTLINE.z];
+function MARGIN_01() = [0, 0, 0];
+
 module epaper_display_part_one_of_one(v = ACTIVE_AREA) {
 	color([0.5, 0.9, 0], 0.5)
 	cube(v);
@@ -15,14 +22,10 @@ module epaper_display_part_two_of_one(v = OUTLINE) {
 	cube(v);
 }
 
-OUTLINE = [170.20, 111.20, 0.91];
-ACTIVE_AREA = [160.00, 96.00];
-MARGIN_ONE = [5.10, 4.70];
-
-module epaper_display_part_one() {
+module epaper_display_part_01() {
 	translate([MARGIN_ONE.x, (OUTLINE.y - ACTIVE_AREA.y) - MARGIN_ONE.y, 0])
 	epaper_display_part_one_of_one([ACTIVE_AREA.x, ACTIVE_AREA.y, OUTLINE.z]);
 	epaper_display_part_two_of_one([OUTLINE.x, OUTLINE.y, OUTLINE.z]);
 }
 
-epaper_display_part_one();
+epaper_display_part_01();
