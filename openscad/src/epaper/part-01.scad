@@ -1,31 +1,30 @@
 // 라이브러리, 검증된 것만 이곳에
-use <MCAD/boxes.scad>
 include	<../common/constants.scad>
-use <../common/library_function.scad>
-use <../common/library_text.scad>
-use <../common/library_cube.scad>
-use <../common/utils.scad>
+use	<common.scad>
 
-OUTLINE = [170.20, 111.20, 0.91];
-ACTIVE_AREA = [160.00, 96.00];
-MARGIN_ONE = [5.10, 4.70];
+// active area
+ACTIVE_AREA_COLOR = [0.3, 0.3, 0.9, 0.9];
+function PART01() = [160.00, 96.00, EPSILON];
 
-function PART_01() = [OUTLINE.x, OUTLINE.y, OUTLINE.z];
-function MARGIN_01() = [0, 0, 0];
+module epaper_part_01() {
+	s = PART01();
 
-module epaper_display_part_one_of_one(v = ACTIVE_AREA) {
-	color([0.5, 0.9, 0], 0.5)
-	cube(v);
+	color(ACTIVE_AREA_COLOR)
+	cube(s);
+	
+	translate([0, s.y - 8, s.z])
+	notate([s.x, 2]);
+
+	translate([s.x - 8, 0, s.z])
+	notate([2, s.y]);
+
+	%translate([2, s.y - 4, EPSILON * 2])
+	linear_extrude(height = s.z) {
+		text(str("1. Active Area: ", s.x, " x ", s.y, "mm"), font = "D2Coding", size = 2);
+	}
 }
-module epaper_display_part_two_of_one(v = OUTLINE) {
-	color([0.5, 0.0, 0.9], 0.5)
-	cube(v);
-}
-
 module epaper_display_part_01() {
-	translate([MARGIN_ONE.x, (OUTLINE.y - ACTIVE_AREA.y) - MARGIN_ONE.y, 0])
-	epaper_display_part_one_of_one([ACTIVE_AREA.x, ACTIVE_AREA.y, OUTLINE.z]);
-	epaper_display_part_two_of_one([OUTLINE.x, OUTLINE.y, OUTLINE.z]);
+	epaper_part_01();
 }
 
 epaper_display_part_01();
