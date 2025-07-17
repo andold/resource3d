@@ -10,7 +10,12 @@ use <part-06.scad>
 ID = "⑧";
 COLOR = [0.3, 0.4, 0.7, 0.9];
 
+function COLOR08() = COLOR;
+
 module epaper_part_08(v) {
+	hr();
+	echo("epaper_part_08", parent_module(1), v);
+
 	w = is_undef(v) ? [32, 8, 16, 2] : v;
 	fontSize = min(w) / 4;
 

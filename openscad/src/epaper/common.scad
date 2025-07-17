@@ -5,8 +5,8 @@ function pointToLineDistance(x0, y0, x1, y1, x2, y2) =
     abs((x2 - x1)*(y1 - y0) - (x1 - x0)*(y2 - y1)) /
     sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
 
-module HR() {
-		echo("_________________________________________________________________________________");
+module hr() {
+	echo(HR);
 }
 module arrow_left(v) {
 	leader = v.y / 32;	//	지시선 두께
@@ -126,9 +126,9 @@ module test() {
 	x2 = 4; y2 = 0;    // 점 C
 
 	distance = pointToLineDistance(x0, y0, x1, y1, x2, y2);
-	HR();
+	hr();
 	echo("A에서 BC까지의 거리: ", distance);
-	HR();
+	hr();
 }
 module main() {
 	SHORT = 20;

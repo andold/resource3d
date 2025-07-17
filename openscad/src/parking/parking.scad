@@ -138,13 +138,31 @@ module build(command = 0) {
 
 	COMMANDS = [
 		["샘플", "첫번째 전화", "두번째 전화"],
-		["박영선 권과헌", "4240 6479", "6810 6479"],
+		["박영선 권과헌", "4240 6479", "6810 6479"],	//	index is 1
 		["권과헌 박영선", "6810 6479", "4240 6479"],
-		["이호창", "2320 4016"],
+		["이호창", "2320 4016"],	//	index is 3
 		["조제욱", "2520 8070"],
 		["한장희", "7564 4567"],
 		["김은주", "3993 8802"],
-		["송홍석", "2425 4821"],
+		["송홍석", "2425 4821"],	//	index is 7
+		
+		["권선희", "5113 1208"],	//	index is 8
+		["손종성", "3653 9094"],
+		["권순덕", "2652 3464"],	//	index is 10
+		["고영국", "4024 6352"],
+		["권영철", "3689 6617"],	//	index is 12
+		["김진순", "3638 0990"],
+		["박동서", "5705 8849"],	//	index is 14
+		["이옥수", "5383 8849"],
+		["박선영", "3875 6082"],	//	index is 16
+		["김기덕", "3249 0190"],
+		["박동서 이옥수", "5705 8849", "5383 8849"],	//	index is 18
+		["박선영 김기덕", "3875 6082", "3249 0190"],
+
+		["권선희 손종성", "5113 1208", "3653 9094"],	//	index is 20
+		["권순덕 고영국", "2652 3464", "4024 6352"],
+		["권영철 김진순", "3689 6617", "3638 0990"],
+
 		["마지막", " RESEVED"]
 	];
 	stick = [8, 64, 2.5];
@@ -152,13 +170,18 @@ module build(command = 0) {
 	if (command < 0) {
 		cube([1, 1, 1]);
 	} else if (command == 0) {
-		//samples(COMMANDS);
 		themeCircleWeb(COMMANDS[1][1], COMMANDS[1][2], stick = stick);
 	} else {
+		echo(COMMANDS[command]);
 		themeCircleWeb(COMMANDS[command][1], COMMANDS[command][2], stick = stick);
 	}
 
 	echo(command, COMMANDS[command][0], COMMANDS[command][1], COMMANDS[command][2], stick = stick);
 }
 
+// look build.bat script file
 build(command == undef ? 0 : command);
+
+/*
+C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\openscad\src\parking\parking-%date:~0,4%%date:~5,2%%date:~8,2%%time:~0,2%%time:~3,2%.stl -D command=17 --export-format asciistl C:\src\eclipse-workspace\resource3d\openscad\src\parking\parking.scad
+*/

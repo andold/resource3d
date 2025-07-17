@@ -10,6 +10,7 @@ EPSILON2 = EPSILON * 2;
 MINIMUM = 0.1;	//	0.1mm
 NOZZLE = 0.4;	//	노즐 지름
 OVERHANG_THRESHOLD = 30;
+HR = "──────────────────────────────────";
 
 FN = $preview ? 16 : 360;
 
