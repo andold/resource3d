@@ -2,94 +2,47 @@
 include	<../common/constants.scad>
 
 use <common.scad>
-use <part-01.scad>
-use <part-02.scad>
-use <part-03.scad>
-use <part-04.scad>
-//	①②③④⑤⑥⑦⑧⑨ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝ
+use <part-04.scad>	//	패널 밑에 받치는 밑판
+use <part-08.scad>	//	모난 구석이 없는 네모 상자
 
-ID = "⑤";
-MARGIN_BACKGROUND = [8, 8];
-COLOR = [0.3, 0.5, 0.1, 0.9];
+COLOR = [0.4, 0.6, 0.2, 0.9];
 
-function PART05() = [PART04().x, PART04().y, 1];
-function PADDING05() = [0.5, 0.5];
+//	디스플레이 패널을 덮는 위판
+function PART05(v = PART04()) = [[
+		[v[0][0].x, v[0][0].y, 1, 1/4],	//	밑판 크기 차용 + 굴곡의 반지름
+		"디스플레이 패널을 덮는 위판"
+	],
+	for (cx = v) cx
+];
+/*
+p5 = PART05();	//	디스플레이 패널을 덮는 위판
+p5 = v[0];	//	디스플레이 패널을 덮는 위판
+size5 = p5[0][0];	//	디스플레이 패널을 덮는 위판 외경
+*/
 
-pNotate = [PART05().x - 16, 16];
+module epaper_part_05(v = PART05()) {
+	echo(str(parent_module(0), "(", v, ")"));
 
-module background_05() {
-	margin02 = MARGIN02();
-	margin04 = MARGIN04();
-	part05 = PART05();
+	assert(!is_undef(v));
 
-	translate([-PART05().x - MARGIN_BACKGROUND.x, 0, 0])
-	epaper_part_04();
+	radius = v[0][1];
+	size = v[0][0];
+	fs = 2;
 
-	translate([margin02.x + margin04.x, margin02.y + margin04.y + MARGIN_BACKGROUND.y, 0])
-	translate([0, part05.y, 0])
-	epaper_display_part_01();
-}
-module epaper_display_part_05() {
-	part01 = PART01();
-	part02 = PART02();
+	color(COLOR)
+	epaper_part_08(size);
 
-	margin02 = MARGIN02();
-	margin04 = MARGIN04();
-	part05 = PART05();
-
-	s01 = [
-		part01.x + PADDING05().x * 2,
-		part01.y + PADDING05().y * 2,
-		part05.z
-	];
-	p01 = [
-		(PART05().x - s01.x) / 2,
-		s01.y + (PART04().y - part01.y) - (margin02.y + margin04.y) - PADDING05().y,
-		0
-	];
-	dpy = 4;
-	difference() {
-		union() {
-			//	원래판
-			color(COLOR)
-			cube(PART05());
-			%translate([0, PART05().y / 2, PART05().z])	text(ID, font = "D2Coding", size = 2);
-
-			%color("yellow")
-			translate([2, PART05().y - 3, PART05().z + EPSILON * 2])
-			linear_extrude(height = PART05().z) {
-				text(str(ID, " Cover Outter: ", PART05().x, " x ", PART05().y, " x ", PART05().z, "mm"), font = "D2Coding", size = 2);
-			}
-			
-			//	왼쪽
-			translate([0, p01.y - dpy, PART05().z])
-			notate([(PART05().x - s01.x) / 2, 2]);
-
-			translate([(PART05().x - s01.x) / 2, p01.y - dpy, PART05().z])
-			notate([(s01.x), 2]);
-
-			translate([PART05().x - (PART05().x - s01.x) / 2, p01.y - dpy, PART05().z])
-			notate([(PART05().x - s01.x) / 2, 2]);
-		}
-		
-		//	삭제판, Active Area
-		translate([p01.x, p01.y - s01.y, -EPSILON])
-		cube([s01.x, s01.y, s01.z + EPSILON * 2]);
-	}
-
-	dpx = part05.x - p01.x * 2 - 4;
-	translate([p01.x + dpx, 0, PART05().z])
-	notate([2, p01.y - s01.y]);
-
-	translate([p01.x + dpx, p01.y - s01.y, PART05().z])
-	notate([2, part01.y + PADDING05().y * 2]);
-
-	translate([p01.x + dpx, p01.y, PART05().z])
-	notate([2, part05.y - p01.y]);
+	translate([0, -fs, size.z])	notate([size.x, fs]);
+	translate([-fs, 0, size.z])	notate([fs, size.y]);
+	translate([-fs, 0, 0])	rotate([90, 0, 0])	notateV([fs, size.z]);
 }
 module main() {
-	%background_05();
-	epaper_display_part_05();
+	hr();
+
+	v = PART05();
+	epaper_part_05(v);
+
+	hr();
 }
 
 main();

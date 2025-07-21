@@ -3,52 +3,71 @@ include	<../common/constants.scad>
 use <common.scad>
 use <part-01.scad>
 
-function PART02() = [170.20, 111.20, 0.91];
-function MARGIN02() = [5.10, 4.70];
+function PART02() = concat([[
+		[170.20, 111.20, 0.91],
+		[5.10, 4.70],
+		"Display Panel"
+	],
+	PART01()
+]);
 COLOR02 = [0.5, 0.5, 0.1, 0.9];
 
-module epaper_part_02() {
-	s = PART02();
-	m = MARGIN02();
+module epaper_part_02(v) {
+	echo(str(parent_module(0), "(", v, ")"));
+
+	assert(!is_undef(v));
+
+	s = [ for (cx = [0:2]) v[0][0][cx] ];
+	m = v[0][1];
+	p1 = v[1];
+	echo(str(parent_module(0)), s, m, p1);
 
 	//	Panel
 	color(COLOR02)
 	cube(s);
 
-	pNotate = [m.x + PART01().x - 8, (s.y - 8) - m.y];
+	pNotate = [m.x + p1.x - 8, (s.y - 8) - m.y];
 
 	//	왼쪽 테두리
-	translate([0, pNotate.y, PART02().z])
-	notate([MARGIN02().x, 2], str(MARGIN02().x, "mm"));
+	translate([0, pNotate.y, s.z])
+	notate([m.x, 2], str(m.x, "mm"));
 
 	//	오른쪽 테두리
-	translate([pNotate.x + 8, pNotate.y, PART02().z])
-	notate([MARGIN02().x, 2], str(MARGIN02().x, "mm"));
+	translate([pNotate.x + 8, pNotate.y, s.z])
+	notate([m.x, 2], str(m.x, "mm"));
 
 	//	위쪽 테두리
-	translate([pNotate.x, PART02().y - MARGIN02().y, PART02().z])
-	notate([2, MARGIN02().y]);
+	translate([pNotate.x, s.y - m.y, s.z])
+	notate([2, m.y]);
 
 	//	아래쪽 테두리
-	translate([pNotate.x, 0, PART02().z])
-	notate([2, PART02().y - PART01().y - MARGIN02().y]);
+	translate([pNotate.x, 0, s.z])
+	notate([2, s.y - p1.y - m.y]);
 
-	%translate([2, s.y - 4, EPSILON])
-	color("black")
+	fs = 2;
+	%translate([s.x / 2, s.y - fs, EPSILON])
 	linear_extrude(height = s.z) {
-		text(str("2. Panel: (", s.x, " x ", s.y, " x ", s.z, "mm), "), size = 2);
+		text(str(parent_module(0), v[0]), font = "D2Coding", size = fs, halign = "center");
 	}
 }
-module epaper_display_part_02() {
-	s = PART02();
-	m = MARGIN02();
+module background02(v) {
+	echo(str(parent_module(0), "(", v, ")"));
+
+	assert(!is_undef(v));
+	s = v[0][0];
+	m = v[0][1];
+	p1 = v[1];
 
 	//	Active Area
-	translate([m.x, (s.y - PART01().y) - m.y, s.z])
-	epaper_display_part_01();
+	translate([m.x, (s.y - p1.y) - m.y, s.z])
+	epaper_part_01(p1);
 
-	epaper_part_02();
+}
+module main() {
+	v = PART02();
+	
+	background02(v);
+	epaper_part_02(v);
 }
 
-epaper_display_part_02();
-!epaper_part_02();
+main();

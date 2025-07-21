@@ -54,8 +54,8 @@ module notateHI(v, title) {
 	translate([v.x - (v.x - titleSize) / 2, 0])
 	arrow_right([(v.x - titleSize) / 2, v.y]);
 
-	translate([(v.x - titleSize) / 2, 0])
-	text(title, font = "D2Coding", size = v.y);
+	translate([v.x / 2, 0])
+	text(title, font = "D2Coding", size = v.y, halign = "center");
 }
 module notateHO(v, title) {
 	titleSize = v.y * len(title);
@@ -67,8 +67,8 @@ module notateHO(v, title) {
 	translate([v.x, 0])
 	arrow_left([arrowSize, v.y]);
 
-	translate([(v.x - titleSize) / 2, 0])
-	text(title, font = "D2Coding", size = v.y);
+	translate([v.x / 2, 0])
+	text(title, font = "D2Coding", size = v.y, halign = "center");
 }
 module notateH(v, title, up, prefix) {
 	prefixSafe = is_undef(prefix) ? "" : prefix;
@@ -98,11 +98,11 @@ module notateH(v, title, up, prefix) {
 			// 바깥에 표시해야 한다
 			notateHO(v, "");
 			if (upSafe) {
-				translate([(v.x - titleDetailSize) / 2, v.y])
-				text(titleDetail, font = "D2Coding", size = v.y);
+				translate([v.x / 2, v.y])
+				text(titleDetail, font = "D2Coding", size = v.y, halign = "center");
 			} else {
-				translate([(v.x - titleDetailSize) / 2, -v.y])
-				text(titleDetail, font = "D2Coding", size = v.y);
+				translate([v.x / 2, -v.y])
+				text(titleDetail, font = "D2Coding", size = v.y, halign = "center");
 			}
 		}
 	}
@@ -113,6 +113,11 @@ module notateV(v, title, up, prefix) {
 	notateH([v.y, v.x], title, up, prefix);
 }
 module notate(v, title, up, prefix) {
+//	echo(str(parent_module(0), ".", parent_module(1), "(", v, title, up, prefix, ")"));
+
+	assert(!is_undef(v));
+	assert(!is_undef(v[1]));
+
 	if (v.x > v.y) {
 		notateH(v, title, up, prefix);
 	} else {

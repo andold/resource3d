@@ -1,73 +1,42 @@
 include	<../common/constants.scad>
 use <common.scad>
-use <part-01.scad>
-use <part-02.scad>
 
-function PART03() = [25.50, 24.00, 0.1];
-function PADDING03() = [3, 3, 1];
-function MARGIN03() = [72.35, 0, 0];
-
-SIZE = [0, 0, 2];
-PADDING = [3, 3, 1];
-MARGIN = [0.5, 0.5];
 COLOR = [0.4, 0.8, 0.4, 0.5];
 
-part01 = PART01();
-part02 = PART02();
-margin02 = MARGIN02();
-part03 = PART03();
-part04 = PART04();
-
-function PART04() = [
-	PADDING.x * 2 + MARGIN.x * 2 + PART02().x,
-	PADDING.y * 2 + MARGIN.y * 2 + PART02().y,
-	SIZE.z + PADDING.z
+function PART03() = [
+	[25.50, 24.00, 0.1, "외경"],
+	[72.35, 0, 0, "여백"]
 ];
-function MARGIN04() = [PADDING.x + MARGIN.x, PADDING.y + MARGIN.y, SIZE.z + PADDING.z];
 
-module epaper_part_03() {
-	s = PART03();
-	m = MARGIN03();
+module epaper_part_03(v) {
+	echo(str(parent_module(0), "(", v, ")"));
+
+	assert(!is_undef(v));
+
+	size = [ for (cx = [0:2]) v[0][cx] ];
+	margin = v[1];
+	fs = min([size.x, size.y, 2]) / 4;
+	echo(size = size, margin = margin, fs = fs);
 	
 	color(COLOR)
-	cube(PART03());
+	cube(size);
 
-	%color("white")
-	translate([1, s.y - 4, PART03().z])
-	linear_extrude(height = PART03().z + EPSILON) {
-		text("3. Connector", size = 2);
-
-		translate([2, -3])
-		text(str(s.x, " x ", s.y, " x 0.1", "mm"), size = 2);
+	%translate([size.x / 2, size.y / 2, size.z])
+	linear_extrude(height = EPSILON) {
+		text(str(parent_module(0), v), size = fs, font = "D2Coding", halign = "center");
 	}
 
 	//	가로
-	translate([0, 2, PART03().z])
-	notate([PART03().x, 2]);
+	translate([0, 0, size.z])
+	notate([size.x, fs]);
 	//	세로
-	translate([PART03().x - 4, 0, PART03().z])
-	notate([2, PART03().y]);
-}
-
-module epaper_display_part_03() {
-	s = PART03();
-	m = MARGIN03();
-	
-	translate(m)
-	{
-		epaper_part_03();
-	}
-}
-
-module background_03() {
-	translate([0, PART03().y, 0])
-	epaper_display_part_02();
+	translate([size.x - fs, 0, size.z])
+	notate([fs, size.y]);
 }
 
 module main() {
-	%background_03();
-	epaper_display_part_03();
+	v = PART03();
+	epaper_part_03(v);
 }
 
-epaper_display_part_03();
-!epaper_part_03();
+main();
