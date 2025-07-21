@@ -40,7 +40,7 @@ module epaper_part_13b(v) {
 	margin = max(v[0][0][0][1]);
 
 	intersection() {
-		epaper_part_12(v);
+		epaper_part_12();
 		translate([-EPSILON, -EPSILON, -EPSILON])
 		cube([margin * 2, margin * 2, 100]);
 	}

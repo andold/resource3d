@@ -3,34 +3,67 @@ include	<../common/constants.scad>
 
 use <common.scad>
 use <part-04.scad>	//	패널 밑에 받치는 밑판
+use <part-06.scad>	//	waveshare epaper 7.3인치 제품. 그룹 of part1, part2, part3
 use <part-08.scad>	//	모난 구석이 없는 네모 상자
 
 COLOR = [0.4, 0.6, 0.2, 0.9];
+p6 = PART06();
 
 //	디스플레이 패널을 덮는 위판
-function PART05(v = PART04()) = [[
-		[v[0][0].x, v[0][0].y, 1, 1/4],	//	밑판 크기 차용 + 굴곡의 반지름
+function PART05(v = [1, 1/4, [0.5, 0.5], "(높이, 굴곡의 반지름, (화면 여백))"], p4 = PART04()) = let(
+						size4 = p4[0][0]) [
+		[size4.x, size4.y, v[0]],	//	계산된 크기
+		v,	//	입력한 값 그대로 또는 디폴트값
+		p4,	//	사용되었던 밑판 정보
 		"디스플레이 패널을 덮는 위판"
-	],
-	for (cx = v) cx
 ];
-/*
-p5 = PART05();	//	디스플레이 패널을 덮는 위판
-p5 = v[0];	//	디스플레이 패널을 덮는 위판
-size5 = p5[0][0];	//	디스플레이 패널을 덮는 위판 외경
-*/
 
-module epaper_part_05(v = PART05()) {
-	echo(str(parent_module(0), "(", v, ")"));
+//	Active Area를 확보하기 위해, 가운데 구멍 내는  것
+module epaper_part_05a(p5) {
+	echo(str(parent_module(0), ".", parent_module(1), "(", p5, ")"));
+
+	margin = p5[1][2];
+//	echo(str(parent_module(0), ".", parent_module(1)), margin = margin);
+	p6 = PART06();
+	sizeActiveArea = p6[3];	//	"Active Area 실제 그림이 그려지는 화면 영역, sizeActiveArea"
+//	echo(str(parent_module(0), ".", parent_module(1)), sizeActiveArea = sizeActiveArea);
+	sizeDisplayPanel = p6[2][0];	//	"부품의 크기", "sizeDisplayPanel"],
+ 
+	marginActiveArea = p6[2][1];	//	"Active Area의 상대적 위치 = 좌상단의 여백", "marginActiveArea"
+//	echo(str(parent_module(0), ".", parent_module(1)), marginActiveArea = marginActiveArea);
+	upstairs = p5[2][0][3];	//	"둔덕의 크기", "upstairs"
+	echo(str(parent_module(0), ".", parent_module(1)), upstairs = upstairs);
+	
+	size = [
+		sizeActiveArea.x + margin.x * 2,
+		sizeActiveArea.y + margin.y * 2,
+		100
+	];
+	
+	translate([
+		upstairs.x + marginActiveArea.x - margin.x,
+//		sizeDisplayPanel.y - (sizeActiveArea.y + upstairs.y + marginActiveArea.y - margin.y),
+		sizeDisplayPanel.y - sizeActiveArea.y,
+		-1
+	])
+	cube(size);
+}
+module epaper_part_05(v = [1, 1/4, [0.5, 0.5]]) {
+	echo(str(parent_module(0), ".", parent_module(1), "(", v, ")"));
 
 	assert(!is_undef(v));
 
-	radius = v[0][1];
-	size = v[0][0];
+	p5 = PART05(v);
+	echo(str(parent_module(0), ".", parent_module(1)), p5 = p5);
+	radius = p5[1][1];
+	size = p5[0];
 	fs = 2;
 
 	color(COLOR)
-	epaper_part_08(size);
+	difference() {
+		epaper_part_08([size.x, size.y, size.z, radius]);
+		epaper_part_05a(p5);
+	}
 
 	translate([0, -fs, size.z])	notate([size.x, fs]);
 	translate([-fs, 0, size.z])	notate([fs, size.y]);
@@ -39,8 +72,7 @@ module epaper_part_05(v = PART05()) {
 module main() {
 	hr();
 
-	v = PART05();
-	epaper_part_05(v);
+	epaper_part_05();
 
 	hr();
 }

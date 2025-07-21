@@ -9,17 +9,17 @@ COLOR = [0.824, 0.412, 0.118, 0.9];
 //	연결 부속이 파인 밑판
 function PART12(v = PART04()) = PART11([v, PART05()]);
 
-module epaper_part_12(v) {
+module epaper_part_12(v = PART12()) {
 	echo(str(parent_module(0), ".", parent_module(1), "(", v, ")"));
 
-	size4 = v[1][0];	//	밑판 외경
-	echo(parent_module(0), size4 = size4);
+	sizeLowerOutter = v[1][0][0][0];	//	"계산된 전체 외경, sizeLowerOutter"
+	echo(parent_module(0), sizeLowerOutter = sizeLowerOutter);
 
 	difference() {
 		color(COLOR)
 		epaper_part_04();
 
-		translate([0, 0, size4.z])
+		translate([0, 0, sizeLowerOutter.z])
 		mirror([0, 0, 1])
 		epaper_part_10(female = true);
 	}
@@ -33,8 +33,6 @@ module main() {
 
 
 module build(command = 0) {
-	echo(str("", parent_module(0), ".", parent_module(1), "(", command, ")"));
-
 	if (command == 0) {
 		main();
 	} else if (command == 1) {

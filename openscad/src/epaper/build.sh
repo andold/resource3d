@@ -25,3 +25,4 @@ SOURCE_SCAD=/media/owl/tmp/epaper/part-12.scad
 #
 #echo "$(date +'%Y%m%H%M')"
 $OPENSCAD $DEFAULT_OPTION -D command=1 -o "/media/owl/tmp/epaper/part-12-$(date +'%Y%m').stl" $SOURCE_SCAD
+/usr/bin/openscad --export-format asciistl -D command=1 -o "/media/owl/tmp/epaper/part-13-$(date +'%Y%m%d%H%M').stl" /media/owl/tmp/epaper/part-13.scad

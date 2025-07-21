@@ -3,12 +3,17 @@ use <common.scad>
 use <part-01.scad>
 use <part-02.scad>
 use <part-03.scad>
-use <part-06.scad>	//	패널 밑에 받치는 밑판
+use <part-06.scad>	//	waveshare epaper 7.3인치 제품. 그룹 of part1, part2, part3
 use <part-07.scad>	//	연결 부속, 수직 최대각도는 45도.
 
 //	패널 밑에 받치는 밑판
 ID = "④";
 COLOR = [0.8, 0.4, 0.3, 1];
+
+p6 = PART06();
+size6 = p6[0][0];
+//echo("..............", size6 = size6);
+
 NOTE_MARGIN = 6;
 
 p2 = PART02();
@@ -25,18 +30,22 @@ function PART04(v = [
 		[16, 16, "밑판 최외곽 최소 너비", "rail"],
 		[0.5, 8, "밑판 구멍내는 비율 및 원의 크기"],
 		"패널 밑에 받치는 밑판"
-	]) = [[
+	]) = let(
+			upstairs = v[1],
+			marginActive = v[2],
+			size3 = p3[0]
+			) [[
 		[
-			v[1].x * 2 + v[2].x * 2 + s2.x,
-			v[1].y * 2 + v[2].y * 2 + s2.y,
-			v[0].z + v[1].z,
-			"계산된 전체 외경"
+			upstairs.x * 2 + marginActive.x * 2 + size6.x,
+			upstairs.y * 2 + marginActive.y * 2 + size6.y,
+			v[0].z + upstairs.z,
+			"계산된 전체 외경, sizeLowerOutter"
 		],
 		[
-			v[2].x * 2 + s2.x,
-			v[2].y * 2 + s2.y,
-			v[1].z,
-			"계산된 내경"
+			marginActive.x * 2 + size6.x,
+			marginActive.y * 2 + size6.y,
+			upstairs.z,
+			"계산된 내경, sizeLowerInner"
 		],
 		for (cx = v) cx
 	],
@@ -58,7 +67,7 @@ hole = v[0][7];		//	밑판 구멍내는 비율 및 원의 크기
 
 //	밑판 구멍내기
 module epaper_part_04a1(v) {
-	echo(str(parent_module(0), "(", v, ")"));
+//	echo(str(parent_module(0), "(", v, ")"));
 
 	assert(!is_undef(v));
 
@@ -90,7 +99,7 @@ module epaper_part_04a1(v) {
 }
 
 module epaper_part_04a_note(v) {
-	echo("밑판 수치 표시", str(parent_module(0), "(", v[0][0], ")"));
+//	echo("밑판 수치 표시", str(parent_module(0), "(", v[0][0], ")"));
 
 	assert(!is_undef(v));
 
@@ -100,7 +109,7 @@ module epaper_part_04a_note(v) {
 	radius = v[0][5][0];	//	모서리 대패의 반경
 	size = [s4.x - radius * 2, s4.y - radius * 2, height - radius];
 	fs = min(size);
-	echo(s4 = s4, height = height, margin = margin, radius = radius);
+//	echo(s4 = s4, height = height, margin = margin, radius = radius);
 
 	//	가로
 	translate([0, -NOTE_MARGIN, size.z])
@@ -117,7 +126,7 @@ module epaper_part_04a_note(v) {
 
 //	밑판
 module epaper_part_04a(v) {
-	echo(str(parent_module(0), "(", v[0][0], ")"));
+//	echo(str(parent_module(0), "(", v[0][0], ")"));
 
 	assert(!is_undef(v));
 
@@ -127,7 +136,7 @@ module epaper_part_04a(v) {
 	radius = v[0][5][0];	//	모서리 대패의 반경
 	size = [s4.x - radius * 2, s4.y - radius * 2, height - radius * 2];
 	fs = min(size);
-	echo(parent_module(0), s4 = s4, height = height, margin = margin, radius = radius, size = size, fs = fs);
+//	echo(parent_module(0), s4 = s4, height = height, margin = margin, radius = radius, size = size, fs = fs);
 
 	difference() {
 		//	통짜
@@ -144,7 +153,7 @@ module epaper_part_04a(v) {
 
 //	위판
 module epaper_part_04b(v) {
-	echo(str(parent_module(0), "(", v, ")"));
+//	echo(str(parent_module(0), "(", v, ")"));
 
 	assert(!is_undef(v));
 
@@ -156,7 +165,7 @@ module epaper_part_04b(v) {
 
 	//	외경
 	size = [psize.x - radius * 2, psize.y - radius * 2, upstairs.z];
-	echo(parent_module(0), psize = psize, size = size, radius = radius);
+//	echo(parent_module(0), psize = psize, size = size, radius = radius);
 	padding = [upstairs.x - radius * 2, upstairs.y - radius * 2, upstairs.z - radius];
 	fs = 0.5;
 
@@ -201,7 +210,7 @@ module epaper_part_04b(v) {
 
 //	아래쪽에 구멍내는 거, 연결선 빠져 나가는 구멍
 module epaper_part_04c(v) {
-	echo(str(parent_module(0), "(", v, ")"));
+//	echo(str(parent_module(0), "(", v, ")"));
 
 	assert(!is_undef(v));
 
@@ -226,7 +235,7 @@ module epaper_part_04c(v) {
 }
 
 module epaper_part_04d(v) {
-	echo(str(parent_module(0), "(", v[0][0], ")", HR));
+//	echo(str(parent_module(0), "(", v[0][0], ")", HR));
 
 	assert(!is_undef(v));
 
@@ -240,7 +249,7 @@ module epaper_part_04d(v) {
 }
 
 module epaper_part_04_notate(v) {
-	echo(str(parent_module(0), "(", v[0][0], ")"));
+//	echo(str(parent_module(0), "(", v[0][0], ")"));
 
 	assert(!is_undef(v));
 
@@ -248,7 +257,7 @@ module epaper_part_04_notate(v) {
 	psize = [ for (cx = [0:2]) p4[cx] ];	//	전체 외경
 	fs = min(min(psize), 2);
 	
-	echo(p4 = p4, psize = psize, fs = fs);
+//	echo(p4 = p4, psize = psize, fs = fs);
 
 	translate([0, -NOTE_MARGIN - 4, 0])	notate([psize.x, 2], up = false);	//	가로
 	translate([-NOTE_MARGIN - 4, 0, 0])	notate([2, psize.y], up = false);	//	세로
@@ -260,7 +269,7 @@ module epaper_part_04_notate(v) {
 }
 
 module epaper_part_04(v = PART04()) {
-	echo(str(parent_module(0), "(", v[0][0], ")", HR));
+//	echo(str(parent_module(0), "(", v[0][0], ")", HR));
 
 	assert(!is_undef(v));
 
@@ -269,7 +278,7 @@ module epaper_part_04(v = PART04()) {
 	radius = v[0][5][0];	//	모서리 대패의 반경
 	margin = v[2][1];	//	연결단자의 위치
 	fs = 2;
-	echo(parent_module(0), psize = psize, radius = radius);
+//	echo(parent_module(0), psize = psize, radius = radius);
 
 	$fn = $preview ? 4 : 16;
 	difference() {

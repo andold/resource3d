@@ -18,7 +18,7 @@ function margin07(v = [0.8, 4, 1.6, 0.4, 0.4]) = [
 ];
 
 module epaper_part_07_female(v, m) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", v, m, ")"));
+//	echo(str(parent_module(0), ".", parent_module(1), "(", v, m, ")"));
 
 	assert(!is_undef(v));
 
@@ -30,7 +30,7 @@ module epaper_part_07_female(v, m) {
 				
 				0	//	reserved
 			];
-	echo(str(parent_module(0), ".", parent_module(1)), sm);
+//	echo(str(parent_module(0), ".", parent_module(1)), sm);
 
 	//	title(모듈 이름) 표시
 	title = str(parent_module(0), ".", parent_module(1), v, m);
@@ -57,7 +57,7 @@ module epaper_part_07_female(v, m) {
 
 		[-EPSILON,				z]
 	];
-	echo(str(parent_module(0), ".", parent_module(1)), points);
+//	echo(str(parent_module(0), ".", parent_module(1)), points);
 
 	epaper_part_07_male(v);
 
@@ -89,7 +89,7 @@ module epaper_part_07_female_notate(v, m) {
 	notate([m.z, fs]);
 }
 module epaper_part_07_male(v) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", v, ")"));
+//	echo(str(parent_module(0), ".", parent_module(1), "(", v, ")"));
 
 	assert(!is_undef(v));
 
@@ -143,7 +143,7 @@ module epaper_part_07_male(v) {
 
 }
 module epaper_part_07(v, female = false, m) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", v, female, m, ")"));
+//	echo(str(parent_module(0), ".", parent_module(1), "(", v, female, m, ")"));
 
 	sv = is_undef(v) ? [0.4, 1.6, 4, 0.4, 0.4] : v;
 

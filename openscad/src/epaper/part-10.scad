@@ -5,7 +5,7 @@ use <part-07.scad>	//	패널 밑에 받치는 밑판
 
 //	연결 부속들만 네 귀퉁이에 위치시킨 것
 function PART10(v = PART04()) = [[
-		[0.8, 8, 3 - 0.4 - 0.1, 0.4, 0.4],
+		[0.8, 12, 3 - 0.4 - 0.1, 0.4, 0.4],
 		[4, 16, 0],
 		"PART10: 연결 부속들, 0: 연결 부속, 1: 여백"
 	],
@@ -14,7 +14,7 @@ function PART10(v = PART04()) = [[
 
 //	기본 부속
 module epaper_part_10a1(v, female) {
-	echo(str(parent_module(0), ".", parent_module(1), ".", parent_module(1), "(", v[0], v[1][3], female, ")"));
+//	echo(str(parent_module(0), ".", parent_module(1), ".", parent_module(1), "(", v[0], v[1][3], female, ")"));
 
 	assert(!is_undef(v));
 
@@ -24,7 +24,7 @@ module epaper_part_10a1(v, female) {
 //	marginExtra = upstairs.x - extraMargin(sizeConnect) - sizeConnect.x;	//	0.33409;
 	marginExtra = extraMargin(sizeConnect);	//	0.33409;
 	fs = 0.1;
-	echo(parent_module(0), ".", parent_module(1), sizeConnect = sizeConnect, margin = margin, upstairs = upstairs, marginExtra = marginExtra, fs = fs);
+//	echo(parent_module(0), ".", parent_module(1), sizeConnect = sizeConnect, margin = margin, upstairs = upstairs, marginExtra = marginExtra, fs = fs);
 
 	translate([margin.x - sizeConnect.x - marginExtra, margin.y, 0])
 	epaper_part_07(sizeConnect, female);
@@ -45,7 +45,7 @@ module epaper_part_10a3(v, female) {
 	epaper_part_10a2(v, female);
 }
 module epaper_part_10a4(v, female) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", v[0], female, ")"));
+//	echo(str(parent_module(0), ".", parent_module(1), "(", v[0], female, ")"));
 
 	assert(!is_undef(v));
 
@@ -77,12 +77,12 @@ module background_10(v) {
 }
 
 module epaper_part_10(v = PART10(PART04()), female = false) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", v[0], female, ")"));
+//	echo(str(parent_module(0), ".", parent_module(1), "(", v[0], female, ")"));
 
 	assert(!is_undef(v));
 
 	size = v[1][0];
-	echo(parent_module(0), ".", parent_module(1), size = size);
+//	echo(parent_module(0), ".", parent_module(1), size = size);
 
 	epaper_part_10a5(v, female);
 

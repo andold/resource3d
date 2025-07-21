@@ -5,35 +5,34 @@ use	<common.scad>
 // active area
 ACTIVE_AREA_COLOR = [0.3, 0.3, 0.9, 0.9];
 function PART01() = [
-	160.00, 96.00,
-	"Active Area"
+	160.00,
+	96.00,
+	"Active Area 실제 그림이 그려지는 화면 영역, sizeActiveArea"
 ];
 
-module epaper_part_01(v) {
-	echo(str(parent_module(0), "(", v, ")"));
+module epaper_part_01() {
+	echo(str(parent_module(0), "(", ")"));
 
-	assert(!is_undef(v));
-
-	s = [v.x, v.y, EPSILON];
+	sizeActiveArea = PART01();
+	size = [sizeActiveArea.x, sizeActiveArea.y, EPSILON];
 	fs = 2;	//	폰트 크기
 
 	color(ACTIVE_AREA_COLOR)
-	cube(s);
+	cube(size);
 	
-	translate([0, s.y - 8, s.z])
-	notate([s.x, fs]);
+	translate([0, size.y - 8, size.z])
+	notate([size.x, fs]);
 
-	translate([s.x - 8, 0, s.z])
-	notate([fs, s.y]);
+	translate([size.x - 8, 0, size.z])
+	notate([fs, size.y]);
 
-	%translate([s.x / 2, s.y / 2, 0])
+	%translate([size.x / 2, size.y / 2, 0])
 	linear_extrude(height = EPSILON) {
-		text(str(parent_module(0), v), font = "D2Coding", size = fs, halign = "center");
+		text(str(parent_module(0), sizeActiveArea), font = "D2Coding", size = fs, halign = "center");
 	}
 }
 module main() {
-	v = PART01();
-	epaper_part_01(v);
+	epaper_part_01();
 }
 
 main();
