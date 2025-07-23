@@ -33,7 +33,7 @@ module epaper_part_07_female(v, m) {
 //	echo(str(parent_module(0), ".", parent_module(1)), sm);
 
 	//	title(모듈 이름) 표시
-	title = str(parent_module(0), ".", parent_module(1), v, m);
+	title = str(parent_module(0), v, sm);
 	color("white")
 	translate([v.x + sm[3], v.y / 2, v.z / 2])
 	rotate([90, 0, 90])
@@ -111,7 +111,7 @@ module epaper_part_07_male(v) {
 	margin = margin07(v);
 
 	//	title(모듈 이름) 표시
-	title = str(parent_module(0), ".", parent_module(1), v);
+	title = str(parent_module(0), v);
 	color("white")
 	translate([v.x, v.y / 2, v.z / 2])
 	rotate([90, 0, 90])
@@ -157,8 +157,15 @@ module epaper_part_07(v, female = false, m) {
 }
 
 module main() {
-	v = [0.8, 4, 1.6, 0.4, 0.4];
-	//epaper_part_07(v, false);
+	v = [0.8 + 0.4, 4, 2.5, 0.4, 0.4];
+	epaper_part_07(v, false);
+	
+	margin = [
+		v[0] + v[3],
+		v[1] + 0.1,
+		-v[2] - v[4] - 0.1
+	];
+	translate([margin.x * 0, margin.y * 0, margin.z])
 	epaper_part_07(v, true);
 }
 

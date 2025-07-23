@@ -39,7 +39,3 @@ module main() {
 }
 
 main();
-v = [[1], [2, 3]];
-w = [ for (cx = [[1], [2, 3]]) cx ];
-echo(PART11()[1]);
-echo(PART04()[1]);
