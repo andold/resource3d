@@ -236,7 +236,7 @@ module samples() {
 	{
 		color("white", 1.0)	cube_type_1([16, 32, 4], 12);
 		//	module note_type_2(name, vs, ve, centered = false, fs, detail = false) {
-		note_type_2("note_type_2", [16, 32, 4], [12, 32, 4], false, undef, true);
+		color("white", 1.0)	note_type_2("note_type_2", [16, 32, 4], [12, 32, 4], false, undef, true);
 	}
 	x12 = x11 + 16 + 4;
 
