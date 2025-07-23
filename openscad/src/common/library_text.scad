@@ -10,33 +10,43 @@ function fsproper(x, y, title) = min(x / len(title) / 4, y / 2);
 
 //	2D 텍스트 또는 이미지를 (0, 0, 0)를 기준으로 xy평면에서 -z축으로 thick mm만큼 새긴다.
 //	offset을 이용하여 양각으로 파낸다.
-module carve(thick = 1) {
+module carve(angles = [0, 0, 0], position = [0, 0, 0], thick = 1, restore = true) {
 	slice = 0.1;
-	difference() {
-		children(0);
-		for (cx = [0:(thick / slice) - 1]) {
-			//	현재 처리해야할 위치 및 간격을 길이(mm) 단위로 환원
-			mm = cx * slice;
-			//	첫번째 위치, 즉 맨 위쪽의 표면에 해당하는 것은 좀더 깍아야 openscad의 프리뷰에 도움이 된다.
-			extrudeHeight = (cx == 0) ? slice + EPSILON : slice;
+	thisAnglies = restore ? angles * -1 : [0, 0, 0];
+	thisPosition = restore ? position : [0, 0, 0];
+	
+	rotate(thisAnglies)
+	translate(thisPosition) {
+		difference() {
+			//	전체 몸통
+			translate(position * -1)
+				rotate(angles)
+					children(0);
 
-			translate([0, 0, -slice - mm]) {
-				difference() {
-					linear_extrude(height = extrudeHeight, center = false, scale = 1)
-					offset(delta = thick * 2 - mm)
-					children([1:$children-1]);
+			//	파내는 거, 차감하는 거
+			for (cx = [0:(thick / slice) - 1]) {
+				//	현재 처리해야할 위치 및 간격을 길이(mm) 단위로 환원
+				mm = cx * slice;
+				//	첫번째 위치, 즉 맨 위쪽의 표면에 해당하는 것은 좀더 깍아야 openscad의 프리뷰에 도움이 된다.
+				extrudeHeight = (cx == 0) ? slice + EPSILON : slice;
 
-					linear_extrude(height = extrudeHeight, center = false, scale = 1)
-					offset(delta = mm)
-					children([1:$children-1]);
+				translate([0, 0, -slice - mm]) {
+					difference() {
+						linear_extrude(height = extrudeHeight, center = false, scale = 1)
+						offset(delta = thick * 2 - mm)
+						children([1:$children-1]);
+
+						linear_extrude(height = extrudeHeight, center = false, scale = 1)
+						offset(delta = mm)
+						children([1:$children-1]);
+					}
 				}
 			}
 		}
-	}
-
-	translate([0, 0, -thick]) {
-		linear_extrude(height = thick, center = false, scale = 1)
-		children([1:$children-1]);
+		translate([0, 0, -thick]) {
+			linear_extrude(height = thick, center = false, scale = 1)
+			children([1:$children-1]);
+		}
 	}
 }
 

@@ -180,19 +180,55 @@ module texture4a(thick) {
 	}
 }
 
+module brand(angles = [90, 0, 0], position = [0, 0, 0], depth = 1, restore = true) {
+	rotate(restore ? angles * -1 : [0, 0, 0])
+	carve([0, 0, 0], position, depth, restore) {
+		rotate(angles)
+		children(0);
+
+		children([1:$children-1]);
+	}
+}
+
 module texture4() {
 //	texture3a("⑳ andold ⓐ", 15, 4);
 //	title = "⑳_andold_ⓐ";
-	title = "a";
-	fontsize = 50;
-	depth = 10;
+	title = "abc 1234";
+	fontsize = 10;
+	depth = 1;
 	margin = fontsize / 3;
+	
+	sn = is_undef(sn) ? floor(rands(100, 999, 1)[0]) : sn;
 	
 	for (cx = title) assert(ord(cx) < 256);
 
-	carve(depth) {
-		translate([-margin, -margin, -depth - margin])
-		cube([len(title) * fontsize + margin * 2, fontsize * 2, depth + margin]);
+	base = [len(title) * fontsize + margin * 2, fontsize * 2, depth + margin];
+	color("DarkGreen", 0.7)
+	carve([-90, 0, 0], [margin, (depth + margin) * 0.3, 0], (depth + margin) * 0.5 / 5, true) {
+		carve([0, 0, 0], [margin, margin, base.z], depth) {
+			cube(base);
+			
+			text(title, size = fontsize, valign = "bottom", halign = "left", font = "D2Coding");
+		}
+
+		text(str("sn: ", sn), size = (depth + margin) * 0.5, valign = "bottom", halign = "left", font = "D2Coding");
+	}
+}
+
+module texture5() {
+	title = "abc 1234";
+	fontsize = 10;
+	depth = 1;
+	margin = fontsize / 3;
+	
+	sn = is_undef(sn) ? floor(rands(100, 999, 1)[0]) : sn;
+	
+	for (cx = title) assert(ord(cx) < 256);
+
+	base = [len(title) * fontsize + margin * 2, fontsize * 2, depth + margin];
+	color("DarkGreen", 0.7)
+	carve([0, 0, 0], [margin, margin, base.z], depth, false) {
+		cube(base);
 		
 		text(title, size = fontsize, valign = "bottom", halign = "left", font = "D2Coding");
 	}
@@ -209,6 +245,8 @@ module build(command = 0) {
 		texture3();
 	} else if (command == 3) {
 		texture4();
+	} else if (command == 4) {
+		texture5();
 	} else {
 		echo("NOT SUPPORTED");
 	}
