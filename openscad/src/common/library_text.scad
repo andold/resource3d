@@ -8,6 +8,31 @@ function fsproper(x, y, title) = min(x / len(title) / 4, y / 2);
 	모듈 섹션
 */
 
+// 문자열 일부 추출: start부터 end까지의 문자 반환
+function substring(string, start, end, index = 0, result = "") =
+    index >= len(string) || index > end
+        ? result
+        : substring(string, start, end,
+            index + 1,
+            str(result, (index >= start ? string[index] : ""))
+        );
+
+// 문자열 일부 추출: start부터 end까지의 문자 반환
+function split(string, delemeter) = let(parts = concat(-1, search(delemeter, string, 0)[0], len(string))) [
+	for (cx = [0:len(parts) - 2])
+		substring(string, parts[cx] + 1, parts[cx + 1] - 1)
+];
+
+//	text() builtin 함수 대체용, 줄바꿈 출력
+module text0(t, size = 10, font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
+
+	lines = split(t, "\n");
+	for (cx = [0:len(lines) - 1]) {
+		translate([0, -cx * (size * hspacing)])
+		text(lines[cx], size = size, font = font, halign = halign, valign = valign, spacing = spacing, direction = direction, language = language, script = script);
+	}
+}
+
 //	2D 텍스트 또는 이미지를 (0, 0, 0)를 기준으로 xy평면에서 -z축으로 thick mm만큼 새긴다.
 //	offset을 이용하여 양각으로 파낸다.
 module carve(angles = [0, 0, 0], position = [0, 0, 0], thick = 1, restore = true) {
