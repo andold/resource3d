@@ -32,24 +32,37 @@ module text0(t, size = 10, font = "D2Coding", halign = "left", valign = "baselin
 		text(lines[cx], size = size, font = font, halign = halign, valign = valign, spacing = spacing, direction = direction, language = language, script = script);
 	}
 }
+module note(string, rotate = [0, 0, 0], translate = [0, 0, 0], offset = 1, preview = false, size = 10, font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
+	thisRotate = preview ? [0, 0, 0] : rotate * -1;
+	thisTranslate = preview ? [0, 0, 0] : translate;
 
+	rotate(thisRotate)
+	translate(thisTranslate) {
+		translate(translate * -1)
+		rotate(rotate)
+		children();
+
+		%text0(string, size = size, font = font, halign = halign, valign = valign, spacing = spacing, hspacing = hspacing, direction = direction, language = language, script = script);
+	}
+}
 //	2D 텍스트 또는 이미지를 (0, 0, 0)를 기준으로 xy평면에서 -z축으로 thick mm만큼 새긴다.
 //	offset을 이용하여 양각으로 파낸다.
-module carve(angles = [0, 0, 0], position = [0, 0, 0], thick = 1, restore = true) {
+module carve(string, rotate = [0, 0, 0], translate = [0, 0, 0], offset = 1, preview = false, size = 10, font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
+
 	slice = 0.1;
-	thisAnglies = restore ? angles * -1 : [0, 0, 0];
-	thisPosition = restore ? position : [0, 0, 0];
-	
-	rotate(thisAnglies)
-	translate(thisPosition) {
+	thisRotate = preview ? [0, 0, 0] : rotate * -1;
+	thisTranslate = preview ? [0, 0, 0] : translate;
+
+	rotate(thisRotate)
+	translate(thisTranslate) {
 		difference() {
 			//	전체 몸통
-			translate(position * -1)
-				rotate(angles)
-					children(0);
+			translate(translate * -1)
+				rotate(rotate)
+					children();
 
 			//	파내는 거, 차감하는 거
-			for (cx = [0:(thick / slice) - 1]) {
+			for (cx = [0:(offset / slice) - 1]) {
 				//	현재 처리해야할 위치 및 간격을 길이(mm) 단위로 환원
 				mm = cx * slice;
 				//	첫번째 위치, 즉 맨 위쪽의 표면에 해당하는 것은 좀더 깍아야 openscad의 프리뷰에 도움이 된다.
@@ -58,19 +71,20 @@ module carve(angles = [0, 0, 0], position = [0, 0, 0], thick = 1, restore = true
 				translate([0, 0, -slice - mm]) {
 					difference() {
 						linear_extrude(height = extrudeHeight, center = false, scale = 1)
-						offset(delta = thick * 2 - mm)
-						children([1:$children-1]);
+						offset(delta = offset * 2 - mm)
+				text0(string, size = size, font = font, halign = halign, valign = valign, spacing = spacing, hspacing = hspacing, direction = direction, language = language, script = script);
 
 						linear_extrude(height = extrudeHeight, center = false, scale = 1)
 						offset(delta = mm)
-						children([1:$children-1]);
+				text0(string, size = size, font = font, halign = halign, valign = valign, spacing = spacing, hspacing = hspacing, direction = direction, language = language, script = script);
 					}
 				}
 			}
 		}
-		translate([0, 0, -thick]) {
-			linear_extrude(height = thick, center = false, scale = 1)
-			children([1:$children-1]);
+		translate([0, 0, -offset]) {
+			linear_extrude(height = offset, center = false, scale = 1) {
+				text0(string, size = size, font = font, halign = halign, valign = valign, spacing = spacing, hspacing = hspacing, direction = direction, language = language, script = script);
+			}
 		}
 	}
 }

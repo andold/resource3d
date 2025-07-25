@@ -1,53 +1,34 @@
 // 라이브러리, 검증된 것만 이곳에
 include	<../common/constants.scad>
+use	<../common/library_text.scad>
 use <common.scad>
 
-function PART02() = [
-	[170.20, 111.20, 0.91, "부품의 크기", "sizeDisplayPanel"],
-	[5.10, 4.70, "Active Area의 상대적 위치 = 좌상단의 여백", "marginActiveArea"],
-	"화면 부품. Display Panel"
-];
 COLOR02 = [0.5, 0.5, 0.1, 0.9];
+DEFAULT = [
+	["display.panel",								"화면 부품. Display Panel, displayPanel, part02"],
+	["display.panel.size",	[170.20, 111.20, 0.91],	"크기, 화면 부품의 크기, sizeDisplayPanel"],
+	["active.area.margin",	[5.10, 4.70],			"크기, 화소가 있는 영역, marginActiveArea"],
 
-module epaper_part_02() {
-	echo(str(parent_module(0), "(", ")"));
+	["reserved", "끝"]
+];
+function default02() = DEFAULT;
 
-	p2 = PART02();
+module epaper_part02(map = DEFAULT) {
+	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
 
-	sizeDisplayPanel = [ for (cx = [0:2]) p2[0][cx] ];
-	marginActiveArea = p2[1];
-	echo(str(parent_module(0)), sizeDisplayPanel, marginActiveArea);
+	sizeDisplayPanel = get(map, "display.panel.size", DEFAULT);
+	marginActiveArea = get(map, "active.area.margin", DEFAULT);
+	description = str(parent_module(0), "\ndisplay.panel", "\ndisplay.panel.size: ", sizeDisplayPanel, "\nactive.area.margin: ", marginActiveArea);
+	//echo(str(parent_module(0)), sizeDisplayPanel, marginActiveArea, description);
 
 	//	Panel
-	color(COLOR02)
-	cube(sizeDisplayPanel);
-
-	pNotate = [marginActiveArea.x + - 8, (sizeDisplayPanel.y - 8) - marginActiveArea.y];
-
-	//	왼쪽 테두리
-	translate([0, pNotate.y, sizeDisplayPanel.z])
-	notate([marginActiveArea.x, 2], str(marginActiveArea.x, "mm"));
-
-	//	오른쪽 테두리
-	translate([pNotate.x + 8, pNotate.y, sizeDisplayPanel.z])
-	notate([marginActiveArea.x, 2], str(marginActiveArea.x, "mm"));
-
-	//	위쪽 테두리
-	translate([pNotate.x, sizeDisplayPanel.y - marginActiveArea.y, sizeDisplayPanel.z])
-	notate([2, marginActiveArea.y]);
-
-	//	아래쪽 테두리
-	translate([pNotate.x, 0, sizeDisplayPanel.z])
-	notate([2, sizeDisplayPanel.y - marginActiveArea.y]);
-
-	fs = 2;
-	%translate([sizeDisplayPanel.x / 2, sizeDisplayPanel.y - fs, EPSILON])
-	linear_extrude(height = sizeDisplayPanel.z) {
-		text(str(parent_module(0), p2[0], p2[2]), font = "D2Coding", size = fs, halign = "center");
+	carve(description, size = 1, rotate = [0, 0, 0], translate = [sizeDisplayPanel.x - 32, 6, sizeDisplayPanel.z], offset = 0.01, preview = !true) {
+		color(COLOR02)
+		cube(sizeDisplayPanel);
 	}
 }
 module main() {
-	epaper_part_02();
+	epaper_part02();
 }
 
 main();

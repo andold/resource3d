@@ -9,6 +9,12 @@ use <part-09.scad>	//	프로토타입, 테스트 출력용
 use <part-11.scad>	//	연결 부속이 장착된 위판
 use <part-12.scad>	//	연결 부속이 파인 밑판
 
+DEFAULT = [
+	["active.area",								"화소가 있는 영역, activeArea, part01"],
+	["active.area.size",	[160.00, 96.00],	"크기, 화소가 있는 영역, sizeActiveArea"],
+	["reserved", "끝"]
+];
+
 module epaper_display() {
 	v = [PART05(), PART04()];
 

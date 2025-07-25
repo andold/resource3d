@@ -7,7 +7,15 @@ use <part-11.scad>	//	연결 부속이 장착된 위판
 use <part-12.scad>	//	연결 부속이 파인 밑판
 
 COLOR = [0.824, 0.412, 0.118, 0.9];
+DEFAULT = [
+	["margin.part13",		[16, 16, 0],	"연결 부속이 위치하는 곳을 기준으로 추가 여백, marginPart13"],
+	["size.connector",		[0.8, 12, 3 - 0.4 - 0.1, 0.4, 0.4],	"연결 부속 크기, sizeConnector"],
+	["margin.connector",	[3, 8, 0],		"연결 부속이 위치하는 모서리로부터의 여백, marginConnector"],
+	["part05.hight",		2,			"높이, hightUpper"],
 
+	["reserved", "끝"]
+];
+ 
 //	프로토타입: 밑판 위판 귀퉁이 일부만 출력
 
 function PART13(v = PART10()) = [[
@@ -18,50 +26,57 @@ function PART13(v = PART10()) = [[
 	for (cx = v) cx
 ];
 
-module epaper_part_13a(v) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", v, ")"));
+module epaper_part_13a(map) {
+	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
 
-	assert(!is_undef(v));
+	assert(!is_undef(map));
 
-	margin = max(v[0][0][0][1]);
-
-	intersection() {
-		epaper_part_11(v);
-		translate([-EPSILON, -EPSILON, -EPSILON])
-		cube([margin * 2, margin * 2, 100]);
-	}
-}
-
-module epaper_part_13b(v) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", v, ")"));
-
-	assert(!is_undef(v));
-
-	margin = max(v[0][0][0][1]);
-
-	intersection() {
-		epaper_part_12();
-		translate([-EPSILON, -EPSILON, -EPSILON])
-		cube([margin * 2, margin * 2, 100]);
-	}
-}
-
-module epaper_part_13(v) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", v, ")"));
-
-	assert(!is_undef(v));
+	margin = max(get(map, "margin.connector", DEFAULT))
+			+ max(get(map, "size.connector", DEFAULT))
+			+ max(get(map, "margin.part13", DEFAULT)) ;
+	echo(str(parent_module(0), ".", parent_module(1)), margin = margin);
 	
-	margin = max(v[0][0][0][1]);
+	intersection() {
+		epaper_part_11(map);
+		translate([-EPSILON, -EPSILON, -EPSILON])
+		cube([margin, margin, 100]);
+	}
+}
 
-	epaper_part_13a(v);
-	translate([margin * 2 + 1, 0, 0])
-	epaper_part_13b(v);
+module epaper_part_13b(map) {
+	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
+
+	assert(!is_undef(map));
+
+	margin = max(get(map, "margin.connector", DEFAULT))
+			+ max(get(map, "size.connector", DEFAULT))
+			+ max(get(map, "margin.part13", DEFAULT)) ;
+	echo(str(parent_module(0), ".", parent_module(1)), margin = margin);
+	
+	intersection() {
+		epaper_part_12(map);
+		translate([-EPSILON, -EPSILON, -EPSILON])
+		cube([margin, margin, 100]);
+	}
+}
+
+module epaper_part_13(map = DEFAULT) {
+	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
+
+	assert(!is_undef(map));
+	
+	margin = max(get(map, "margin.connector", DEFAULT))
+			+ max(get(map, "size.connector", DEFAULT))
+			+ max(get(map, "margin.part13", DEFAULT)) ;
+	echo(str(parent_module(0), ".", parent_module(1)), margin = margin);
+
+	epaper_part_13a(map);
+	translate([margin + 1, 0, 0])
+	epaper_part_13b(map);
 }
 
 module main() {
-	v = PART13();
-
-	epaper_part_13(v);
+	epaper_part_13();
 }
 
 

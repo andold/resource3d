@@ -1,42 +1,35 @@
 include	<../common/constants.scad>
+use	<../common/library_text.scad>
 use <common.scad>
 
 COLOR = [0.4, 0.8, 0.4, 0.5];
-
-function PART03() = [
-	[25.50, 24.00, 0.1, "외경"],
-	[72.35, 0, 0, "여백"]
+DEFAULT = [
+	["display.connector",			"디스플레이 패널에 붙어있는 커넥터, displayConnector, part03"],
+	["display.connector.size",		[25.50, 24.00, 0.1],			"크기, sizeDisplayConnector"],
+	["display.connector.margin",	[72.35, 0, 0],					"디스플레이 패널로부터의 상대적인 위치,여백, marginDisplayConnector"],
+	["reserved", "끝"]
 ];
+function default03() = DEFAULT;
 
-module epaper_part_03(v) {
-	echo(str(parent_module(0), "(", v, ")"));
+module epaper_part03(map = DEFAULT) {
+	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
 
-	assert(!is_undef(v));
+	assert(!is_undef(map));
 
-	size = [ for (cx = [0:2]) v[0][cx] ];
-	margin = v[1];
-	fs = min([size.x, size.y, 2]) / 4;
-	echo(size = size, margin = margin, fs = fs);
-	
-	color(COLOR)
-	cube(size);
+	sizeDisplayConnector = get(map, "display.connector.size", DEFAULT);
+	marginDisplayConnector = get(map, "display.connector.margin", DEFAULT);
+	description = str(parent_module(0), "\ndisplay.connector", "\ndisplay.connector.size: ", sizeDisplayConnector, "\ndisplay.connector.margin: ", marginDisplayConnector);
 
-	%translate([size.x / 2, size.y / 2, size.z])
-	linear_extrude(height = EPSILON) {
-		text(str(parent_module(0), v), size = fs, font = "D2Coding", halign = "center");
+	carve([0, 0, 0], [1, 5, sizeDisplayConnector.z], 0.01, true) {
+		color(COLOR)
+		cube(sizeDisplayConnector);
+
+		text0(description, 0.7);
 	}
-
-	//	가로
-	translate([0, 0, size.z])
-	notate([size.x, fs]);
-	//	세로
-	translate([size.x - fs, 0, size.z])
-	notate([fs, size.y]);
 }
 
 module main() {
-	v = PART03();
-	epaper_part_03(v);
+	epaper_part03();
 }
 
 main();
