@@ -7,66 +7,62 @@ use <part-11.scad>	//	연결 부속이 장착된 위판
 
 COLOR = [0.824, 0.412, 0.118, 0.9];
 DEFAULT = [
-	["part05",							"디스플레이 패널을 덮는 위판, upper"],
-	["part05.hight",		1,			"높이, hightUpper"],
-	["part05.radius",		1 / 4,		"모서리 굴곡의 반지름"],
-	["margin.active.area",	[0.5, 0.5],	"안쪽 Active Area의 바깥쪽의 여백"],
-	["margin.active.area.part06",	PART06()[2][1],		"안쪽 Active Area의 바깥쪽의 여백"],
-	["size.active.area",			PART06()[3],		""],
-	["size.display.panel",			PART06()[2][0],		""],
-	["size.upstairs",				PART04()[0][3],		""],
-	["size.part04",					PART04()[0][0],		""],
+	for (cx = default04()) cx,
+	for (cx = default05()) cx,
+	for (cx = default10()) cx,
+	
 	["reserved", "끝"]
 ];
 
 //	연결 부속이 파인 밑판
 function PART12(v = PART04()) = PART11([v, PART05()]);
 
-module epaper_part_12(v = PART12()) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", v, ")"));
+module epaper_part12(map = DEFAULT) {
+//	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
 
-	sizeLowerOutter = v[1][0][0][0];	//	"계산된 전체 외경, sizeLowerOutter"
-	echo(parent_module(0), sizeLowerOutter = sizeLowerOutter);
+	heightUnderPanel = get(map, "under.panel.height", DEFAULT);	//	밑판의 높이, heightUnderPanel
 
 	difference() {
 		color(COLOR)
-		epaper_part_04();
+		epaper_part04(map);
 
-		translate([0, 0, sizeLowerOutter.z])
+		translate([0, 0, heightUnderPanel])
 		mirror([0, 0, 1])
-		epaper_part_10(female = true);
+		epaper_part10(map, female = true);
 	}
 }
 
-module epaper_part_12a(map = DEFAULT) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
+module epaper_part12a(map = DEFAULT) {
+//	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
 
-	sizeLowerOutter = v[1][0][0][0];	//	"계산된 전체 외경, sizeLowerOutter"
-	echo(parent_module(0), sizeLowerOutter = sizeLowerOutter);
+	sizeOutterUnderPanel = calculateSizeOutterUnderPanel(map, DEFAULT);
 
 	difference() {
 		color(COLOR)
-		epaper_part_04();
+		epaper_part04(map);
 
-		translate([0, 0, sizeLowerOutter.z])
+		translate([0, 0, sizeOutterUnderPanel.z])
 		mirror([0, 0, 1])
-		epaper_part_10(female = true);
+		epaper_part10(map, female = true);
 	}
 }
 
 module main() {
-	epaper_part_12a();
+	epaper_part12a();
 }
 
 
 module build(command = 0) {
+	map = DEFAULT;
+	
 	if (command == 0) {
-		main();
 	} else if (command == 1) {
-		main();
+		epaper_part12a(map);
+	} else if (command == 2) {
+		epaper_part12(map);
 	} else {
 		echo("NOT SUPPORTED");
 	}
 }
 
-build(is_undef(command) ? 0 : command);
+build(is_undef(command) ? 2 : command);

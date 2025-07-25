@@ -3,6 +3,7 @@ use <common.scad>
 use <part-07.scad>
 use <part-08.scad>
 
+//	deprecated
 //	프로토타입, 테스트 출력용
 ID = "⑨";
 COLOR = [0.5, 0.4, 0.3, 0.9];

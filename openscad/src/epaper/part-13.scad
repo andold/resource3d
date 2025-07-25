@@ -8,85 +8,78 @@ use <part-12.scad>	//	연결 부속이 파인 밑판
 
 COLOR = [0.824, 0.412, 0.118, 0.9];
 DEFAULT = [
-	["margin.part13",		[16, 16, 0],	"연결 부속이 위치하는 곳을 기준으로 추가 여백, marginPart13"],
-	["size.connector",		[0.8, 12, 3 - 0.4 - 0.1, 0.4, 0.4],	"연결 부속 크기, sizeConnector"],
-	["margin.connector",	[3, 8, 0],		"연결 부속이 위치하는 모서리로부터의 여백, marginConnector"],
-	["part05.hight",		2,			"높이, hightUpper"],
+	["prototype",							"프로토타입: 밑판 위판 귀퉁이 일부만 출력, prototype"],
+	["prototype.joint.margin",	[32, 32],	"연결 부속을 들어내는 크기, marginPrototypeJoint"],
+
+//	for (cx = default04()) cx,
+//	for (cx = default05()) cx,
+//	for (cx = default10()) cx,
 
 	["reserved", "끝"]
 ];
  
 //	프로토타입: 밑판 위판 귀퉁이 일부만 출력
-
-function PART13(v = PART10()) = [[
-		PART10(),
-		PART11(),
-		PART12()
-	],
-	for (cx = v) cx
-];
-
-module epaper_part_13a(map) {
+module epaper_part13a(map) {
 	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
-
 	assert(!is_undef(map));
 
-	margin = max(get(map, "margin.connector", DEFAULT))
-			+ max(get(map, "size.connector", DEFAULT))
-			+ max(get(map, "margin.part13", DEFAULT)) ;
-	echo(str(parent_module(0), ".", parent_module(1)), margin = margin);
-	
+	marginPrototypeJoint = get(map, "prototype.joint.margin", DEFAULT);	//	연결 부속을 들어내는 크기, marginPrototypeJoint
 	intersection() {
-		epaper_part_11(map);
+		epaper_part11(map);
 		translate([-EPSILON, -EPSILON, -EPSILON])
-		cube([margin, margin, 100]);
+		cube([marginPrototypeJoint.x, marginPrototypeJoint.y, 100]);
 	}
 }
 
-module epaper_part_13b(map) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
-
+module epaper_part13b(map) {
+//	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
 	assert(!is_undef(map));
 
-	margin = max(get(map, "margin.connector", DEFAULT))
-			+ max(get(map, "size.connector", DEFAULT))
-			+ max(get(map, "margin.part13", DEFAULT)) ;
-	echo(str(parent_module(0), ".", parent_module(1)), margin = margin);
+	marginPrototypeJoint = get(map, "prototype.joint.margin", DEFAULT);	//	연결 부속을 들어내는 크기, marginPrototypeJoint
 	
 	intersection() {
-		epaper_part_12(map);
+		epaper_part12(map);
 		translate([-EPSILON, -EPSILON, -EPSILON])
-		cube([margin, margin, 100]);
+		cube([marginPrototypeJoint.x, marginPrototypeJoint.y, 100]);
 	}
 }
 
-module epaper_part_13(map = DEFAULT) {
+module epaper_part13(map = DEFAULT) {
 	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
-
 	assert(!is_undef(map));
 	
-	margin = max(get(map, "margin.connector", DEFAULT))
-			+ max(get(map, "size.connector", DEFAULT))
-			+ max(get(map, "margin.part13", DEFAULT)) ;
-	echo(str(parent_module(0), ".", parent_module(1)), margin = margin);
+	marginPrototypeJoint = get(map, "prototype.joint.margin", DEFAULT);	//	연결 부속을 들어내는 크기, marginPrototypeJoint
 
-	epaper_part_13a(map);
-	translate([margin + 1, 0, 0])
-	epaper_part_13b(map);
+	epaper_part13a(map);
+	translate([marginPrototypeJoint.x + 1, 0, 0])
+	epaper_part13b(map);
 }
 
 module main() {
-	epaper_part_13();
+	epaper_part13();
 }
 
 
 module build(command = 0) {
 	echo(str("", parent_module(0), "(", command, ")"));
 
+	map = [
+		["joint.margin",			[3, 16, 0],	"여백, 연결 부속의 모서리로부터의 위치, marginJoint"],
+		["prototype.joint.margin",	[32, 32],	"연결 부속을 들어내는 크기, marginPrototypeJoint"],
+		["under.panel.hole.ratio",			0.0,		"밑판 구멍내는 비율, ratioUnderPanelHole"],
+		
+		"andold", ""
+	];
+	
 	if (command == 0) {
-		main();
+		epaper_part13(map);
 	} else if (command == 1) {
-		main();
+		epaper_part13a(map);
+	} else if (command == 2) {
+		epaper_part11(map);
+	} else if (command == 3) {
+		epaper_part13b(map);
+	} else if (command == 4) {
 	} else {
 		echo("NOT SUPPORTED");
 	}

@@ -1,8 +1,8 @@
 include	<../common/constants.scad>
 use <../common/library_text.scad>
 use <common.scad>
-use <part-01.scad>
-use <part-02.scad>
+use <part-01.scad>	// 화소가 있는 영역, activeArea
+use <part-02.scad>	//	주요 화면 부품. Display Panel, displayPanel
 use <part-03.scad>
 use <part-06.scad>	//	waveshare epaper 7.3인치 제품. 그룹 of part1, part2, part3
 use <part-07.scad>	//	연결 부속, 수직 최대각도는 45도.
@@ -14,7 +14,7 @@ DEFAULT = [
 	["under.panel",									"패널 밑에 받치는 밑판, underPanel"],
 	["under.panel.height",				2,			"밑판의 높이, heightUnderPanel"],
 	["under.panel.hill.size",			[3, 3, 1],	"언덕의 크기, sizeUnderPanelHill"],
-	["under.panel.corner.plane.radius",	3 / 4,		"모서리 대패의 반경, radiusUnderPanel"],
+	["under.panel.corner.plane.radius",	3 / 4,		"모서리 대패의 반경, radiusUnderPanelCornerPlane"],
 	["under.panel.rail",				[16, 16],	"밑판 최외곽 최소 너비 railUnderPanel"],
 	["under.panel.hole",							"밑판 구멍"],
 	["under.panel.hole.ratio",			0.5,		"밑판 구멍내는 비율, ratioUnderPanelHole"],
@@ -33,63 +33,15 @@ DEFAULT = [
 ];
 function default04() = DEFAULT;
 
-function linecount(string) = len(split(string, "\n")) + 1;
-
-function calculateSizeOutterUnderPanel(map) = let(
-	ratioUnderPanelHole = get(map, "under.panel.hole.ratio", DEFAULT),
-	radiusUnderPanelHole = get(map, "under.panel.hole.radius", DEFAULT),
-	heightUnderPanel = get(map, "under.panel.height", DEFAULT),	//	밑판의 높이
-	sizeDisplayPanel = get(map, "display.panel.size", DEFAULT),
-	sizeUnderPanelHill = get(map, "under.panel.hill.size", DEFAULT),
-	railUnderPanel = get(map, "under.panel.rail", DEFAULT),
-	marginDisplayPanel = get(map, "display.panel.margin", DEFAULT),
-
-	reserved = 0
-) [
-	sizeDisplayPanel.x + (sizeUnderPanelHill.x + marginDisplayPanel.x) * 2,
-	sizeDisplayPanel.y + (sizeUnderPanelHill.y + marginDisplayPanel.y) * 2,
-	heightUnderPanel,
-];
-function calculateSizeInnerUnderPanel(map) = let(
-	heightUnderPanel = get(map, "under.panel.height", DEFAULT),	//	밑판의 높이
-	railUnderPanel = get(map, "under.panel.rail", DEFAULT),
-	sizeOutterUnderPanel = calculateSizeOutterUnderPanel(map),
-
-	reserved = 0
-) [
-	sizeOutterUnderPanel.x - railUnderPanel.x * 2,
-	sizeOutterUnderPanel.y - railUnderPanel.y * 2,
-	heightUnderPanel,
-];
-function calculateCount(map) = let(
-	ratioUnderPanelHole = get(map, "under.panel.hole.ratio", DEFAULT),
-	radiusUnderPanelHole = get(map, "under.panel.hole.radius", DEFAULT),
-	sizeDisplayPanel = get(map, "display.panel.size", DEFAULT),
-	sizeUnderPanelHill = get(map, "under.panel.hill.size", DEFAULT),
-	railUnderPanel = get(map, "under.panel.rail", DEFAULT),
-
-	sizeInnerUnderPanel = calculateSizeInnerUnderPanel(map),
-
-	areaBase = sizeInnerUnderPanel.x * sizeInnerUnderPanel.y,	//	내경 면적
-	areaUnderPanelHole = PI * radiusUnderPanelHole * radiusUnderPanelHole,	//	원의 면적
-	county = floor(sqrt(areaBase / areaUnderPanelHole * ratioUnderPanelHole)),	//	원이 몇개 필요
-	countx = floor(sizeInnerUnderPanel.x * county / sizeInnerUnderPanel.y),
-
-	dummy = echo(parent_module(0), "ratioUnderPanelHole", ratioUnderPanelHole, "sizeInnerUnderPanel", sizeInnerUnderPanel, "countx", countx, "county", county),
-
-	reserved = 0
-) [
-	countx,	//	countx
-	county	//	county
-];
-
 //	밑판 구멍내기
 module epaper_part04a1(map) {
+	echo(str("", parent_module(0), ".", parent_module(1), "(", map, ")"), HR);
 	assert(!is_undef(map));
 
+	ratioUnderPanelHole = get(map, "under.panel.hole.ratio", DEFAULT);
 	radiusUnderPanelHole = get(map, "under.panel.hole.radius", DEFAULT);
-	sizeInnerUnderPanel = calculateSizeInnerUnderPanel(map);
-	counts = calculateCount(map);
+	sizeInnerUnderPanel = calculateSizeInnerUnderPanel(map, DEFAULT);
+	counts = calculateCount(map, DEFAULT);
 	delta = [
 		(sizeInnerUnderPanel.x - radiusUnderPanelHole * 2 * counts.x) / (counts.x - 1),
 		(sizeInnerUnderPanel.y - radiusUnderPanelHole * 2 * counts.y) / (counts.y - 1)
@@ -100,6 +52,14 @@ module epaper_part04a1(map) {
 					"\ncounts: ", counts,
 					"\ndelta: ", delta,
 					"");
+	echo(str("", parent_module(0), ".", parent_module(1))
+		, ratioUnderPanelHole = ratioUnderPanelHole
+		, radiusUnderPanelHole = radiusUnderPanelHole
+		, sizeInnerUnderPanel = sizeInnerUnderPanel
+		, counts = counts
+		, delta = delta
+		, description = description
+	);
 
 	$fn = $preview ? 5 : 32;
 	//	for loop가 있는 곳에서 낙인작업(carve)을 하면 오래 걸린다.
@@ -110,32 +70,6 @@ module epaper_part04a1(map) {
 			cylinder(sizeInnerUnderPanel.z + EPSILON * 2, radiusUnderPanelHole, radiusUnderPanelHole);
 		}
 	}
-}
-
-module epaper_part_04a_note(v) {
-//	echo("밑판 수치 표시", str(parent_module(0), "(", v[0][0], ")"));
-
-	assert(!is_undef(v));
-
-	s4 = v[0][0];		//	전체 외경
-	height = v[0][2].z;	//	밑판의 높이
-	margin = v[0][6];	//	밑판 최외곽 최소 너비
-	radius = v[0][5][0];	//	모서리 대패의 반경
-	size = [s4.x - radius * 2, s4.y - radius * 2, height - radius];
-	fs = min(size);
-//	echo(s4 = s4, height = height, margin = margin, radius = radius);
-
-	//	가로
-	translate([0, -NOTE_MARGIN, size.z])
-	notate([size.x, fs]);
-
-	//	세로
-	translate([-NOTE_MARGIN, 0, size.z])
-	notate([fs, size.y]);
-
-	translate([-NOTE_MARGIN, 0, 0])
-	rotate([90, 0, 0])
-	notate([fs, size.z]);
 }
 
 //	밑판
@@ -175,7 +109,7 @@ module epaper_part04b(map) {
 	heightUnderPanel = get(map, "under.panel.height", DEFAULT);	//	밑판의 높이
 	sizeUnderPanelHill = get(map, "under.panel.hill.size", DEFAULT);
 	sizeDisplayPanel = get(map, "display.panel.size", DEFAULT);
-	sizeOutterUnderPanel = calculateSizeOutterUnderPanel(map);
+	sizeOutterUnderPanel = calculateSizeOutterUnderPanel(map, DEFAULT);
 
 	//	색상을 밑판보다 진하게
 	cdelta = 0.1;
@@ -205,29 +139,27 @@ module epaper_part04b(map) {
 }
 
 //	아래쪽에 구멍내는 거, 연결선 빠져 나가는 구멍
-module epaper_part04c(v) {
-//	echo(str(parent_module(0), "(", v, ")"));
+module epaper_part04c(map) {
+	assert(!is_undef(map));
 
-	assert(!is_undef(v));
+	sizeDisplayConnector = get(map, "display.connector.size", DEFAULT);
+	sizeUnderPanelHill = get(map, "under.panel.hill.size", DEFAULT);	//	언덕의 크기
+	marginDisplayPanel = get(map, "display.panel.margin", DEFAULT);	//	여백, 밑판과 화면 부품 사이의 여유 공간
+	marginDisplayConnector = get(map, "display.connector.margin", DEFAULT);
+	sizeOutterUnderPanel = calculateSizeOutterUnderPanel(map, DEFAULT);
 
-	upstairs = v[0][3];	//	둔덕의 크기
-	marginActive = v[0][4];	//	패널 확보 여백
-	size3 = v[2][0];	//	연결단자의 크기
-	margin = v[2][1];	//	연결단자의 위치
-	height = v[0][2].z;	//	밑판의 높이
-
-	size = [
-		size3.x + marginActive.x * 2,
-		upstairs.y + marginActive.y + EPSILON,
-		height + marginActive.z + EPSILON
+	sizeHold = [
+		sizeDisplayConnector.x,
+		sizeDisplayConnector.y,
+		sizeOutterUnderPanel.z + sizeUnderPanelHill.z
 	];
-	fs = min(size);
 
-	translate([0, -EPSILON, -EPSILON])
-	cube(size);
-
-	translate([0, -NOTE_MARGIN+2, -EPSILON])
-	notate([size.x, fs]);
+	translate([
+		sizeUnderPanelHill.x + marginDisplayPanel.x + marginDisplayConnector.x,
+		-(sizeDisplayConnector.y - sizeUnderPanelHill.y - marginDisplayPanel.y) - 0,
+		(-EPSILON)
+	])
+	cube(sizeHold);
 }
 
 //	아래판 전체
@@ -238,36 +170,155 @@ module epaper_part04d(map) {
 	epaper_part04b(map);	//	2층
 }
 
-module epaper_part04(map = DEFAULT) {
+//	커넥터 구멍 뚤기
+module epaper_part04e(map) {
 	assert(!is_undef(map));
 
-	radius = 1;
-	margin = [0, 0, 0];
-	upstairs = [1, 1, 1];
-	
-	$fn = $preview ? 4 : 16;
 	difference() {
-		translate([radius, radius, radius])
-		minkowski() {
-			epaper_part04d(map);
-			color(COLOR)
-			sphere(radius);
-			notateH([margin.x, 2], up = false);
-		}
+		epaper_part04d(map);
 
-/*
-		translate([upstairs.x + margin.x, 0, 0])
 		epaper_part04c(map);
-
-		translate([0, -NOTE_MARGIN + 2, 0])	{
-			notateH([upstairs.x, fs], up = false);
-			translate([upstairs.x, 0, 0])	notateH([margin.x, fs], up = false);
-
-			translate([psize.x - upstairs.x, 0, 0])	notateH([upstairs.x, fs], up = false);
-			translate([psize.x - (upstairs.x + margin.x), 0, 0])	notate([margin.x, fs], up = false);
-		}
-*/
 	}
+}
+
+module epaper_part04(map = DEFAULT) {
+	assert(!is_undef(map));
+	epaper_part04d(map);
+}
+
+//	수평선
+module lineh(point, length) {
+	thick = 0.1;
+	
+	polygon([
+		[point.x, point.y],
+		[point.x + length, point.y],
+		[point.x + length, point.y + thick],
+		[point.x, point.y + thick]
+	]);
+}
+//	수직선
+module linev(point, length) {
+	thick = 0.1;
+	
+	polygon([
+		[point.x, point.y],
+		[point.x, point.y + length],
+		[point.x + thick, point.y + length],
+		[point.x + thick, point.y]
+	]);
+}
+
+//	모든 지시선
+module epaper_part04_note(map) {
+	assert(!is_undef(map));
+	
+	sizeOutterUnderPanel = calculateSizeOutterUnderPanel(map);
+	railUnderPanel = get(map, "under.panel.rail", DEFAULT);	//	밑판 최외곽 최소 너비 railUnderPanel
+	radiusUnderPanelCornerPlane = get(map, "under.panel.corner.plane.radius", DEFAULT);	//	모서리 대패의 반경
+	sizeUnderPanelHill = get(map, "under.panel.hill.size", DEFAULT);	//	언덕의 크기
+	marginDisplayPanel = get(map, "display.panel.margin", DEFAULT);	//	여백, 밑판과 화면 부품 사이의 여유 공간
+	marginDisplayConnector = get(map, "display.connector.margin", DEFAULT);	//	디스플레이 패널로부터의 상대적인 위치,여백
+	radiusUnderPanelHole = get(map, "under.panel.hole.radius", DEFAULT);	//	밑판 구멍내는 원의 크기, radiusUnderPanelHole
+/*
+	["display.connector",			"디스플레이 패널에 붙어있는 커넥터, displayConnector, part03"],
+	["display.connector.size",		[25.50, 24.00, 0.1],			"크기, sizeDisplayConnector"],
+	["display.connector.margin",	[72.35, 0, 0],					"디스플레이 패널로부터의 상대적인 위치,여백, marginDisplayConnector"],
+	["under.panel",									"패널 밑에 받치는 밑판, underPanel"],
+	["under.panel.height",				2,			"밑판의 높이, heightUnderPanel"],
+	["under.panel.hill.size",			[3, 3, 1],	"언덕의 크기, sizeUnderPanelHill"],
+	["under.panel.corner.plane.radius",	3 / 4,		"모서리 대패의 반경, radiusUnderPanelCornerPlane"],
+	["under.panel.rail",				[16, 16],	"밑판 최외곽 최소 너비 railUnderPanel"],
+	["under.panel.hole",							"밑판 구멍"],
+	["under.panel.hole.ratio",			0.5,		"밑판 구멍내는 비율, ratioUnderPanelHole"],
+	["under.panel.hole.radius",			8,			"밑판 구멍내는 원의 크기, radiusUnderPanelHole"],
+	["under.panel.size",							"계산된 크기. 다른 부품(패널)의 크기에 종속된다"],
+	["under.panel.size.outter",			undef,		"계산된 전체 외경, sizeOutterUnderPanel"],
+	["under.panel.size.inner",			undef,		"계산된 내경, sizeInnerUnderPanel"],
+
+	["display.panel.margin",			[0.5, 0.5],	"여백, 밑판과 화면 부품 사이의 여유 공간, marginDisplayPanel"],
+*/
+	//	수직선
+	//	외경
+	linev([0, -railUnderPanel.y], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	linev([sizeOutterUnderPanel.x, -railUnderPanel.y], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	//	모서리 대패의 반경
+	linev([radiusUnderPanelCornerPlane, -railUnderPanel.y], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	linev([sizeOutterUnderPanel.x - radiusUnderPanelCornerPlane, -railUnderPanel.y], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	//	언덕
+	linev([sizeUnderPanelHill.x, -railUnderPanel.y], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	linev([sizeOutterUnderPanel.x - sizeUnderPanelHill.x, -railUnderPanel.y], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	//	여백, 밑판과 화면 부품 사이의 여유 공간
+	linev([sizeUnderPanelHill.x + marginDisplayPanel.x, -railUnderPanel.y], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	linev([sizeOutterUnderPanel.x - (sizeUnderPanelHill.x + marginDisplayPanel.x), -railUnderPanel.y], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	//	디스플레이 패널로부터의 상대적인 위치,여백
+	linev([
+		sizeUnderPanelHill.x + marginDisplayPanel.x + marginDisplayConnector.x,
+		-railUnderPanel.y
+	], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	linev([
+		sizeOutterUnderPanel.x - (sizeUnderPanelHill.x + marginDisplayPanel.x + marginDisplayConnector.x),
+		-railUnderPanel.y
+	], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	//	밑판 최외곽 최소 너비 railUnderPanel
+	linev([
+		railUnderPanel.x,
+		-railUnderPanel.y
+	], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	linev([
+		sizeOutterUnderPanel.x - railUnderPanel.x,
+		-railUnderPanel.y
+	], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	//	밑판 구멍내는 원의 크기, radiusUnderPanelHole
+	linev([
+		railUnderPanel.x + radiusUnderPanelHole,
+		-railUnderPanel.y
+	], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	linev([
+		sizeOutterUnderPanel.x - (railUnderPanel.x + radiusUnderPanelHole),
+		-railUnderPanel.y
+	], sizeOutterUnderPanel.y + railUnderPanel.y * 2);
+	
+	//	수평선
+	//	외경
+	lineh([-railUnderPanel.x, 0], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	lineh([-railUnderPanel.x, sizeOutterUnderPanel.y], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	//	모서리 대패의 반경
+	lineh([-railUnderPanel.x, radiusUnderPanelCornerPlane], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	lineh([-railUnderPanel.x, sizeOutterUnderPanel.y - (radiusUnderPanelCornerPlane)], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	//	언덕
+	lineh([-railUnderPanel.x, sizeUnderPanelHill.y], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	lineh([-railUnderPanel.x, sizeOutterUnderPanel.y - (sizeUnderPanelHill.y)], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	//	여백, 밑판과 화면 부품 사이의 여유 공간
+	lineh([-railUnderPanel.x, sizeUnderPanelHill.y + marginDisplayPanel.y], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	lineh([-railUnderPanel.x, sizeOutterUnderPanel.y - (sizeUnderPanelHill.y + marginDisplayPanel.y)], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	//	디스플레이 패널로부터의 상대적인 위치,여백
+	lineh([
+		-railUnderPanel.x,
+		sizeUnderPanelHill.y + marginDisplayPanel.y + marginDisplayConnector.y
+	], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	lineh([
+		-railUnderPanel.x,
+		sizeOutterUnderPanel.y - (sizeUnderPanelHill.y + marginDisplayPanel.y + marginDisplayConnector.y)
+	], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	//	밑판 최외곽 최소 너비 railUnderPanel
+	lineh([
+		-railUnderPanel.x,
+		railUnderPanel.y
+	], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	lineh([
+		-railUnderPanel.x,
+		sizeOutterUnderPanel.y - railUnderPanel.y
+	], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	//	밑판 구멍내는 원의 크기, radiusUnderPanelHole
+	lineh([
+		-railUnderPanel.x,
+		railUnderPanel.y + radiusUnderPanelHole
+	], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
+	lineh([
+		-railUnderPanel.x,
+		sizeOutterUnderPanel.y - (railUnderPanel.y + radiusUnderPanelHole)
+	], sizeOutterUnderPanel.x + railUnderPanel.x * 2);
 }
 
 module main(command = 0) {
@@ -278,19 +329,29 @@ module main(command = 0) {
 	} else if (command == 1) {
 		epaper_part04a(DEFAULT);	//	밑판
 	} else if (command == 2) {
-		epaper_part04();
+		map = [["under.panel.hole.ratio",			0.0,		"밑판 구멍내는 비율, ratioUnderPanelHole"]];
+		epaper_part04a1(map);	//	밑판 구멍내기
 	} else if (command == 3) {
 		epaper_part04a1(DEFAULT);	//	밑판 구멍내기
 	} else if (command == 4) {
 		epaper_part04b(DEFAULT);	//	위판
 	} else if (command == 5) {
-		epaper_part04d(DEFAULT);
+		map = [["under.panel.hole.ratio",			0.5,		"밑판 구멍내는 비율, ratioUnderPanelHole"]];
+		epaper_part04d(map);
+	} else if (command == 6) {
+		map = [["under.panel.hole.ratio",			0.5,		"밑판 구멍내는 비율, ratioUnderPanelHole"]];
+		epaper_part04e(map);	//	모서리 대패를 적용하기 위해, 굴곡만큼 작게 만들기
+	} else if (command == 7) {
+		epaper_part04_note(DEFAULT);
+	} else if (command == 8) {
+		map = [["under.panel.hole.ratio",			0.5,		"밑판 구멍내는 비율, ratioUnderPanelHole"]];
+		epaper_part04e(map);	//	모서리 대패를 적용하기 위해, 굴곡만큼 작게 만들기
+		epaper_part04_note(DEFAULT);
 	} else {
 		echo("NOT SUPPORTED");
 	}
 	
-	rotate([180, 0, 0])	epaper_part02();
 	hr();
 }
 
-main(is_undef(command) ? 2 : command);
+main(is_undef(command) ? 8 : command);

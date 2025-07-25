@@ -3,10 +3,10 @@ include	<../common/constants.scad>
 use	<../common/library_text.scad>
 use	<common.scad>
 
-// active area
+// 화소가 있는 영역, activeArea
 ACTIVE_AREA_COLOR = [0.3, 0.3, 0.9, 0.9];
 DEFAULT = [
-	["active.area",								"화소가 있는 영역, activeArea, part01"],
+	["active.area",								"화소가 있는 영역, activeArea"],
 	["active.area.size",	[160.00, 96.00],	"크기, 화소가 있는 영역, sizeActiveArea"],
 	["reserved", "끝"]
 ];

@@ -1,10 +1,64 @@
 include	<../common/constants.scad>
+use <../common/library_text.scad>
 
 // map에서 못찾으면 default에서 찾는다
 function get(map, key, default) = let(
 	result = search([key], map, 1, 0),
 	spare = search([key], default, 1, 0)
-)	len(result) > 0	? map[result[0]][1] : len(spare) > 0 ? map[default[0]][1] : "";
+)	is_num(result[0])
+		? map[result[0]][1] 
+		: is_num(spare[0]) ? default[spare[0]][1] : assert(false) "";
+
+function linecount(string) = len(split(string, "\n")) + 1;
+
+function calculateSizeOutterUnderPanel(map, default) = let(
+	ratioUnderPanelHole = get(map, "under.panel.hole.ratio", default),
+	radiusUnderPanelHole = get(map, "under.panel.hole.radius", default),
+	heightUnderPanel = get(map, "under.panel.height", default),	//	밑판의 높이
+	sizeDisplayPanel = get(map, "display.panel.size", default),
+	sizeUnderPanelHill = get(map, "under.panel.hill.size", default),
+	railUnderPanel = get(map, "under.panel.rail", default),
+	marginDisplayPanel = get(map, "display.panel.margin", default),
+
+	reserved = 0
+) [
+	sizeDisplayPanel.x + (sizeUnderPanelHill.x + marginDisplayPanel.x) * 2,
+	sizeDisplayPanel.y + (sizeUnderPanelHill.y + marginDisplayPanel.y) * 2,
+	heightUnderPanel + sizeUnderPanelHill.z,
+];
+function calculateSizeInnerUnderPanel(map, default) = let(
+	heightUnderPanel = get(map, "under.panel.height", default),	//	밑판의 높이
+	railUnderPanel = get(map, "under.panel.rail", default),
+	sizeOutterUnderPanel = calculateSizeOutterUnderPanel(map, default),
+
+	reserved = 0
+) [
+	sizeOutterUnderPanel.x - railUnderPanel.x * 2,
+	sizeOutterUnderPanel.y - railUnderPanel.y * 2,
+	heightUnderPanel,
+];
+function calculateCount(map, default) = let(
+	ratioUnderPanelHole = get(map, "under.panel.hole.ratio", default),
+	radiusUnderPanelHole = get(map, "under.panel.hole.radius", default),
+	sizeDisplayPanel = get(map, "display.panel.size", default),
+	sizeUnderPanelHill = get(map, "under.panel.hill.size", default),
+	railUnderPanel = get(map, "under.panel.rail", default),
+
+	sizeInnerUnderPanel = calculateSizeInnerUnderPanel(map, default),
+
+	areaBase = sizeInnerUnderPanel.x * sizeInnerUnderPanel.y,	//	내경 면적
+	areaUnderPanelHole = PI * radiusUnderPanelHole * radiusUnderPanelHole,	//	원의 면적
+	county = floor(sqrt(areaBase / areaUnderPanelHole * ratioUnderPanelHole)),	//	원이 몇개 필요
+	countx = floor(sizeInnerUnderPanel.x * county / sizeInnerUnderPanel.y),
+
+	dummy = echo(parent_module(0), "ratioUnderPanelHole", ratioUnderPanelHole, "sizeInnerUnderPanel", sizeInnerUnderPanel, "countx", countx, "county", county),
+
+	reserved = 0
+) [
+	countx,	//	countx
+	county	//	county
+];
+
 
 // A(x0, y0), B(x1, y1), C(x2, y2) 에서 A와 직선 BC 사이 거리 계산
 function pointToLineDistance(x0, y0, x1, y1, x2, y2) =

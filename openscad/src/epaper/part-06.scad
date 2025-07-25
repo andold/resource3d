@@ -17,6 +17,7 @@ DEFAULT = [
 
 	["reserved", "끝"]
 ];
+function default06() = DEFAULT;
 
 //	waveshare epaper 7.3인치 제품. 그룹 of part1, part2, part3
 

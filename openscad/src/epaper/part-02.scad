@@ -3,11 +3,12 @@ include	<../common/constants.scad>
 use	<../common/library_text.scad>
 use <common.scad>
 
+//	주요 화면 부품. Display Panel, displayPanel
 COLOR02 = [0.5, 0.5, 0.1, 0.9];
 DEFAULT = [
-	["display.panel",								"화면 부품. Display Panel, displayPanel, part02"],
+	["display.panel",								"주요 화면 부품. Display Panel, displayPanel"],
 	["display.panel.size",	[170.20, 111.20, 0.91],	"크기, 화면 부품의 크기, sizeDisplayPanel"],
-	["active.area.margin",	[5.10, 4.70],			"크기, 화소가 있는 영역, marginActiveArea"],
+	["active.area.margin",	[5.10, 4.70],			"여백, 화소가 있는 영역, marginActiveArea"],
 
 	["reserved", "끝"]
 ];

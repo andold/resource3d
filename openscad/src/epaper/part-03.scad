@@ -20,11 +20,9 @@ module epaper_part03(map = DEFAULT) {
 	marginDisplayConnector = get(map, "display.connector.margin", DEFAULT);
 	description = str(parent_module(0), "\ndisplay.connector", "\ndisplay.connector.size: ", sizeDisplayConnector, "\ndisplay.connector.margin: ", marginDisplayConnector);
 
-	carve([0, 0, 0], [1, 5, sizeDisplayConnector.z], 0.01, true) {
+	carve(description, size= 0.7, translate = [1, 5, sizeDisplayConnector.z], offset = 0.01) {
 		color(COLOR)
 		cube(sizeDisplayConnector);
-
-		text0(description, 0.7);
 	}
 }
 
