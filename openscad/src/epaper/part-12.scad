@@ -21,38 +21,21 @@ module epaper_part12(map = DEFAULT) {
 //	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
 
 	heightUnderPanel = get(map, "under.panel.height", DEFAULT);	//	밑판의 높이, heightUnderPanel
+	sizeUnderPanelHill = get(map, "under.panel.hill.size", DEFAULT);	//	언덕의 크기, sizeUnderPanelHill
+	echo(str(parent_module(0), ".", parent_module(1)), heightUnderPanel = heightUnderPanel);
+	echo(str(parent_module(0), ".", parent_module(1)), sizeUnderPanelHill = sizeUnderPanelHill);
 
 	difference() {
 		color(COLOR)
 		epaper_part04(map);
 
-		translate([0, 0, heightUnderPanel])
+		translate([0, 0, heightUnderPanel + sizeUnderPanelHill.z])
 		mirror([0, 0, 1])
 		epaper_part10(map, female = true);
 	}
 }
 
-module epaper_part12a(map = DEFAULT) {
-//	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
-
-	sizeOutterUnderPanel = calculateSizeOutterUnderPanel(map, DEFAULT);
-
-	difference() {
-		color(COLOR)
-		epaper_part04(map);
-
-		translate([0, 0, sizeOutterUnderPanel.z])
-		mirror([0, 0, 1])
-		epaper_part10(map, female = true);
-	}
-}
-
-module main() {
-	epaper_part12a();
-}
-
-
-module build(command = 0) {
+module main(command = 0) {
 	map = DEFAULT;
 	
 	if (command == 0) {
@@ -65,4 +48,4 @@ module build(command = 0) {
 	}
 }
 
-build(is_undef(command) ? 2 : command);
+main(is_undef(command) ? 2 : command);

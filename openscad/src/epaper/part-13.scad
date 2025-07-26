@@ -49,21 +49,23 @@ module epaper_part13(map = DEFAULT) {
 	assert(!is_undef(map));
 	
 	marginPrototypeJoint = get(map, "prototype.joint.margin", DEFAULT);	//	연결 부속을 들어내는 크기, marginPrototypeJoint
+	snumber = str("sn: ", is_undef(sn) ? floor(rands(0, 999, 1)[0]) : sn);
 
-	epaper_part13a(map);
+	carve(snumber, size = 4, offset = 0.5, rotate = [180, 0, 0], translate = [4, -8, 0], preview = !true) {
+		epaper_part13a(map);
+	}
+
 	translate([marginPrototypeJoint.x + 1, 0, 0])
-	epaper_part13b(map);
+	carve(snumber, size = 4, offset = 0.5, rotate = [180, 0, 0], translate = [8, -12, 0], preview = !true) {
+		epaper_part13b(map);
+	}
 }
 
-module main() {
-	epaper_part13();
-}
-
-
-module build(command = 0) {
+module main(command = 0) {
 	echo(str("", parent_module(0), "(", command, ")"));
 
 	map = [
+		["joint.size",				[0.8, 12, 2.5, 0.4, 0.4],		"연결 부속 크기 정의, sizeJoint"],
 		["joint.margin",			[3, 16, 0],	"여백, 연결 부속의 모서리로부터의 위치, marginJoint"],
 		["prototype.joint.margin",	[32, 32],	"연결 부속을 들어내는 크기, marginPrototypeJoint"],
 		["under.panel.hole.ratio",			0.0,		"밑판 구멍내는 비율, ratioUnderPanelHole"],
@@ -72,11 +74,28 @@ module build(command = 0) {
 	];
 	
 	if (command == 0) {
-		epaper_part13(map);
+		hr();
+		echo("usage: ");
+		hr();
 	} else if (command == 1) {
-		epaper_part13a(map);
+		epaper_part13(map = [
+			["joint.size",				[0.8, 12, 2.5, 0.4, 0.4],		"연결 부속 크기 정의, sizeJoint"],
+			["joint.margin",			[3, 16, 0],	"여백, 연결 부속의 모서리로부터의 위치, marginJoint"],
+			["prototype.joint.margin",	[32, 32],	"연결 부속을 들어내는 크기, marginPrototypeJoint"],
+			["under.panel.hole.ratio",			0.0,		"밑판 구멍내는 비율, ratioUnderPanelHole"],
+		
+			"andold", ""
+		]);
 	} else if (command == 2) {
-		epaper_part11(map);
+		epaper_part13(map = [
+			["under.panel.hill.size",	[3, 3, 1.6],				"언덕의 크기, sizeUnderPanelHill"],
+			["joint.size",				[1.2, 12, 2.5, 0.8, 0.8],	"연결 부속 크기 정의, sizeJoint"],
+			["joint.margin",			[3, 16, 0],	"여백, 연결 부속의 모서리로부터의 위치, marginJoint"],
+			["prototype.joint.margin",	[32, 32],	"연결 부속을 들어내는 크기, marginPrototypeJoint"],
+			["under.panel.hole.ratio",			0.0,		"밑판 구멍내는 비율, ratioUnderPanelHole"],
+		
+			"andold", ""
+		]);
 	} else if (command == 3) {
 		epaper_part13b(map);
 	} else if (command == 4) {
@@ -85,4 +104,4 @@ module build(command = 0) {
 	}
 }
 
-build(is_undef(command) ? 0 : command);
+main(is_undef(command) ? 2 : command);

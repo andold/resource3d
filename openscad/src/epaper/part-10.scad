@@ -17,14 +17,14 @@ function default10() = DEFAULT;
 
 //	결합 연결 부속
 module epaper_part10a1(map, female) {
-//	echo(str(parent_module(0), ".", parent_module(1), ".", parent_module(1), "(", v[0], v[1][3], female, ")"));
+//	echo(str(parent_module(0), ".", parent_module(1), "(", ", ", female, ")"));
 	assert(!is_undef(map));
 
 	sizeJoint = get(map, "joint.size", DEFAULT);	//	연결 부속 크기 정의, sizeJoint
 	marginJoint = get(map, "joint.margin", DEFAULT);	//	여백, 연결 부속의 모서리로부터의 위치, marginJoint
 
 	translate([marginJoint.x, marginJoint.y, 0])
-	epaper_part_07(sizeJoint, female);
+	epaper_part07(sizeJoint, female = female);
 }
 module epaper_part10a2(map, female) {
 	mirror([1, -1, 0])
@@ -89,6 +89,7 @@ module main(command = 0) {
 	} else if (command == 5) {
 		epaper_part10(map, true);
 	} else if (command == 6) {
+		epaper_part10(map, false);
 	} else if (command == 7) {
 	} else if (command == 8) {
 	} else {

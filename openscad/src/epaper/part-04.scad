@@ -35,7 +35,7 @@ function default04() = DEFAULT;
 
 //	밑판 구멍내기
 module epaper_part04a1(map) {
-	echo(str("", parent_module(0), ".", parent_module(1), "(", map, ")"), HR);
+//	echo(str("", parent_module(0), ".", parent_module(1), "(", map, ")"), HR);
 	assert(!is_undef(map));
 
 	ratioUnderPanelHole = get(map, "under.panel.hole.ratio", DEFAULT);
@@ -89,7 +89,7 @@ module epaper_part04a(map) {
 					"\nsizeOutterUnderPanel: ", sizeOutterUnderPanel,
 					"\ndisplay.panel.size: ", sizeDisplayPanel,
 					"\nunder.panel.rail: ", railUnderPanel);
-	note(description, size = 1, rotate = [180, 0, 0], translate = [sizeUnderPanelHill.x, -sizeUnderPanelHill.y, 0], offset = 0.01, preview = false) {
+	note(description, size = 1, rotate = [180, 0, 0], translate = [sizeUnderPanelHill.x + 4, -sizeUnderPanelHill.y - 4, 0], offset = 0.01, preview = false) {
 		difference() {
 			//	통짜
 			color(COLOR)
@@ -119,22 +119,22 @@ module epaper_part04b(map) {
 		// 아래
 		translate([0, 0, 0])
 		color(ccolor)
-		cube([sizeOutterUnderPanel.x, sizeUnderPanelHill.y, sizeOutterUnderPanel.z]);
+		cube([sizeOutterUnderPanel.x, sizeUnderPanelHill.y, sizeUnderPanelHill.z]);
 
 		//	위
 		translate([0, sizeOutterUnderPanel.y - sizeUnderPanelHill.y, 0])
 		color(ccolor)
-		cube([sizeOutterUnderPanel.x, sizeUnderPanelHill.y, sizeOutterUnderPanel.z]);
+		cube([sizeOutterUnderPanel.x, sizeUnderPanelHill.y, sizeUnderPanelHill.z]);
 
 		//	왼쪽
 		translate([0, 0, 0])
 		color(ccolor)
-		cube([sizeUnderPanelHill.x, sizeOutterUnderPanel.y, sizeOutterUnderPanel.z]);
+		cube([sizeUnderPanelHill.x, sizeOutterUnderPanel.y, sizeUnderPanelHill.z]);
 
 		//	오른쪽
 		translate([sizeOutterUnderPanel.x - sizeUnderPanelHill.x, 0, 0])
 		color(ccolor)
-		cube([sizeUnderPanelHill.x, sizeOutterUnderPanel.y, sizeOutterUnderPanel.z]);
+		cube([sizeUnderPanelHill.x, sizeOutterUnderPanel.y, sizeUnderPanelHill.z]);
 	}
 }
 
