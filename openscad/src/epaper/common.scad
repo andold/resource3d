@@ -11,6 +11,7 @@ function get(map, key, default) = let(
 
 function linecount(string) = len(split(string, "\n")) + 1;
 
+//	밑판의 외경을 계산
 function calculateSizeOutterUnderPanel(map, default) = let(
 	ratioUnderPanelHole = get(map, "under.panel.hole.ratio", default),
 	radiusUnderPanelHole = get(map, "under.panel.hole.radius", default),
@@ -26,6 +27,8 @@ function calculateSizeOutterUnderPanel(map, default) = let(
 	sizeDisplayPanel.y + (sizeUnderPanelHill.y + marginDisplayPanel.y) * 2,
 	heightUnderPanel + sizeUnderPanelHill.z,
 ];
+
+//	밑판에서 구멍을 내는 영역의 크기 계산
 function calculateSizeInnerUnderPanel(map, default) = let(
 	heightUnderPanel = get(map, "under.panel.height", default),	//	밑판의 높이
 	railUnderPanel = get(map, "under.panel.rail", default),
@@ -37,6 +40,8 @@ function calculateSizeInnerUnderPanel(map, default) = let(
 	sizeOutterUnderPanel.y - railUnderPanel.y * 2,
 	heightUnderPanel,
 ];
+
+//	동그만 구멍의 가로 세로 몇개씩 내야하는지 계산
 function calculateCount(map, default) = let(
 	ratioUnderPanelHole = get(map, "under.panel.hole.ratio", default),
 	radiusUnderPanelHole = get(map, "under.panel.hole.radius", default),
@@ -63,6 +68,107 @@ function calculateCount(map, default) = let(
 function pointToLineDistance(x0, y0, x1, y1, x2, y2) =
     abs((x2 - x1)*(y1 - y0) - (x1 - x0)*(y2 - y1)) /
     sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+
+//	실린더에 모서리 대패질 기능을 추가한것
+module planeCylinder(h = 1, r1 = 1, r2 = 1, rplane = 0, female = false) {
+//	echo(str("", parent_module(0), ".", parent_module(1), "(", h, ", ", r1, ", ", r2, ", ", rplane, ", ", female, ")"), HR);
+	assert(!is_undef(h));
+	
+	$fn = 16;
+	if (rplane <= 0) {
+		cylinder(h = h, r1 = r1, r2 = r2);
+	} else {
+		if (!female) {
+			translate([0, 0, rplane]) {
+				minkowski() {
+					color("yellow")
+					cylinder(h = h - rplane * 2, r1 = r1 - rplane, r2 = r2 - rplane);
+					sphere(rplane);
+				}
+			}
+		} else {
+			//	under construction
+			rotate_extrude()
+			projection()
+			rotate([-90, 0, 0])
+			difference() {
+				union() {
+					cylinder(h = h, r1 = r1 + rplane, r2 = r2 + rplane);
+				}
+
+				translate([r1 + rplane, h, rplane])	rotate([90, 0, 0])	cylinder(h = h * 2, r1 = rplane, r2 = rplane);
+				translate([r1 + rplane, h, h - rplane])	rotate([90, 0, 0])	cylinder(h = h * 2, r1 = rplane, r2 = rplane);
+//				translate([-(r1 + rplane), h, h - rplane])	rotate([90, 0, 0])	cylinder(h = h * 2, r1 = rplane, r2 = rplane);
+//				translate([-(r1 + rplane), h, rplane])	rotate([90, 0, 0])	cylinder(h = h * 2, r1 = rplane, r2 = rplane);
+				
+				big = max(r1, r2, h) * 3;
+				translate([r1, -big / 2, rplane])	cube([big, big, h - rplane * 2]);
+				translate([-big, -big / 2, -big / 2])	cube([big, big, big]);
+			}
+		}
+	}
+}
+
+THICK_LINE_INDEX = 0.1;
+//	수평선
+module lineh(point, length) {
+	assert(!is_undef(point));
+	assert(!is_undef(point.x));
+	assert(!is_undef(point.y));
+	thick = THICK_LINE_INDEX;
+	
+	polygon([
+		[point.x, point.y],
+		[point.x + length, point.y],
+		[point.x + length, point.y + thick],
+		[point.x, point.y + thick]
+	]);
+}
+//	수직선
+module linev(point, length) {
+	thick = THICK_LINE_INDEX;
+	
+	polygon([
+		[point.x, point.y],
+		[point.x, point.y + length],
+		[point.x + thick, point.y + length],
+		[point.x + thick, point.y]
+	]);
+}
+
+//	직사각형(외경)의 지시선, 대칭, 축선에는 그리지 않는다.
+module lineindex13(point, size, xsymmetry, ysymmetry) {
+	padding = size / 10;
+	
+	if (point.x == 0 && point.y == 0) {
+		linev([size.x, -padding.y], size.y + padding.y * 2);
+		lineh([-padding.x, size.y], size.x + padding.x * 2);
+	}
+	if (point.x != 0) {
+		linev([point.x, -padding.y], size.y + padding.y * 2);
+		if (xsymmetry) {
+			linev([size.x - point.x, -padding.y], size.y + padding.y * 2);
+		}
+	}
+
+	if (point.y != 0) {
+		lineh([-padding.x, point.y], size.x + padding.x * 2);
+		if (ysymmetry) {
+			lineh([-padding.x, size.y - (point.y)], size.x + padding.x * 2);
+		}
+	}
+}
+
+//	직사각형(외경)의 지시선, 대칭
+module lineindex(point, size, xsymmetry = true, ysymmetry = true, xysymmetry = true) {
+	assert(!is_undef(point));
+	assert(!is_undef(point.x));
+
+	lineindex13(point, size, xsymmetry, ysymmetry);
+	if (xysymmetry) {
+		lineindex13([point.y, point.x], size, ysymmetry, xsymmetry);
+	}
+}
 
 //	가로 막대 긴거
 module hr() {
@@ -106,6 +212,7 @@ module arrow_down(v) {
 	arrow_left([v.y, v.x]);
 }
 
+//	수평 안쪽에
 module notateHI(v, title) {
 	titleSize = v.y * len(title);
 
@@ -117,6 +224,8 @@ module notateHI(v, title) {
 	translate([v.x / 2, 0])
 	text(title, font = "D2Coding", size = v.y, halign = "center");
 }
+
+//	수평 바깥쪽에
 module notateHO(v, title) {
 	titleSize = v.y * len(title);
 	arrowSize = v.y * 3;
@@ -130,6 +239,8 @@ module notateHO(v, title) {
 	translate([v.x / 2, 0])
 	text(title, font = "D2Coding", size = v.y, halign = "center");
 }
+
+//	수평
 module notateH(v, title, up, prefix) {
 	prefixSafe = is_undef(prefix) ? "" : prefix;
 	titleDetail = is_undef(title) ? str(prefixSafe, v.x, "mm") : title;
@@ -167,11 +278,15 @@ module notateH(v, title, up, prefix) {
 		}
 	}
 }
+
+//	수직
 module notateV(v, title, up, prefix) {
 	translate([v.x, 0])
 	rotate([0, 0, 90])
 	notateH([v.y, v.x], title, up, prefix);
 }
+
+//	수치 표시, 화살표를 이용, v의 가로 세로 길이에 따라 수직 수평 구분.
 module notate(v, title, up, prefix) {
 //	echo(str(parent_module(0), ".", parent_module(1), "(", v, title, up, prefix, ")"));
 

@@ -2,15 +2,11 @@
 include	<../common/constants.scad>
 use	<../common/library_text.scad>
 use	<common.scad>
+use <collect-default.scad>
 
 // 화소가 있는 영역, activeArea
 ACTIVE_AREA_COLOR = [0.3, 0.3, 0.9, 0.9];
-DEFAULT = [
-	["active.area",								"화소가 있는 영역, activeArea"],
-	["active.area.size",	[160.00, 96.00],	"크기, 화소가 있는 영역, sizeActiveArea"],
-	["reserved", "끝"]
-];
-function default01() = DEFAULT;
+DEFAULT = default();
 
 module epaper_part01(map = DEFAULT) {
 	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));

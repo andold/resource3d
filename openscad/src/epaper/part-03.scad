@@ -1,15 +1,10 @@
 include	<../common/constants.scad>
 use	<../common/library_text.scad>
 use <common.scad>
+use <collect-default.scad>
 
 COLOR = [0.4, 0.8, 0.4, 0.5];
-DEFAULT = [
-	["display.connector",			"디스플레이 패널에 붙어있는 커넥터, displayConnector, part03"],
-	["display.connector.size",		[25.50, 24.00, 0.1],			"크기, sizeDisplayConnector"],
-	["display.connector.margin",	[72.35, 0, 0],					"디스플레이 패널로부터의 상대적인 위치,여백, marginDisplayConnector"],
-	["reserved", "끝"]
-];
-function default03() = DEFAULT;
+DEFAULT = default();
 
 module epaper_part03(map = DEFAULT) {
 	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));

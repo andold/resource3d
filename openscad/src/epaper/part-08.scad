@@ -1,18 +1,10 @@
 include	<../common/constants.scad>
 use <common.scad>
-use <part-01.scad>
-use <part-02.scad>
-use <part-03.scad>
-use <part-06.scad>
 
-//	①②③④⑤⑥⑦⑧⑨ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓄ
 //	모난 구석이 없는 네모 상자
-ID = "⑧";
 COLOR = [0.3, 0.4, 0.7, 0.9];
 
-function COLOR08() = COLOR;
-
-module epaper_part_08_notate(w) {
+module epaper_part08_notate(w) {
 	echo(str(parent_module(0), ".", parent_module(1), "(", w, ")"));
 	assert(!is_undef(w));
 
@@ -50,7 +42,7 @@ module epaper_part_08_notate(w) {
 	translate([0, 0, radius])			rotate([0, -90, 0])	notate([w.z - radius * 2, fontSize]);
 	translate([0, 0, w.z - radius])	rotate([0, -90, 0])	notate([radius, fontSize]);
 }
-module epaper_part_08(v = [32, 8, 16, 2]) {
+module epaper_part08(v = [32, 8, 16, 2]) {
 	echo(str(parent_module(0), ".", parent_module(1), "(", v, ")"));
 
 	w = is_undef(v) ? [32, 8, 16, 2] : v;
@@ -69,13 +61,13 @@ module epaper_part_08(v = [32, 8, 16, 2]) {
 		sphere(radius);
 	}
 	
-	epaper_part_08_notate(w);
+	epaper_part08_notate(w);
 }
 
 module main() {
 	hr();
 
-	epaper_part_08();
+	epaper_part08();
 
 	hr();
 }

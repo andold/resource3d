@@ -1,19 +1,11 @@
 include	<../common/constants.scad>
 use <common.scad>
+use <collect-default.scad>
 use <part-04.scad>	//	패널 밑에 받치는 밑판
 use <part-07.scad>	//	연결 부속, 수직 최대각도는 45도.
 
 //	연결 부속들만 네 귀퉁이에 위치시킨 것
-DEFAULT = [
-	["joint",													"연결 부속, joint"],
-	["joint.size",		[0.8, 12, 3 - 0.4 - 0.1, 0.4, 0.4],		"연결 부속 크기 정의, sizeJoint"],
-	["joint.margin",	[3, 8, 0],								"여백, 연결 부속의 모서리로부터의 위치, marginJoint"],
-
-	for (cx = default04()) cx,
-	
-	["reserved", "끝"]
-];
-function default10() = DEFAULT;
+DEFAULT = default();
 
 //	결합 연결 부속
 module epaper_part10a1(map, female) {
