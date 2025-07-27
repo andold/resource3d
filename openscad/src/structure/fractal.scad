@@ -2,6 +2,7 @@
 use <MCAD/boxes.scad>
 include	<../common/constants.scad>
 use <../common/library.scad>
+use <fractal03.scad>
 
 module octagon(unit = 8, thick = 1) {
 	delta = unit / sqrt(2);
@@ -70,38 +71,6 @@ module fractal02(unit = 8, thick = 1, count = 4) {
 	fractal02a();
 }
 
-module fractal03a(unit = 32, thick = 4, count = 4) {
-	intersection() {
-		cube([unit, unit, unit] * count);
-		for (cx = [-count:count]) {
-			for (cy = [-count:count]) {
-				translate([cx * unit, cy * unit, 0])
-				rotate([0, 45, 0])
-				translate([-thick / 2, -thick / 2, -thick])
-				cube([thick, thick, unit * count * 2]);
-			}
-		}
-	}
-}
-
-module fractal03(unit = 32, thick = 4, count = 4) {
-	fractal03a(unit, thick, count);
-
-	translate([unit * count, 0, 0])
-	rotate([0, 0, 90])
-	fractal03a(unit, thick, count);
-
-	translate([unit * count, unit * count, 0])
-	rotate([0, 0, 180])
-	fractal03a(unit, thick, count);
-
-	translate([0, unit * count, 0])
-	rotate([0, 0, 270])
-	fractal03a(unit, thick, count);
-/*
-*/
-}
-
 module fractal01() {
 	unit = 8;
 	thick = 1;
@@ -120,20 +89,27 @@ module fractal01() {
 	octagon(unit, thick);
 }
 
-module build(command = 0) {
+module usage(command = 0) {
+	echo("command == 1", "팔각형 쌓기");
+	echo("command == 2", "사선을 면으로 쌓기");
+	echo("command == 3", "사선을 4각 막대로 쌓기");
+}
+
+module main(command = 0) {
 	echo(str("", parent_module(0), "(", command, ")"));
 
 	if (command == 0) {
-		fractal01();	//	팔각형
+		usage();
 	} else if (command == 1) {
-		fractal02();	//	면
+		fractal01();	//	팔각형
 	} else if (command == 2) {
-		fractal03();	//	선
+		fractal02();	//	면
 	} else if (command == 3) {
+		fractal03();	//	선
 	} else {
 		echo("NOT SUPPORTED");
 	}
 }
 
 // look build.bat script file
-build(is_undef(command) ? 2 : command);
+main(is_undef(command) ? 0 : command);
