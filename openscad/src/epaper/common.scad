@@ -1,5 +1,6 @@
 include	<../common/constants.scad>
-use <../common/library.scad>
+use	<../common/library_function.scad>
+use	<../common/library_text.scad>
 
 //	밑판의 외경을 계산
 function calculateSizeOutterUnderPanel(map, default) = let(

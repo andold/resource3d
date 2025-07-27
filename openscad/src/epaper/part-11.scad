@@ -1,5 +1,6 @@
 include	<../common/constants.scad>
-use	<../common/library.scad>
+use	<../common/library_function.scad>
+use	<../common/library_text.scad>
 use <common.scad>
 use <collect-default.scad>
 use <part-05.scad>	//	디스플레이 패널을 덮는 위판

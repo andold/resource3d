@@ -1,5 +1,6 @@
 include	<../common/constants.scad>
-use	<../common/library.scad>
+use	<../common/library_function.scad>
+use	<../common/library_text.scad>
 use <common.scad>
 use <collect-default.scad>
 use <part-04.scad>	//	패널 밑에 받치는 밑판

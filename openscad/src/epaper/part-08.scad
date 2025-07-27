@@ -1,5 +1,6 @@
 include	<../common/constants.scad>
-use	<../common/library.scad>
+use	<../common/library_function.scad>
+use	<../common/library_text.scad>
 use <common.scad>
 
 //	모난 구석이 없는 네모 상자

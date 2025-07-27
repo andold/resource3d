@@ -1,12 +1,3 @@
-//use <part-01.scad>	// 화소가 있는 영역, activeArea
-//use <part-02.scad>	//	주요 화면 부품. Display Panel, displayPanel
-//use <part-03.scad>	//	디스플레이 패널에 붙어있는 커넥터, displayConnector
-//use <part-04.scad>	//	패널 밑에 받치는 밑판
-//use <part-05.scad>	//	디스플레이 패널을 덮는 위판, upperPanel
-//use <part-06.scad>	//	waveshare epaper 7.3인치 제품. 그룹 of part1, part2, part3
-//use <part-10.scad>	//	연결 부속들만 네 귀퉁이에 위치시킨 것
-//use <part-13.scad>
-
 //	DEFAULT값을 모아, 모아서
 DEFAULT_COLLECTED = [
 	// part01, 화소가 있는 영역, activeArea
