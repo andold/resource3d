@@ -28,6 +28,7 @@ module usage() {
 	//	/usr/bin/openscad --export-format asciistl -D command=1 -D sn=10 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-010.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad
 	echo("						/usr/bin/openscad --export-format asciistl -D command=1 -D sn=10 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-010.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
 	echo("	-D command=2	 밑판 프린트");
+	//	/usr/bin/openscad --export-format asciistl -D command=2 -D sn=11 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-011.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad
 	echo("						/usr/bin/openscad --export-format asciistl -D command=2 -D sn=11 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-011.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
 	echo("	-D command=3	 프리뷰용. 위판 밑판이 결합한 형태로 프린트");
 }
