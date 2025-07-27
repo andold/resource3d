@@ -3,6 +3,11 @@ use <MCAD/boxes.scad>
 include	<constants.scad>
 
 
+// A(x0, y0), B(x1, y1), C(x2, y2) 에서 A와 직선 BC 사이 거리 계산
+function pointToLineDistance(x0, y0, x1, y1, x2, y2) =
+    abs((x2 - x1)*(y1 - y0) - (x1 - x0)*(y2 - y1)) /
+    sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+
 // map에서 못찾으면 default에서 찾는다
 function get(map, key, default) = let(
 	result = search([key], map, 1, 0),
