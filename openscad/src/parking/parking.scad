@@ -180,7 +180,7 @@ module build(command = 0) {
 }
 
 // look build.bat script file
-build(command == undef ? 0 : command);
+build(command == undef ? 4 : command);
 
 /*
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\openscad\src\parking\parking-%date:~0,4%%date:~5,2%%date:~8,2%%time:~0,2%%time:~3,2%.stl -D command=17 --export-format asciistl C:\src\eclipse-workspace\resource3d\openscad\src\parking\parking.scad
