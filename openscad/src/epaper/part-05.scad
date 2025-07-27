@@ -1,15 +1,10 @@
 // 라이브러리, 검증된 것만 이곳에
 include	<../common/constants.scad>
-include	<../common/library_text.scad>
+use	<../common/library.scad>
 use <common.scad>
 use <collect-default.scad>
-/*
-use <part-01.scad>	//	화소가 있는 영역, activeArea
-use <part-02.scad>	//	주요 화면 부품. Display Panel, displayPanel
-use <part-04.scad>	//	패널 밑에 받치는 밑판
-use <part-06.scad>	//	waveshare epaper 7.3인치 제품. 그룹 of part1, part2, part3
-*/
 use <part-08.scad>	//	모난 구석이 없는 네모 상자
+
 COLOR = [0.4, 0.6, 0.2, 0.9];
 
 DEFAULT = default();

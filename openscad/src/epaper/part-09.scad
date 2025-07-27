@@ -1,4 +1,5 @@
 include	<../common/constants.scad>
+use	<../common/library.scad>
 use <common.scad>
 use <part-07.scad>
 use <part-08.scad>

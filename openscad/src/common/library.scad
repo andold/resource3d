@@ -9,6 +9,32 @@ use <utils.scad>
 /*
 	모듈 섹션
 */
+
+// map에서 못찾으면 default에서 찾는다
+function get(map, key, default) = let(
+	result = search([key], map, 1, 0),
+	spare = search([key], default, 1, 0)
+)	is_num(result[0])
+		? map[result[0]][1] 
+		: is_num(spare[0]) ? default[spare[0]][1] : assert(false) "";
+
+function linecount(string) = len(split(string, "\n")) + 1;
+
+// 문자열 일부 추출: start부터 end까지의 문자 반환
+function substring(string, start, end, index = 0, result = "") =
+    index >= len(string) || index > end
+        ? result
+        : substring(string, start, end,
+            index + 1,
+            str(result, (index >= start ? string[index] : ""))
+        );
+
+// 문자열 일부 추출: start부터 end까지의 문자 반환
+function split(string, delemeter) = let(parts = concat(-1, search(delemeter, string, 0)[0], len(string))) [
+	for (cx = [0:len(parts) - 2])
+		substring(string, parts[cx] + 1, parts[cx + 1] - 1)
+];
+
 // 상하 모서리의 일부 각을 제거한 것
 module cylinder_type_1(height, radious, cut) {
 	fn = fnRound(radious);

@@ -1,15 +1,5 @@
 include	<../common/constants.scad>
-use <../common/library_text.scad>
-
-// map에서 못찾으면 default에서 찾는다
-function get(map, key, default) = let(
-	result = search([key], map, 1, 0),
-	spare = search([key], default, 1, 0)
-)	is_num(result[0])
-		? map[result[0]][1] 
-		: is_num(spare[0]) ? default[spare[0]][1] : assert(false) "";
-
-function linecount(string) = len(split(string, "\n")) + 1;
+use <../common/library.scad>
 
 //	밑판의 외경을 계산
 function calculateSizeOutterUnderPanel(map, default) = let(

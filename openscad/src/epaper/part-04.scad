@@ -1,14 +1,8 @@
 include	<../common/constants.scad>
-use <../common/library_text.scad>
+use	<../common/library.scad>
 use <common.scad>
 use <collect-default.scad>
-/*
-use <part-01.scad>	// 화소가 있는 영역, activeArea
-use <part-02.scad>	//	주요 화면 부품. Display Panel, displayPanel
-use <part-03.scad>
-use <part-06.scad>	//	waveshare epaper 7.3인치 제품. 그룹 of part1, part2, part3
-use <part-07.scad>	//	연결 부속, 수직 최대각도는 45도.
-*/
+
 //	패널 밑에 받치는 밑판
 COLOR = [0.8, 0.4, 0.3, 1];
 DEFAULT = default();
