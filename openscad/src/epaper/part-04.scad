@@ -120,7 +120,8 @@ module epaper_part04c(map) {
 	sizeHold = [
 		sizeDisplayConnector.x + marginDisplayPanel.x * 2,
 		sizeDisplayConnector.y + marginDisplayPanel.y,
-		heightUnderPanel + marginDisplayPanel.z
+//		heightUnderPanel + marginDisplayPanel.z
+		heightUnderPanel + sizeUnderPanelHill.z + EPSILON * 2
 	];
 
 	translate([
