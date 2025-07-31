@@ -23,22 +23,35 @@ module epaper_display() {
 }
 
 module usage() {
-	echo("usage:");
-	echo("/usr/bin/openscad --export-format asciistl -D sn=10 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S').stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
-	echo("	-D sn=nnn		 일련번호 마킹");
-	echo("	-D command=1	 위판 프린트");
-	//	/usr/bin/openscad --export-format asciistl -D command=1 -D sn=10 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-010.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad
-	echo("						/usr/bin/openscad --export-format asciistl -D command=1 -D sn=10 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-010.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
-	echo("	-D command=2	 밑판 프린트");
-	//	/usr/bin/openscad --export-format asciistl -D command=2 -D sn=11 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-011.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad
-	echo("						/usr/bin/openscad --export-format asciistl -D command=2 -D sn=11 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-011.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
-	echo("	-D command=3	 프리뷰용. 위판 밑판이 결합한 형태로 프린트");
+	if (is_undef(command)) {
+		echo("usage:");
+		echo("/usr/bin/openscad --export-format asciistl -D sn=10 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S').stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
+		echo("	-D sn=nnn		 일련번호 마킹");
+		echo("	-D command=1	 위판 프린트");
+		//	/usr/bin/openscad --export-format asciistl -D command=1 -D sn=10 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-010.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad
+		echo("						/usr/bin/openscad --export-format asciistl -D command=1 -D sn=10 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-010.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
+		echo("	-D command=2	 밑판 프린트");
+		//	/usr/bin/openscad --export-format asciistl -D command=2 -D sn=11 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-011.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad
+		echo("						/usr/bin/openscad --export-format asciistl -D command=2 -D sn=11 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-011.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
+		echo("	-D command=3	 프리뷰용. 위판 밑판이 결합한 형태로 프린트");
+	} else if (command == 0) {
+		echo("이것을 합니다");
+	} else if (command == 1) {
+		echo("밑판을 출력합니다");
+	} else if (command == 2) {
+		echo("위판을 출력합니다");
+	} else if (command == 3) {
+		echo("테스트 입니다.");
+	} else if (command == 4) {
+		echo("아무것도 하지 않습니다.");
+	} else {
+	}
 }
 
 module main(command = 0) {
 	hr();
 	echo(str("", parent_module(0), "(", command, ")"));
-	usage();
+	usage(command);
 
 	if (command == 0) {
 	} else if (command == 1) {
@@ -64,4 +77,4 @@ module main(command = 0) {
 	hr();
 }
 
-main(is_undef(command) ? 0 : command);
+main(is_undef(command) ? 2 : command);
