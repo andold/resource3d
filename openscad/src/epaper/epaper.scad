@@ -18,40 +18,47 @@ custome = [
 
 	"andold", ""
 ];
+	custome74 = [
+		["under.panel.height",		2 + 3,						"밑판의 높이, heightUnderPanel"],
+		["under.panel.hill.size",	[3 + 2, 3 + 2, 1 + 0.6],	"언덕의 크기, sizeUnderPanelHill"],
+		["under.panel.hole.ratio",	0.5,		"밑판 구멍내는 비율, ratioUnderPanelHole"],
+
+		["upper.panel.hight",		1 + 4,		"높이 of 디스플레이 패널을 덮는 위판, hightUpperPanel"],
+
+		["display.panel.margin",	[0.5 + 0.5, 0.5 + 0.5, 0.5 + 0.5],	"여백, 밑판과 화면 부품 사이의 여유 공간, marginDisplayPanel"],
+		["joint.size",				[1.2, 12, 2.5, 0.8, 0.8],	"연결 부속 크기 정의, sizeJoint"],
+		["joint.margin",			[3, 16, 0],	"여백, 연결 부속의 모서리로부터의 위치, marginJoint"],
+		["prototype.joint.margin",	[32, 32],	"연결 부속을 들어내는 크기, marginPrototypeJoint"],
+
+		"andold", ""
+	];
 
 module epaper_display() {
 }
 
+//	/usr/bin/openscad --export-format asciistl -D command=0 -D sn=999 -o /media/owl/data/resource3d/stl/20991231235959.stl /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad
 module usage() {
-	if (is_undef(command)) {
-		echo("usage:");
-		echo("/usr/bin/openscad --export-format asciistl -D sn=10 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S').stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
-		echo("	-D sn=nnn		 일련번호 마킹");
-		echo("	-D command=1	 위판 프린트");
-		//	/usr/bin/openscad --export-format asciistl -D command=1 -D sn=10 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-010.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad
-		echo("						/usr/bin/openscad --export-format asciistl -D command=1 -D sn=10 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-010.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
-		echo("	-D command=2	 밑판 프린트");
-		//	/usr/bin/openscad --export-format asciistl -D command=2 -D sn=11 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-011.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad
-		echo("						/usr/bin/openscad --export-format asciistl -D command=2 -D sn=11 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-011.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
-		echo("	-D command=3	 프리뷰용. 위판 밑판이 결합한 형태로 프린트");
-	} else if (command == 0) {
-		echo("이것을 합니다");
-	} else if (command == 1) {
-		echo("밑판을 출력합니다");
-	} else if (command == 2) {
-		echo("위판을 출력합니다");
-	} else if (command == 3) {
-		echo("테스트 입니다.");
-	} else if (command == 4) {
-		echo("아무것도 하지 않습니다.");
-	} else {
-	}
+	echo("usage:");
+	echo("		/usr/bin/openscad --export-format asciistl -D command=0 -D sn=999 -o /media/owl/data/resource3d/stl/20991231235959.stl /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad");
+	echo(str("		/usr/bin/openscad --export-format asciistl -D command=0 -D sn=", sn, " -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-", sn, ".stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/epaper/epaper.scad"));
+	echo();
+	echo("	-D sn=nnn	 일련번호 마킹");
+	echo("	-D command=1	 위판을 출력합니다");
+	echo("	-D command=2	 밑판을 출력합니다");
+	echo("	-D command=3	 좀더 튼튼한 위판을 출력합니다");
+	echo("	-D command=4	 좀더 튼튼한 밑판을 출력합니다");
+	echo();
+	echo("	평범한");
+	for (cx = custome)	echo(cx);
+	echo();
+	echo("	좀더 튼튼한");
+	for (cx = custome74)	echo(cx);
 }
 
 module main(command = 0) {
 	hr();
 	echo(str("", parent_module(0), "(", command, ")"));
-	usage(command);
+	usage();
 
 	if (command == 0) {
 	} else if (command == 1) {
@@ -60,21 +67,15 @@ module main(command = 0) {
 		epaper_part12(custome);
 		epaper_part04_note(custome);
 	} else if (command == 3) {
-		epaper_part12(custome);
-
-		hightUpperPanel = get(custome, "upper.panel.hight", DEFAULT);
-		sizeOutterUnderPanel = calculateSizeOutterUnderPanel(custome, DEFAULT);
-
-		translate([sizeOutterUnderPanel.x * 1, 0, sizeOutterUnderPanel.z + hightUpperPanel])
-		rotate([0, 180, 0])
-		epaper_part11(custome);
+		epaper_part11(custome74);
 	} else if (command == 4) {
+		epaper_part12(custome74);
+		epaper_part04_note(custome74);
 	} else {
 		echo("NOT SUPPORTED");
 	}
 
-	usage();
 	hr();
 }
 
-main(is_undef(command) ? 2 : command);
+main(is_undef(command) ? 0 : command);

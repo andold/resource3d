@@ -27,7 +27,7 @@ DEFAULT_COLLECTED = [
 	["under.panel.size.outter",			undef,		"계산된 전체 외경, sizeOutterUnderPanel"],
 	["under.panel.size.inner",			undef,		"계산된 내경, sizeInnerUnderPanel"],
 
-	["display.panel.margin",			[0.5, 0.5,  0.5],	"여백, 밑판과 화면 부품 사이의 여유 공간, marginDisplayPanel"],
+	["display.panel.margin",			[0.5, 0.5, 0.5],	"여백, 밑판과 화면 부품 사이의 여유 공간, marginDisplayPanel"],
 
 	//	part05, 디스플레이 패널을 덮는 위판, upperPanel
 	["upper.panel",					"디스플레이 패널을 덮는 위판, upperPanel"],
