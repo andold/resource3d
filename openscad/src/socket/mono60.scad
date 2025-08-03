@@ -8,6 +8,8 @@ DEFAULT_SOCKET = [
 	["socket.mono.height",	5,			"높이, height"],
 	["socket.mono.corner",	1,			"모서리 깍기 반지름, corner"],
 
+	["socket.mono.hole.distance",	[45.52, 53.21],	"벽체 고정 나사 구멍 거리, distanceHole"],
+
 	"andold", ""
 ];
 function default() = DEFAULT_SOCKET;
@@ -22,9 +24,30 @@ module serial_number(map = default()) {
 	snumber = str("sn: ", is_undef(sn) ? floor(rands(0, 999, 1)[0]) : sn);
 
 	$fn = $preview ? 32 : 256;
+	translate([0, 0, height])
 	carve(snumber, size = radius / 6, offset = radius / 60, rotate = [0, 0, 0], translate = [radius, 0, height], preview = true, halign = "center", valign = "center") {
-		mono60(map);
+		mono60b(map);
 	}
+}
+
+//	벽체 고정 나사 구멍
+module mono60a(map) {
+	//	벽체 고정 나사 구멍 거리, distanceHole
+	distanceHole = get(map, "socket.mono.hole.distance", DEFAULT_SOCKET);
+	//	반지름
+	radius = get(map, "socket.mono.radius", DEFAULT_SOCKET);
+	//	높이
+	height = get(map, "socket.mono.height", DEFAULT_SOCKET);
+
+	distance = (distanceHole[0] + distanceHole[1]) / 2 / 2;
+	radiusHole = (distanceHole[1] - distanceHole[0]) / 2 / 2 / 2;
+	echo(distance = distance, radiusHole = radiusHole);
+	
+	translate([radius + distance, 0, -EPSILON])
+	cylinder(height + EPSILON * 2, radiusHole, radiusHole);
+
+	translate([radius - distance, 0, -EPSILON])
+	cylinder(height + EPSILON * 2, radiusHole, radiusHole);
 }
 
 //	실린더 모양, 모서리 대패
@@ -35,7 +58,7 @@ module mono60(map = default()) {
 	height = get(map, "socket.mono.height", DEFAULT_SOCKET);
 	//	모서리 깍기 반지름
 	corner = get(map, "socket.mono.corner", DEFAULT_SOCKET);
-	
+
 	minkowski() {
 		translate([radius, 0, corner])
 		cylinder(height - corner * 2, radius - corner, radius - corner);
@@ -44,14 +67,23 @@ module mono60(map = default()) {
 	}
 }
 
+//	구멍 뚫린 실린더 모양, 모서리 대패
+module mono60b(map) {
+	difference() {
+		mono60(map);
+		
+		mono60a(map);
+	}
+}
+
 module usage(command) {
 	if (is_undef(command)) {
 		echo("usage:");
-		echo("/usr/bin/openscad --export-format asciistl -D command=1 -D sn=10 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S').stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/socket/mono60.scad");
+		echo("	/usr/bin/openscad -D command=0 /media/owl/src/eclipse-workspace/resource3d/openscad/src/socket/mono60.scad");
 		echo("	-D sn=nnn		 일련번호 마킹");
 		echo("	-D command=1	 프린트");
-		//	/usr/bin/openscad --export-format asciistl -D command=1 -D sn=15 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-015.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/socket/mono60.scad
-		echo("						/usr/bin/openscad --export-format asciistl -D command=1 -D sn=15 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-015.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/socket/mono60.scad");
+		//	/usr/bin/openscad --export-format asciistl -D command=1 -D sn=18 -o "/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-18.stl" /media/owl/src/eclipse-workspace/resource3d/openscad/src/socket/mono60.scad
+		echo("		/usr/bin/openscad --export-format asciistl -D command=1 -D sn=18 -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-18.stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/socket/mono60.scad");
 	} else if (command == 0) {
 		echo("이것을 합니다");
 	} else if (command == 1) {
@@ -68,11 +100,12 @@ module main(command = 0) {
 	} else if (command == 1) {
 		serial_number();
 	} else if (command == 2) {
+		mono60a(default());
+	} else if (command == 3) {	//	구멍 뚫린 실린더 모양, 모서리 대패
+		mono60b(default());
 	} else {
 		echo("NOT SUPPORTED");
 	}
-
-	usage();
 }
 
-main(is_undef(command) ? 2 : command);
+main(is_undef(command) ? 1 : command);
