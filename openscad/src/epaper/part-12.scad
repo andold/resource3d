@@ -24,7 +24,7 @@ module epaper_part12(map = DEFAULT) {
 			sizeOutterUnderPanel = calculateSizeOutterUnderPanel(map, DEFAULT);
 			heightUnderPanel = get(map, "under.panel.height", DEFAULT);	//	밑판의 높이
 
-			!carve(snumber, size = snsize, offset = snsize / 10, halign = "left", rotate = [0, 180, 0], translate = [sizeOutterUnderPanel.x * -1 + snsize, snsize / 2 + 2, 0], preview = !true) {
+			carve(snumber, size = snsize, offset = snsize / 10, halign = "left", rotate = [0, 180, 0], translate = [sizeOutterUnderPanel.x * -1 + snsize, snsize / 2 + 2, 0], preview = !true) {
 				epaper_part04(map);
 			}
 		}

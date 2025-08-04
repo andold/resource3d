@@ -78,4 +78,4 @@ module main(command = 0) {
 	hr();
 }
 
-main(is_undef(command) ? 0 : command);
+main(is_undef(command) ? 2 : command);
