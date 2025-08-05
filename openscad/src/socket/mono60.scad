@@ -25,7 +25,7 @@ module serial_number(map = default()) {
 
 	$fn = $preview ? 32 : 256;
 	translate([0, 0, height])
-	carve(snumber, size = radius / 6, offset = radius / 60, rotate = [0, 0, 0], translate = [radius, 0, height], preview = true, halign = "center", valign = "center") {
+	carve(snumber, size = radius / 6, offset = radius / 60, rotate = [0, 0, 0], translate = [radius, 0, height], preview = !true, halign = "center", valign = "center") {
 		mono60b(map);
 	}
 }

@@ -188,4 +188,4 @@ module main(command = 0) {
 	}
 }
 
-main(is_undef(command) ? 1 : command);
+main(is_undef(command) ? 3 : command);
