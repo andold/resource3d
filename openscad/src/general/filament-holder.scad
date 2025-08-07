@@ -7,11 +7,12 @@ use	<../common/library_line.scad>
 DEFAULT = [
 	["filament.holder",		"필라멘트 걸이 고정물, holderFilament"],
 	["filament.holder.corner.plane.radius",		1,	"필라멘트 걸이 모서리 대패 반지름, radiusCornerPlaneHolderFilament"],
-	["filament.holder.radius",		30.03 / 2 + 1 - 2,		"필라멘트 걸이 반지름, radiusHolderFilament"],
-	["filament.holder.thick",		4 - 2,				"필라멘트 걸이 두께, thickHolderFilament"],
-	["filament.holder.width",		24 - 2,				"필라멘트 걸이 너비, widthHolderFilament"],
-	["filament.holder.margin",		30,					"필라멘트 걸이 좁히는 최대 거리, marginHolderFilament"],
-	["filament.holder.arrow.size",	[64 - 2, 8 - 2, 4 - 2],	"필라멘트 걸이 표시자 크기, sizeArrowHolderFilament"],
+	["filament.holder.radius",			30.03 / 2 + 1 - 1,		"필라멘트 걸이 반지름, radiusHolderFilament"],
+	["filament.holder.radius.outter",	(30.03 / 2 + 1 - 1) / 4,	"필라멘트 걸이 홀더의 바깥쪽으로의 곡선 반지름, radiusOutterHolderFilament"],
+	["filament.holder.thick",			3 - 2,				"필라멘트 걸이 두께, thickHolderFilament"],
+	["filament.holder.width",			24 - 2,				"필라멘트 걸이 너비, widthHolderFilament"],
+	["filament.holder.margin",			30,					"필라멘트 걸이 좁히는 최대 거리, marginHolderFilament"],
+	["filament.holder.arrow.size",		[64 - 2, 4 - 2, 8 - 2],	"필라멘트 걸이 표시자 크기, sizeArrowHolderFilament"],
 
 	""
 ];
@@ -37,28 +38,29 @@ module filamentHolderArrow(map) {
 //	필라멘트 걸이 고정물 절반, 대칭
 module filamentHolderJointHalf(map) {
 	radiusHolderFilament = get(map, "filament.holder.radius", DEFAULT);	//	필라멘트 걸이 반지름, radiusHolderFilament
+	radiusOutterHolderFilament = get(map, "filament.holder.radius.outter", DEFAULT);	//	필라멘트 걸이 홀더의 바깥쪽으로의 곡선 반지름, radiusOutterHolderFilament
 	thickHolderFilament = get(map, "filament.holder.thick", DEFAULT);	//	필라멘트 걸이 너비, widthHolderFilament
 	widthHolderFilament = get(map, "filament.holder.width", DEFAULT);	//	필라멘트 걸이 두께, thickHolderFilament
 	marginHolderFilament = get(map, "filament.holder.margin", DEFAULT);	//	필라멘트 걸이 좁히는 최대 거리, marginHolderFilament
 
 	rotate([0, 0, -90])
-	translate([-(thickHolderFilament + radiusHolderFilament + radiusHolderFilament), 0, 0]) {
+	translate([-(thickHolderFilament + radiusHolderFilament + radiusOutterHolderFilament), 0, 0]) {
 		mirror([0, 0, 1])
-		translate([(thickHolderFilament + radiusHolderFilament + radiusHolderFilament), 0, -widthHolderFilament])
-		rotate_extrude(angle=180, convexity=10, $fn = $preview ? 32 : 512)
+		translate([(thickHolderFilament + radiusHolderFilament + radiusOutterHolderFilament), 0, -widthHolderFilament])
+		rotate_extrude(angle=180, convexity=10, $fn = $preview ? 16 : 512)
 		translate([radiusHolderFilament, 0])
 		square([thickHolderFilament, widthHolderFilament]);
 
 		mirror([0, 1, 0])
-		rotate_extrude(angle=90, convexity=10, $fn = $preview ? 32 : 512)
-		translate([radiusHolderFilament, 0])
+		rotate_extrude(angle=90, convexity=10, $fn = $preview ? 16 : 512)
+		translate([radiusOutterHolderFilament, 0])
 		square([thickHolderFilament, widthHolderFilament]);
 	}
 }
 
 //	필라멘트 걸이 고정물
 module filamentHolderJoint(map) {
-	degree = -45;
+	degree = -50;
 	
 	rotate([0, 0, degree])
 	filamentHolderJointHalf(map);
@@ -96,14 +98,8 @@ module filamentHolder(map) {
 	radiusHolderFilament = get(map, "filament.holder.radius", DEFAULT);	//	필라멘트 걸이 반지름, radiusHolderFilament
 	radiusCornerPlaneHolderFilament = get(map, "filament.holder.corner.plane.radius", DEFAULT);	//	필라멘트 걸이 모서리 대패 반지름, radiusCornerPlaneHolderFilament
 
-//	translate([0, -radiusHolderFilament, 0])
-//	minkowski()
-	{
-		translate([0, 0, radiusCornerPlaneHolderFilament])
-		filamentHolder1(map);
-		
-//		sphere(radiusCornerPlaneHolderFilament);
-	}
+	translate([0, -radiusHolderFilament, radiusCornerPlaneHolderFilament])
+	filamentHolder1(map);
 }
 
 //	오버행 처리
