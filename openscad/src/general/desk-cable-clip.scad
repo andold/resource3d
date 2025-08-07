@@ -9,10 +9,10 @@ DEFAULT = [
 
 	["clip.edge",		"판넬 가장자리에 끼우는 클립, clipEdge"],
 	["clip.edge.polygon",	[
-		[31, 63, 2],	//	밑판
-		[2, undef, 18.6 + 2.0],	//	위로
-		[23, 2, -2.0],	//	위판 첫번째, 아래로 꺽이는 정도
-		[8, 2, 1.5],	//	위판 두번째, 다시 위로 꺽이는 정도
+		[16 - 1, 63, 2],	//	밑판
+		[2, undef, 18.6 + 1.0],	//	위로
+		[12, 2, -2.0],	//	위판 첫번째, 아래로 꺽이는 정도
+		[4, 2, 1.5],	//	위판 두번째, 다시 위로 꺽이는 정도
 		[0, 0, 0]
 	],	"판넬 가장자리에 끼우는 클립의 도형 정의, polygonClipEdge"],
 	["clip.edge.corner.plane.radius",	0.5,	"클립 모서리 대패 반지름, radiusCorner"],
@@ -21,6 +21,7 @@ DEFAULT = [
 	["cable.holder",		"케이블 걸이 구멍, cableHolder"],
 	["cable.holder.radius",		2.5,	"반지름, 케이블 걸이 구멍, radiusCableHolder"],
 	["cable.holder.thick",		1,	"두께에 해당, 케이블 걸이 구멍, thickCableHolder"],
+	["cable.holder.height",		4,	"높이, 케이블 걸이 구멍, heightCableHolder"],
 	["cable.holder.gap",		1,	"틈새, 케이블 걸이 구멍, gapCableHolder"],
 	["cable.holder.radius.out",	1,	"반지름, 바깥 케이블 걸이 구멍, radiusOutCableHolder"],
 
@@ -72,9 +73,11 @@ module clip0(map) {
 
 module clip(map) {
 	radiusCorner = get(map, "clip.edge.corner.plane.radius", DEFAULT);	//	클립 모서리 대패 반지름, radiusCorner
-
+	polygonClipEdge = get(map, "clip.edge.polygon", DEFAULT);	//	판넬 가장자리에 끼우는 클립의 도형 정의, 
+	
 	snumber = str("sn: ", is_undef(sn) ? floor(rands(0, 999, 1)[0]) : sn);
-	carve(snumber, size = 5, offset = 0.5, rotate = [180, 0, 90], translate = [10, 20, 0], preview = !true, halign = "left", valign = "center") {
+	size = 5;
+	carve(snumber, size = size, offset = size / 10, rotate = [180, 0, 90], translate = [polygonClipEdge[0].y / 2, size / 2, 0], preview = !true, halign = "center", valign = "bottom") {
 		minkowski() {
 			translate([radiusCorner, radiusCorner, radiusCorner])
 			clip0(map);
@@ -97,11 +100,14 @@ module clipNote(map) {
 module cableHolderHalf(map) {
 	radiusCableHolder = get(map, "cable.holder.radius", DEFAULT);	//	반지름, 케이블 걸이 구멍, radiusCableHolder
 	thickCableHolder = get(map, "cable.holder.thick", DEFAULT);	//	두께에 해당, 케이블 걸이 구멍, thickCableHolder
+	heightCableHolder = get(map, "cable.holder.height", DEFAULT);	//	높이, 케이블 걸이 구멍, heightCableHolder
 	gapCableHolder = get(map, "cable.holder.gap", DEFAULT);	//	틈새, 케이블 걸이 구멍, gapCableHolder
 	radiusOutCableHolder = get(map, "cable.holder.radius.out", DEFAULT);	//	반지름, 바깥 케이블 걸이 구멍, radiusOutCableHolder
 	
 	$fn = 32;
 
+	translate([0, 0, heightCableHolder / thickCableHolder])
+	scale([1, 1, heightCableHolder / thickCableHolder])
 	rotate([0, 0, -90])
 	translate([-(radiusCableHolder + thickCableHolder + 1), 0, 0]) {
 		mirror([0, 0, 1])
@@ -137,7 +143,7 @@ module cableHolders(map) {
 	thickCableHolder = get(map, "cable.holder.thick", DEFAULT);	//	두께에 해당, 케이블 걸이 구멍, thickCableHolder
 
 	delta = (64 - (marginCableHolder.x * 2 + radiusCableHolder * 2 * countCableHolder)) / (countCableHolder - 1) + radiusCableHolder * 2;
-	translate([marginCableHolder.x, marginCableHolder.y, marginCableHolder.z])
+	translate([marginCableHolder.x, marginCableHolder.y, 0])
 	for (cx  = [0:countCableHolder - 1]) {
 		translate([radiusCableHolder + delta * cx, radiusCableHolder + thickCableHolder * 2, 0])
 		cableHolder(map, -(35 + cx * 3));
@@ -154,24 +160,34 @@ module overhang(map) {
 	starty = 0;
 	endy = polygonClipEdge[0].y + radiusCorner;
 
-	//	시작
-	translate([radiusCorner * 1 + polygonClipEdge[1].x, starty, radiusCorner * 1 + polygonClipEdge[0].z])
-	cube(size);
+	difference() {
+		union() {
+			//	시작
+			translate([radiusCorner * 1 + polygonClipEdge[1].x, starty, radiusCorner * 1 + polygonClipEdge[0].z])
+			cube(size);
 
-	//	끝
-	translate([0, endy, 0])
-	translate([radiusCorner * 1 + polygonClipEdge[1].x, starty, radiusCorner * 1 + polygonClipEdge[0].z])
-	cube(size);
+			//	끝
+			translate([0, endy, 0])
+			translate([radiusCorner * 1 + polygonClipEdge[1].x, starty, radiusCorner * 1 + polygonClipEdge[0].z])
+			cube(size);
 
-	//	중간
-	translate([0, (starty + endy) / 2, 0])
-	translate([radiusCorner * 1 + polygonClipEdge[1].x, starty, radiusCorner * 1 + polygonClipEdge[0].z])
-	cube(size);
+			//	중간
+			translate([0, (starty + endy) / 2, 0])
+			translate([radiusCorner * 1 + polygonClipEdge[1].x, starty, radiusCorner * 1 + polygonClipEdge[0].z])
+			cube(size);
+		}
+
+		translate([radiusCorner * 1 + polygonClipEdge[1].x, -polygonClipEdge[0].y / 4, radiusCorner * 1 + polygonClipEdge[0].z])
+		cube([size.x - NOZZLE * 4, polygonClipEdge[0].y * 2, thickDesk + polygonClipEdge[2][2]]);
+	}
+
+	
 }
 
 //	탁자 전선 걸이
 module deskCableClip(map) {
-	echo(str(parent_module(0), ".", parent_module(1), "(", map, ")"));
+	echo(str(parent_module(0), ".", parent_module(1), "(...)"));
+	for (cx = map) echo(cx);
 
 	COLOR = [1, 1, 0, 0.5];
 	translate([8, 0, 0]) {
@@ -192,7 +208,7 @@ module usage() {
 
 	echo("usage:");
 	echo("		/usr/bin/openscad --export-format asciistl -D command=0 -D sn=999 -o /media/owl/data/resource3d/stl/20991231235959.stl /media/owl/src/eclipse-workspace/resource3d/openscad/src/general/desk-cable-clip.scad");
-	echo(str("		/usr/bin/openscad --export-format asciistl -D command=0 -D sn=", snumber, " -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-", snumber, ".stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/general/desk-cable-clip.scad"));
+	echo(str("		/usr/bin/openscad --export-format asciistl -D command=1 -D sn=", snumber, " -o \"/media/owl/data/resource3d/stl/$(date +'%Y%m%d%H%M%S')-", snumber, ".stl\" /media/owl/src/eclipse-workspace/resource3d/openscad/src/general/desk-cable-clip.scad"));
 	echo();
 	echo("	-D sn=nnn	 일련번호 마킹");
 	echo("	-D command=1	 출력합니다");
