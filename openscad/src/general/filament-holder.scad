@@ -24,7 +24,12 @@ module filamentHolderArrow(map) {
 
 	snumber = str("sn: ", is_undef(sn) ? floor(rands(0, 999, 1)[0]) : sn);
 
-	carve(snumber, size = sizeArrowHolderFilament.y * 3 / 5, offset = sizeArrowHolderFilament.y / 10, rotate = [0, 0, 0], translate = [sizeArrowHolderFilament.x - sizeArrowHolderFilament.y / 10 * 4, sizeArrowHolderFilament.y / 5, sizeArrowHolderFilament.z], preview = !true, halign = "right", valign = "bottom") {
+	carve(snumber, size = sizeArrowHolderFilament.z * 3 / 5, offset = sizeArrowHolderFilament.y / 10, rotate = [90, 0, 0],
+		translate = [
+			sizeArrowHolderFilament.x - sizeArrowHolderFilament.y / 10 * 4,
+			-sizeArrowHolderFilament.y / 2 - radiusCornerPlaneHolderFilament,
+			-radiusCornerPlaneHolderFilament * 3 + sizeArrowHolderFilament.z
+		], preview = !true, halign = "right", valign = "center") {
 		minkowski()
 		{
 			cube(sizeArrowHolderFilament);
