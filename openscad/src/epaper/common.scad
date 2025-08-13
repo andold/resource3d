@@ -290,25 +290,95 @@ module notate(v, title, up, prefix) {
 		notateV(v, title, up, prefix);
 	}
 }
+
+
+// 테스트
+module test1(r, thick, degree) {
+	translate([0, 0, 0])
+	rotate_extrude(angle = degree)
+	difference() {
+		circle(r);
+		circle(r - thick);
+		
+		translate([-thick / 2 - NOZZLE, thick])
+		circle(r);
+		
+		rotate([0, 0, -60])
+		translate([-r, -r])
+		square([r * 1, r * 2]);
+
+		translate([-r, -r])
+		square([r * 1, r * 2]);
+	}
+}
+// 테스트
 module test() {
-	// 테스트
-	x0 = 2; y0 = 2;    // 점 A
-	x1 = 0; y1 = 0;    // 점 B
-	x2 = 4; y2 = 0;    // 점 C
+	r = 32;
+	thick = 4;
+	
+	translate([r * 4, 0, -r / 2 * 0])
+	difference() {
+		sphere(r);
+		sphere(r - thick);
+		translate([-r, -r, r / 2])
+		cube([r * 2, r * 2, r * 2]);
+	}
 
-	distance = pointToLineDistance(x0, y0, x1, y1, x2, y2);
-	hr();
-	echo("A에서 BC까지의 거리: ", distance);
-	hr();
+	translate([r * 0, 0, 0])
+	rotate_extrude(angle = 360)
+	difference() {
+		circle(r);
+		circle(r - thick);
+		
+		translate([0, thick])
+		circle(r);
+		
+		rotate([0, 0, -135])
+		translate([-r, -r])
+		square([r * 1, r * 2]);
+
+		translate([-r, -r])
+		square([r * 1, r * 2]);
+	}
+
+	for (cx = [0:30:360]) {
+		echo(cx);
+		rotate([0, 0, cx])
+		test1(r, thick, 20);
+	}
 }
-module main() {
-	SHORT = 20;
-	//notate([32, 16], str(32, "mm"));
-	//notateH([3, 4]);
-	notate([13, 4]);
-	arrow_left([8, 2]);
 
-	test();
+//	사용법
+module usage() {
+	echo("usage:");
+	echo();
+	echo("	-D command=0 사용법");
+	echo("	-D command=1 실린더에 모서리 대패질 기능을 추가한것");
+	echo();
 }
 
-main();
+module main(command = 0) {
+	if (command == 0) {
+		usage();
+	} else if (command == 1) {
+		planeCylinder(32, 64, 60, 4, !false);
+		
+		color("yellow", 0.9)
+		translate([0, 0, 40])
+		difference() {
+			translate([0, 0, 20])
+			cube([150, 150, 40], center = true);
+			planeCylinder(32, 64, 60, 4, true);
+		}
+	} else if (command == 2) {
+	} else if (command == 3) {
+		notate([13, 4]);
+		arrow_left([8, 2]);
+	} else if (command == 4) {
+		test();
+	} else {
+		echo("NOT SUPPORTED");
+	}
+}
+
+main(is_undef(command) ? 4 : command);

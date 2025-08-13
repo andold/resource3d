@@ -17,6 +17,7 @@ module text0(t, size = 10, font = "D2Coding", halign = "left", valign = "baselin
 		text(lines[cx], size = size, font = font, halign = halign, valign = valign, spacing = spacing, direction = direction, language = language, script = script);
 	}
 }
+
 //	2D 텍스트 또는 이미지를 (0, 0, 0)를 기준으로 xy평면에서 -z축으로 thick mm만큼 새긴다.
 //	offset을 이용하여 양각으로 파낸다.
 module carve(string, rotate = [0, 0, 0], translate = [0, 0, 0], offset = 1, preview = false, size = 10, font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
