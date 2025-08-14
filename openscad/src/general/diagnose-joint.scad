@@ -175,6 +175,30 @@ module diagnose_joint5(map, note = false) {
 	}
 }
 
+//	8.4mm가 기준인 사다리꼴 원기둥 모양
+module diagnose_joint6(map, note = false) {
+	sizeHandle = get(map, "male.handle.size", DEFAULT);	//	사각형/모형 손잡이 크기 sizeMaleHandle sizeHandle
+	sizeRangeMaleCylender = get(map, "male.cylender.size.range", DEFAULT);	//	원기둥 모형 크기의 최소 최대 sizeRangeMaleCylender
+	sizeMaleCylender = get(map, "male.cylender.size", DEFAULT);	//	원기둥 모형 크기 sizeMaleCylender
+	paddingMaleRectangle = get(map, "male.rectangle.padding", DEFAULT);	//	사각형 모형 손잡이 paddingMaleRectangle
+
+	for (cx = [sizeRangeMaleCylender[0]:sizeRangeMaleCylender[2]:sizeRangeMaleCylender[1]]) {
+		title = str(sizeMaleCylender.x + cx, " x ", sizeMaleCylender.y);
+		size = sizeHandle.x / 8;
+		translate([
+			(cx - sizeRangeMaleCylender[0]) / sizeRangeMaleCylender[2] * (sizeHandle.x + paddingMaleRectangle.x),
+			0,
+			0
+		])
+		carve(title, size = size, rotate = [180, 0, 0], translate = [sizeHandle.x / 2, -sizeHandle.x / 2, 0], offset = size / 10, halign = "center", valign = "center", preview = false) {
+			diagnose_joint2([
+				["male.handle.size", sizeHandle],
+				["male.cylender.size", [sizeMaleCylender.x + 0.4 + cx, sizeMaleCylender.y + 0.4, sizeMaleCylender.z]],
+			], false);
+		}
+	}
+}
+
 module usage(command) {
 	echo("usage:");
 	echo("	/usr/bin/openscad -D command=0 /media/owl/src/eclipse-workspace/resource3d/openscad/src/general/diagnose-joint.scad");
@@ -199,10 +223,12 @@ module main(command = 0) {
 	} else if (command == 6) {
 		diagnose_joint4(DEFAULT);	//	사다리꼴 원기둥 모양
 	} else if (command == 7) {
-		diagnose_joint5(DEFAULT);	//	사다리꼴 원기둥 모양
+		diagnose_joint5(DEFAULT);	//	사다리꼴 원기둥 모양 주물
+	} else if (command == 8) {
+		diagnose_joint6(DEFAULT);	//	8.4mm가 기준인 사다리꼴 원기둥 모양
 	} else {
 		echo("NOT SUPPORTED");
 	}
 }
 
-main(is_undef(command) ? 7 : command);
+main(is_undef(command) ? 8 : command);
