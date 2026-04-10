@@ -58,7 +58,7 @@ function Basis(props: any) {
 	const { show } = props;
 
 	const v: any[] = [1000, 0.1, 1000];
-	const texture = useLoader(TextureLoader, "/texture/잔디.png");
+	const texture = useLoader(TextureLoader, "/texture/green-grass-texture.jpg");
 	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 	texture.offset.set(0, 0);
 	texture.repeat.set(128, 128);

@@ -4,6 +4,7 @@ import { useLayoutEffect, } from "react";
 
 // container
 import TestContainer from "./container/TestContainer";
+import MathContainer from "./container/MathContainer";
 
 function App() {
 	useLayoutEffect(() => {
@@ -11,6 +12,7 @@ function App() {
 	}, []);
 
 	return (<>
+		<MathContainer />
 		<TestContainer/>
 	</>);
 }

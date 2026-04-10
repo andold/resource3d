@@ -18,6 +18,13 @@ module text0(t, size = 10, font = "D2Coding", halign = "left", valign = "baselin
 	}
 }
 
+//	text0() 함수 대체용, 회전 후 이동
+module text1(string, size = 10, rotate = [0, 0, 0], translate = [0, 0, 0], font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
+		translate(translate)
+		rotate(rotate)
+		text0(string, size = size, font = font, halign = halign, valign = valign, spacing = spacing, hspacing = hspacing, direction = direction, language = language, script = script);
+}
+
 //	2D 텍스트 또는 이미지를 (0, 0, 0)를 기준으로 xy평면에서 -z축으로 thick mm만큼 새긴다.
 //	offset을 이용하여 양각으로 파낸다.
 module carve(string, rotate = [0, 0, 0], translate = [0, 0, 0], offset = 1, preview = false, size = 10, font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
@@ -68,6 +75,8 @@ module carve(string, rotate = [0, 0, 0], translate = [0, 0, 0], offset = 1, prev
 
 //	text와 carve를 함께 섞어 놓은 것. 출력되지 않는다.
 module note(string, rotate = [0, 0, 0], translate = [0, 0, 0], offset = 1, preview = false, size = 10, font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
+	echo(str(parent_module(0), ".", parent_module(1)), string, rotate, translate, offset, preview, size, font, halign, valign, spacing, hspacing, direction, language, script);
+
 	thisRotate = preview ? [0, 0, 0] : rotate * -1;
 	thisTranslate = preview ? [0, 0, 0] : translate;
 
@@ -312,3 +321,9 @@ module note_type_2(name, vs, ve, centered = false, fs, detail = false) {
 			text(name, size = yzfs, halign = "center", language = "kr", font = "NanumGothic");
 	}
 }
+
+module samples() {
+//	note(str(23, "mm"), [-90, 0, 0], [0, 0, -32], preview = false);
+	text1(str(24, "mm"), 10, [90, 0, 0], [0, 0, 0], preview = false);
+}
+samples();
