@@ -25,17 +25,17 @@ module foot0a(data) {
 	points = [
 		[data["벽.위치.1"].x + nozzleRadius,							nozzleRadius],
 		[data["벽.위치.1"].x + nozzleRadius,							data["벽.위치.1"].y - nozzleRadius],
-		[data["벽.위치.1"].x + nozzleRadius + data["벽.위치.2"].x,	data["벽.위치.1"].y - nozzleRadius],
-		[data["벽.위치.1"].x + nozzleRadius + data["벽.위치.2"].x,	data["벽.위치.1"].y + data["벽.위치.2"].y + nozzleRadius],
-		[data["벽.위치.1"].x + nozzleRadius - data["벽.위치.1"].x,	data["벽.위치.1"].y + data["벽.위치.2"].y + nozzleRadius],
+		[data["벽.위치.1"].x + nozzleRadius + data["벽.위치.2"].x,		data["벽.위치.1"].y - nozzleRadius],
+		[data["벽.위치.1"].x + nozzleRadius + data["벽.위치.2"].x,		data["벽.위치.1"].y + data["벽.위치.2"].y + nozzleRadius],
+		[data["벽.위치.1"].x + nozzleRadius - data["벽.위치.1"].x,		data["벽.위치.1"].y + data["벽.위치.2"].y + nozzleRadius],
 
 		[data["벽.위치.1"].x + nozzleRadius - data["벽.위치.1"].x,			data["벽.위치.1"].y + data["벽.위치.2"].y + thick - nozzleRadius],
 		[data["벽.위치.1"].x + thick + data["벽.위치.2"].x - nozzleRadius,	data["벽.위치.1"].y + data["벽.위치.2"].y + thick - nozzleRadius],
 		[data["벽.위치.1"].x + thick + data["벽.위치.2"].x - nozzleRadius,	data["벽.위치.1"].y - thick + nozzleRadius],
-		[data["벽.위치.1"].x + thick - nozzleRadius,							data["벽.위치.1"].y - thick + nozzleRadius],
-		[data["벽.위치.1"].x + thick - nozzleRadius,							nozzleRadius],
+		[data["벽.위치.1"].x + thick - nozzleRadius,						data["벽.위치.1"].y - thick + nozzleRadius],
+		[data["벽.위치.1"].x + thick - nozzleRadius,						nozzleRadius],
 
-		[data["벽.위치.1"].x + nozzleRadius,									nozzleRadius]
+		[data["벽.위치.1"].x + nozzleRadius,								nozzleRadius]
 	];
 	polygon(points = points);
 }
@@ -58,7 +58,7 @@ module	wall_2d(data) {
 }
 
 //	벽 위치 자세::	xy평면에 있는 도형을 늘리고, 회전 이전 시켜 자세를 잡는다
-module wall0(data) {
+module place0(data) {
 	echo(str("벽 위치 자세::", parent_module(0), ".", parent_module(1), "(", data, ")"));
 	
 	translate([0, data["벽.크기"].y, 0])
@@ -69,38 +69,42 @@ module wall0(data) {
 
 //	벽
 module wall00(data) {
-	echo(str("벽::", parent_module(0), ".", parent_module(1), "(", data, ")"));
-	
-	fontsize1 = 4;
-	fontsize2 = 2;
+	myname = str("벽::", parent_module(0), ".", parent_module(1));
+	echo(str(myname, "(", data, ")"));
+
+	fontsize1 = 3;
+	fontsize2 = 1;
 
 	%
-	wall0(data) {
+	place0(data) {
 		linear_extrude(height  = data["벽.크기"].y, v = [0, 0, 1], center = false) {
 			 wall_2d(data);
 		}
 		color("yellow") {
+			translate([(data["벽.위치.1"].x + data["벽.위치.2"].x) / 2, (data["벽.위치.1"].y + data["벽.위치.2"].y) / 2, data["벽.크기"].y])
+			note(str(myname), size = fontsize1, valign = "top", halign = "center");
+
 			translate([(data["벽.위치.1"].x + data["벽.위치.2"].x) / 2, data["벽.위치.1"].y + data["벽.위치.2"].y, data["벽.크기"].y])
 			note(str(data["벽.위치.1"].x + data["벽.위치.2"].x, "mm"), size = fontsize1, valign = "top", halign = "center");
 
 			translate([(data["벽.위치.1"].x) / 2, 0, data["벽.크기"].y])
-			note(str(data["벽.위치.1"].x, "mm"), size = fontsize1, valign = "bottom", halign = "center");
+			note(str("벽.위치.1.x: ", data["벽.위치.1"].x, "mm"), size = fontsize1, valign = "bottom", halign = "center");
 
 			translate([0, (data["벽.위치.1"].y + data["벽.위치.2"].y) / 2, data["벽.크기"].y])
 			rotate([0, 0, 90])
 			note(str(data["벽.위치.1"].y + data["벽.위치.2"].y, "mm"), size = fontsize1, valign = "top", halign = "center");
 
-			translate([(data["벽.위치.1"].x) / 1, (data["벽.위치.1"].y) / 2, data["벽.크기"].y])
+			translate([data["벽.위치.1"].x, (data["벽.위치.1"].y) / 2, data["벽.크기"].y])
 			rotate([0, 0, -90])
-			note(str(data["벽.위치.1"].y, "mm"), size = fontsize1, valign = "top", halign = "center");
+			note(str("벽.위치.1.y: ", data["벽.위치.1"].y, "mm"), size = fontsize1, valign = "top", halign = "center");
 
 			translate([data["벽.위치.1"].x + data["벽.위치.2"].x / 2, (data["벽.위치.1"].y), data["벽.크기"].y])
 			rotate([0, 0, 0])
-			note(str(data["벽.위치.2"].x, "mm"), size = fontsize2, valign = "bottom", halign = "center");
+			note(str("벽.위치.2.x: ", data["벽.위치.2"].x, "mm"), size = fontsize2, valign = "bottom", halign = "center");
 
 			translate([data["벽.위치.1"].x + data["벽.위치.2"].x, (data["벽.위치.1"].y) + data["벽.위치.2"].y / 2, data["벽.크기"].y])
 			rotate([0, 0, -90])
-			note(str(data["벽.위치.2"].y, "mm"), size = fontsize2, valign = "top", halign = "center");
+			note(str("벽.위치.2.y: ", data["벽.위치.2"].y, "mm"), size = fontsize2, valign = "top", halign = "center");
 		}
 	}
 	
@@ -117,7 +121,7 @@ module foot0(data) {
 	nozzleRadius = data["노즐.지름"] / 2 * 10;
 
 	color("blue")
-	wall0(data)
+	place0(data)
 	linear_extrude(height  = data["벽.크기"].y, v = [0, 0, 1], center = false) {
 		foot0a(data);
 	}

@@ -1,7 +1,10 @@
 // 라이브러리, 검증된 것만 이곳에
 include	<knife-data.scad>
+use	<knife-before.scad>
+use	<under.scad>
 use	<./body/wall.scad>
 use	<./body/basis#37.scad>
+use	<./body/under#38.scad>
 
 module usage() {
 	sn = 1;
@@ -22,6 +25,20 @@ module main(command = 0) {
 	usage();
 
 	if (command == 0) {
+		*wall00(DEFAULT);
+
+		foot0(DEFAULT);
+
+		basis0p(DEFAULT)	//	전체 구조물을 상판위에 비스듬이 돌려서 엊저 놓는다
+		basis01_type_4_assemble(DEFAULT);
+
+		basis0p(DEFAULT)	//	전체 구조물을 상판위에 비스듬이 돌려서 엊저 놓는다
+		basis1p(DEFAULT)	//	오른쪽 벽 구조물을 해당 위치에 세운다
+		under20(DEFAULT);
+
+		basis0p(DEFAULT)	//	전체 구조물을 상판위에 비스듬이 돌려서 엊저 놓는다
+		basis1p(DEFAULT)	//	오른쪽 벽 구조물을 해당 위치에 세운다
+		under21(DEFAULT);
 	} else if (command == 1) {
 		wall(1024, 1024, 1024);
 	} else if (command == 2) {
@@ -32,8 +49,8 @@ module main(command = 0) {
 		basis01_type_4_assemble0(DEFAULT);
 		foot0(DEFAULT);
 	} else if (command == 4) {
-		wall00(DEFAULT);
-		foot0(DEFAULT);
+		basis2p(DEFAULT)
+		basis01_type_4_left00(DEFAULT);
 	} else {
 		echo("NOT SUPPORTED");
 	}

@@ -10,9 +10,14 @@ function fsproper(x, y, title) = min(x / len(title) / 4, y / 2);
 
 //	text() builtin 함수 대체용, 줄바꿈 출력
 module text0(t, size = 10, font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
+	echo(str("text() builtin 함수 대체용:: ", parent_module(0), ".", parent_module(1), "(", t, ")"));
+	assert(t, "스트링 undefined");
 
 	lines = split(t, "\n");
+	echo(lines);
 	for (cx = [0:len(lines) - 1]) {
+		echo(lines[cx]);
+
 		translate([0, -cx * (size * hspacing)])
 		text(lines[cx], size = size, font = font, halign = halign, valign = valign, spacing = spacing, direction = direction, language = language, script = script);
 	}
@@ -20,9 +25,9 @@ module text0(t, size = 10, font = "D2Coding", halign = "left", valign = "baselin
 
 //	text0() 함수 대체용, 회전 후 이동
 module text1(string, size = 10, rotate = [0, 0, 0], translate = [0, 0, 0], font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
-		translate(translate)
-		rotate(rotate)
-		text0(string, size = size, font = font, halign = halign, valign = valign, spacing = spacing, hspacing = hspacing, direction = direction, language = language, script = script);
+	translate(translate)
+	rotate(rotate)
+	text0(string, size = size, font = font, halign = halign, valign = valign, spacing = spacing, hspacing = hspacing, direction = direction, language = language, script = script);
 }
 
 //	2D 텍스트 또는 이미지를 (0, 0, 0)를 기준으로 xy평면에서 -z축으로 thick mm만큼 새긴다.
@@ -243,6 +248,9 @@ module note_type_1(vs, ve, centered = false, fs, detail = false) {
 
 // 치수 표시 with name
 module note_type_2(name, vs, ve, centered = false, fs, detail = false) {
+	echo(str("치수 표시 with name:: ", parent_module(0), ".", parent_module(1), "(", name, ")"));
+	assert(name, "name undefined");
+
 	DEFAULT_MIN_FONT_SIZE = 0.5;
 
 	x = vs.x;

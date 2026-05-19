@@ -335,8 +335,32 @@ module under12_print() {
 	under11();
 }
 
-//under12_assemble();
-under12_print();
+module main(command = 0) {
+	echo(HR);
+	echo(str("", parent_module(0), "(", command, ")"));
+
+	if (command == 0) {
+	} else if (command == 1) {
+		under12_assemble();
+	} else if (command == 2) {
+		under12_print();
+	} else if (command == 3) {
+		%under12_assemble();
+		under12_print();
+	} else if (command == 4) {
+		difference()
+		{
+			color("yellow")	offset(delta = 0.2) text0("ABC", language = "kr");
+			color("black")	text0("ABC", language = "kr");
+		}
+	} else {
+		echo("NOT SUPPORTED");
+	}
+
+	echo(HR);
+}
+
+main(is_undef(command) ? 3 : command);
 
 /*
 # in HOME(project root, ie. .../resouce3d)
