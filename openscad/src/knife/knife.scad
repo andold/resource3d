@@ -58,4 +58,4 @@ module main(command = 0) {
 	echo(HR);
 }
 
-main(is_undef(command) ? 4 : command);
+main(is_undef(command) ? 3 : command);

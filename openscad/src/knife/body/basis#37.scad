@@ -172,6 +172,7 @@ module	basis01_type_4_right00(data) {
 			translate([x - z, 0, 0])
 				wrapper_cube_type_7([z, top.y, z], cut, title = "지지대 4: ");
 
+			color("blue", 0.5)
 			translate([sqrt(2) * z / 2, top.y - sqrt(2) * z / 2, 0])
 			rotate([0, 0, 45])
 			{
@@ -210,7 +211,8 @@ module basis01_type_4_left() {
 
 module basis01_type_4_left00(data = DEFAULT) {
 	translate([200, 0, 0])
-		mirror([1, 0, 0])	basis01_type_4_right00(data);
+	mirror([1, 0, 0])
+	basis01_type_4_right00(data);
 }
 
 module	basis01_type_4_assemble(data = DEFAULT) {
@@ -260,6 +262,10 @@ module main(command = 0) {
 	} else if (command == 5) {
 		basis2p(DEFAULT)
 		basis01_type_4_left00(DEFAULT);
+	} else if (command == 6) {
+//		translate([200, 0, 0])
+//		mirror([1, 0, 0])
+		basis01_type_4_right00(data);
 	} else {
 		wall00(DEFAULT);
 		basis01_type_4_assemble0(DEFAULT);
@@ -268,7 +274,7 @@ module main(command = 0) {
 	echo(HR);
 }
 
-main(is_undef(command) ? 4 : command);
+main(is_undef(command) ? 5 : command);
 /*
 # in HOME(project root, ie. .../resouce3d)
 C:\apps\openscad-2021.01\openscad.exe -o C:\src\eclipse-workspace\resource3d\stl\#37-left.stl -D target=0 --export-format asciistl C:\src\eclipse-workspace\resource3d\knife\body\basis#37.scad
