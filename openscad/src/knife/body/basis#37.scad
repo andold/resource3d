@@ -265,7 +265,7 @@ module main(command = 0) {
 	} else if (command == 6) {
 //		translate([200, 0, 0])
 //		mirror([1, 0, 0])
-		basis01_type_4_right00(data);
+		basis01_type_4_right00(DEFAULT);
 	} else {
 		wall00(DEFAULT);
 		basis01_type_4_assemble0(DEFAULT);
