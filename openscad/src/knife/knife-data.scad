@@ -2,7 +2,7 @@ include	<../common/constants.scad>
 use	<../common/library_function.scad>
 use	<../common/library_text.scad>
 
-// DEFAULT 데이타 정의
+// DEFAULT 데이터 정의
 DEFAULT0 = object([
 	["노즐.지름",		0.4					],
 
@@ -17,21 +17,21 @@ DEFAULT0 = object([
 	["몸체.이동",		[40, 200, 0]		],
 
 	["기초.두께",		4					],
-	["기초.여유",		1					],
+	["기초.여유",		1					],	//	미사용
 	["기초.중복",		200					],
-	["기초.높이",		128					],
+	["기초.높이",		128					],	//	미사용
 	["기초.각도.앞",	45					],
-	["기초.각도.옆",	-30					],
+	["기초.각도.옆",	-30					],	//	미사용
 
 	["다리.두께",		8					],
 
-	["andold",			""					]
+	["andold",			""					]	//	미사용
 ]);
 
 DEFAULT = object([
 	for (cx = DEFAULT0)		[cx, DEFAULT0[cx]],
 
-	["몸체.크기.외경",		[DEFAULT0["상판.크기"].x + DEFAULT0["기초.두께"] * 2 * 2, DEFAULT0["상판.크기"].y, DEFAULT0["기초.중복"]]],
-	
-	["andold",				""				]
+	["몸체.크기.외경",		[DEFAULT0["상판.크기"].x + DEFAULT0["기초.두께"] * 2 * 2, DEFAULT0["상판.크기"].y, DEFAULT0["기초.중복"]]],	//	미사용
+
+	["andold",				""				]	//	미사용
 ]);
