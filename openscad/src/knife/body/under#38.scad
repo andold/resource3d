@@ -10,8 +10,8 @@ use <wall.scad>
 
 /*
 	치수는 knife-data.scad 의 data 맵을 쓴다 (예전 MEASURE / DEFINE 배열 대체)
-		단 높이 1차			벽.단.높이 - 벽.단.턱두께		(2차 측정값. 1차 57.7 은 오류)
-		단 높이 2차(턱 두께)	벽.단.턱두께					(1차 13 은 오류)
+		단 높이 1차(아래 단)	벽.위치.1.y
+		단 높이 2차(턱 두께)	벽.위치.2.y
 		지지대/다리 두께		다리.두께
 		상판 크기				상판.크기
 		옆으로 돌아가는 정도	기초.각도.옆
@@ -23,8 +23,8 @@ use <wall.scad>
 module under1(name = "UNDER①", data = DEFAULT) {
 	echo("under1 처음: ");
 
-	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
-	height2nd = data["벽.단.턱두께"];
+	height1st = data["벽.위치.1"].y;
+	height2nd = data["벽.위치.2"].y;
 	thick = data["다리.두께"];
 	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
@@ -65,8 +65,8 @@ module under2(data = DEFAULT) {
 
 // UNDER③
 module under3(data = DEFAULT) {
-	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
-	height2nd = data["벽.단.턱두께"];
+	height1st = data["벽.위치.1"].y;
+	height2nd = data["벽.위치.2"].y;
 	thick = data["다리.두께"];
 	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
@@ -90,8 +90,8 @@ module under3(data = DEFAULT) {
 module under4(data = DEFAULT) {
 	echo("under4 처음: ");
 
-	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
-	height2nd = data["벽.단.턱두께"];
+	height1st = data["벽.위치.1"].y;
+	height2nd = data["벽.위치.2"].y;
 	thick = data["다리.두께"];
 	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
@@ -123,7 +123,7 @@ module under4(data = DEFAULT) {
 
 // UNDER⑤
 module under5(name = "UNDER⑤", data = DEFAULT) {
-	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
+	height1st = data["벽.위치.1"].y;
 	thick = data["다리.두께"];
 	cube_type_7([thick, thick, height1st]);
 	note_type_2(name, [thick, thick, height1st]);
@@ -136,8 +136,8 @@ module under6(name = "UNDER⑥", data = DEFAULT) {
 
 // UNDER⑦
 module under7(name = "UNDER⑦", data = DEFAULT) {
-	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
-	height2nd = data["벽.단.턱두께"];
+	height1st = data["벽.위치.1"].y;
+	height2nd = data["벽.위치.2"].y;
 	thick = data["다리.두께"];
 	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
@@ -168,8 +168,8 @@ module under7(name = "UNDER⑦", data = DEFAULT) {
 module under8(data = DEFAULT) {
 	echo("under8 처음: ");
 
-	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
-	height2nd = data["벽.단.턱두께"];
+	height1st = data["벽.위치.1"].y;
+	height2nd = data["벽.위치.2"].y;
 	thick = data["다리.두께"];
 	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
@@ -252,8 +252,8 @@ module under11(name = "UNDER⑪", data = DEFAULT) {
 module under12(name = "UNDER⑫", data = DEFAULT) {
 	echo("under12 처음: ");
 
-	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
-	height2nd = data["벽.단.턱두께"];
+	height1st = data["벽.위치.1"].y;
+	height2nd = data["벽.위치.2"].y;
 	thick = data["다리.두께"];
 	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
@@ -292,7 +292,7 @@ module under12(name = "UNDER⑫", data = DEFAULT) {
 module under12_assemble(data = DEFAULT) {
 	%translate([32, 0, 0])
 		rotate([0, 0, data["기초.각도.옆"]])
-		translate([0, 0, data["벽.단.높이"]])
+		translate([0, 0, (data["벽.위치.1"].y + data["벽.위치.2"].y)])
 		basis01_type_4_assemble(data);
 	*%wall(320, 320, 320);
 	
@@ -304,7 +304,7 @@ module under12_print(data = DEFAULT) {
 
 	*%translate([32, 0, 0])
 		rotate([0, 0, data["기초.각도.옆"]])
-		translate([0, 0, data["벽.단.높이"]])
+		translate([0, 0, (data["벽.위치.1"].y + data["벽.위치.2"].y)])
 		basis01_type_4_assemble(data);
 	
 	translate([220, 256 * sin(data["기초.각도.옆"]), 0])
