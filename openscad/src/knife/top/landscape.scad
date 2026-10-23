@@ -66,9 +66,9 @@ module landscape1p(thick, margin, delta, data) {
 	children();
 }
 
-//	빵칼 등받이 위치
-module landscape2p(thick, margin, delta, data) {
-	translate([delta, margin - thick / 2 + data["상판.등받이.두께"], thick])
+//	빵칼 등받이 위치: 빵칼 구멍 시작점(칼구멍 영역 원점 + 빵칼.시작)에 맞춘다
+module landscape2p(thick, margin, data) {
+	translate([margin + data["칼구멍.빵칼.시작"], margin - thick / 2 + data["상판.등받이.두께"], thick])
 	children();
 }
 
@@ -162,7 +162,7 @@ module landscape(thick, margin, delta, data = DEFAULT) {
 			landscape1p(t, m, d, data)
 			landscape_handle(base, t, m, d, data);
 
-			landscape2p(t, m, d, data)
+			landscape2p(t, m, data)
 			landscape_bread_back(data);
 		}
 
