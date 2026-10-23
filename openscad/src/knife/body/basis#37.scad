@@ -13,32 +13,8 @@ use <../../common/library_cube.scad>
 use <../top/landscape.scad>
 use <wall.scad>
 
-// 상수
-PARAM_TOP = [
-	8,	//	thick = 8;	//	상판의 두께
-	12,	//	margin = 8;	//	상판의 가장자리 여유 거리
-	8,	//	delta = 8;	//	상판의 구멍 표준 간격
-	0	//	reserved
-];
-PARAM_BODY = [
-	4,	//thick
-	8,	// margin
-	8,	// delta
-	12,	// marginy
-	24,	// paddingx
-	12	// paddingy
-];
-DEFAULT_PARAM = [
-		4,		//	thick = 4;
-		1,		//	margin = 1;		//	하층판 결합부위 여유 공간
-		200,	//	overlap = 32;	//	하층판과 기초판이 겹치는 길이
-		128,	//	height = 128;	//	기초판의 높이
-		45,	//	anglex = -30;	//	앞으로 기울어지는 정도
-		-30,	//	anglez = -30;	//	옆으로 돌아가는 정도
-		0		//	reserved
-];
-
-function topSize(param) = landscapeSize(param[0], param[1], param[2]);
+//	상판 외곽 크기: 상판.크기.z(두께), 상판.여백, 칼구멍.간격 으로 계산
+function topSize(data = DEFAULT) = landscapeSize(undef, undef, undef, data);
 
 //	text0() 함수 대체용, 회전 후 이동
 module wtext1(string, size = 10, rotate = [0, 0, 0], translate = [0, 0, 0], font = "D2Coding", halign = "left", valign = "baseline", spacing = 1, hspacing = 1.5, direction = "ltr", language = "en", script = "latin") {
@@ -75,24 +51,18 @@ module wrapper_cube_type_7(v, c = 0, title = "") {
 /*
 	오른쪽 지지대
 */
-module	basis01_type_4_right() {
-	top = topSize(PARAM_TOP);
+module	basis01_type_4_right(data = DEFAULT) {
+	echo(str("", parent_module(0), ".", parent_module(1)));
 
-	thick = DEFAULT_PARAM[0];
-	margin = DEFAULT_PARAM[1];
-	overlap = DEFAULT_PARAM[2];
-	height = DEFAULT_PARAM[3];
-	anglex = 0;
-	angley = DEFAULT_PARAM[4];
-	anglez = DEFAULT_PARAM[5];
+	top = topSize(data);
 
-	radious = thick;
-	cut = 0.2;
+	radious = data["기초.두께"];
+	cut = data["기초.모따기"];
 
 	//	외경
-	x = 200;
-	y = 200;
-	z = DEFAULT_PARAM[0] * 2;
+	x = data["기초.길이"];
+	y = data["기초.중복"];
+	z = data["기초.두께"] * 2;
 
 	dy = y - top.y;
 	diagonal = sqrt(dy * dy);	//	대각선
@@ -139,22 +109,14 @@ module	basis01_type_4_right() {
 module	basis01_type_4_right00(data) {
 	echo(str("", parent_module(0), ".", parent_module(1), "(", data, ")"));
 
-	top = topSize(PARAM_TOP);
-
-	thick = DEFAULT_PARAM[0];
-	margin = DEFAULT_PARAM[1];
-	overlap = DEFAULT_PARAM[2];
-	height = DEFAULT_PARAM[3];
-	anglex = 0;
-	angley = DEFAULT_PARAM[4];
-	anglez = DEFAULT_PARAM[5];
+	top = topSize(data);
 
 	radious = data["기초.두께"];
-	cut = 0.2;
+	cut = data["기초.모따기"];
 
 	//	외경
-	x = 200;
-	y = 200;
+	x = data["기초.길이"];
+	y = data["기초.중복"];
 	z = data["기초.두께"] * 2;
 
 	dy = data["기초.중복"] - data["상판.크기"].y;
@@ -204,37 +166,39 @@ module	basis01_type_4_right00(data) {
 	}
 }
 
-module basis01_type_4_left() {
-	translate([200, 0, 0])
-		mirror([1, 0, 0])	basis01_type_4_right();
+//	오른쪽 지지대를 대칭시켜 왼쪽 지지대로 만든다
+module basis01_type_4_left(data = DEFAULT) {
+	translate([data["기초.길이"], 0, 0])
+		mirror([1, 0, 0])	basis01_type_4_right(data);
 }
 
 module basis01_type_4_left00(data = DEFAULT) {
-	translate([200, 0, 0])
+	translate([data["기초.길이"], 0, 0])
 	mirror([1, 0, 0])
 	basis01_type_4_right00(data);
 }
 
+//	상판(유령)을 지지대 위에 기울여 얹는다
+module	basis3p(data = DEFAULT) {
+	y = data["기초.중복"];
+	angle = data["기초.각도.앞"];
+
+	translate([y * cos(angle), 0, y])
+		rotate([0, angle, 0])
+		translate([topSize(data).y, 0, 0])
+		rotate([0, 0, 90])
+		children();
+}
+
 module	basis01_type_4_assemble(data = DEFAULT) {
-	top = topSize(PARAM_TOP);
-	x = 200;
-	y = 200;
-	angle = 45;
-
-	dy = y - top.y;
-	degree = atan(dy / (x - dy));
-
 	basis2p(data)
 	basis01_type_4_left00(data);
 
 	basis1p(data)
 	basis01_type_4_right00(data);
 
-	translate([y * cos(angle), 0, 200])
-		rotate([0, 45, 0])
-		translate([top.y, 0, 0])
-		rotate([0, 0, 90])
-		%landscape(PARAM_TOP[0], PARAM_TOP[1], PARAM_TOP[2]);
+	%basis3p(data)
+	landscape(undef, undef, undef, data);
 }
 
 module	basis01_type_4_assemble0(data = DEFAULT) {

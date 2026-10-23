@@ -1,4 +1,5 @@
 include	<../../common/constants.scad>
+include	<../knife-data.scad>
 use <../../common/library.scad>
 use <../../common/library_text.scad>
 use <../../common/library_cube.scad>
@@ -7,38 +8,28 @@ use <wall.scad>
 
 //	①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳
 
-MEASURE = [
-	57.7,	//	1차 높이. 오류, deprecate, use MEASURE[4] - MEASURE[5]
-	13,		//	튀어나온 부분 두께. 오류, deprecate, use MEASURE[5]
-	8,		//	지지대 두께
-	[152, 84, 8],	//	top size
-	//	2차 측정 값, 4 ~
-	70.0,	//	단 전체 높이
-	19.3,	//	튀어 나온 단 두께
-	
-	0		//	reserved
-];
-
-DEFINE = [
-	8,		//	두께
-	-30,	//	옆으로 돌아가는 정도
-	MEASURE[3].x + MEASURE[2] * 2,	//	바깥쪽으로 감싸는 길이, 내경에 해당
-	32,		//	다리와 아래단까지의 거리
-
-	0		//	reserved
-];
+/*
+	치수는 knife-data.scad 의 data 맵을 쓴다 (예전 MEASURE / DEFINE 배열 대체)
+		단 높이 1차			벽.단.높이 - 벽.단.턱두께		(2차 측정값. 1차 57.7 은 오류)
+		단 높이 2차(턱 두께)	벽.단.턱두께					(1차 13 은 오류)
+		지지대/다리 두께		다리.두께
+		상판 크기				상판.크기
+		옆으로 돌아가는 정도	기초.각도.옆
+		내경(바깥쪽으로 감싸는 길이)	상판.크기.x + 다리.두께 * 2
+		다리와 아래단까지의 거리	다리.거리
+*/
 
 // UNDER①
-module under1(name = "UNDER①") {
+module under1(name = "UNDER①", data = DEFAULT) {
 	echo("under1 처음: ");
 
-	height1st = MEASURE[4] - MEASURE[5];
-	height2nd = MEASURE[5];
-	thick = DEFINE[0];
-	inner = DEFINE[2];
+	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
+	height2nd = data["벽.단.턱두께"];
+	thick = data["다리.두께"];
+	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
-	angle = DEFINE[1];
-	distance = DEFINE[3];
+	angle = data["기초.각도.옆"];
+	distance = data["다리.거리"];
 
 	tcos = thick * cos(angle);	//	두께 코사인
 	tsin = thick * sin(angle);	//	두께 사인
@@ -67,17 +58,17 @@ module under1(name = "UNDER①") {
 }
 
 // UNDER②
-module under2() {
+module under2(data = DEFAULT) {
 	mirror([0,1,0])
-	under1("UNDER②");
+	under1("UNDER②", data);
 }
 
 // UNDER③
-module under3() {
-	height1st = MEASURE[4] - MEASURE[5];
-	height2nd = MEASURE[5];
-	thick = DEFINE[0];
-	inner = DEFINE[2];
+module under3(data = DEFAULT) {
+	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
+	height2nd = data["벽.단.턱두께"];
+	thick = data["다리.두께"];
+	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
 	z = height1st + height2nd + thick;
 
@@ -96,16 +87,16 @@ module under3() {
 }
 
 // UNDER④ = UNDER① + UNDER② + UNDER③
-module under4() {
+module under4(data = DEFAULT) {
 	echo("under4 처음: ");
 
-	height1st = MEASURE[4] - MEASURE[5];
-	height2nd = MEASURE[5];
-	thick = DEFINE[0];
-	inner = DEFINE[2];
+	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
+	height2nd = data["벽.단.턱두께"];
+	thick = data["다리.두께"];
+	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
-	angle = DEFINE[1];
-	distance = DEFINE[3];
+	angle = data["기초.각도.옆"];
+	distance = data["다리.거리"];
 
 	tcos = thick * cos(angle);	//	두께 코사인
 	tsin = thick * sin(angle);	//	두께 사인
@@ -119,38 +110,38 @@ module under4() {
 
     //	다리
     translate([0, -thick, 0])
-	under1();
+	under1(data = data);
 
-    translate([0, MEASURE[3].x + thick * 3, 0])
-	under2();
+    translate([0, data["상판.크기"].x + thick * 3, 0])
+	under2(data = data);
 
     translate([0, -thick, height1st - thick])
-	under3();
+	under3(data = data);
 
 	echo("under4 끝: ");
 }
 
 // UNDER⑤
-module under5(name = "UNDER⑤") {
-	height1st = MEASURE[4] - MEASURE[5];
-	thick = DEFINE[0];
+module under5(name = "UNDER⑤", data = DEFAULT) {
+	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
+	thick = data["다리.두께"];
 	cube_type_7([thick, thick, height1st]);
 	note_type_2(name, [thick, thick, height1st]);
 }
 
 // UNDER⑥
-module under6(name = "UNDER⑥") {
-	under5(name);
+module under6(name = "UNDER⑥", data = DEFAULT) {
+	under5(name, data);
 }
 
 // UNDER⑦
-module under7(name = "UNDER⑦") {
-	height1st = MEASURE[4] - MEASURE[5];
-	height2nd = MEASURE[5];
-	thick = DEFINE[0];
-	inner = DEFINE[2];
+module under7(name = "UNDER⑦", data = DEFAULT) {
+	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
+	height2nd = data["벽.단.턱두께"];
+	thick = data["다리.두께"];
+	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
-	angle = DEFINE[1];
+	angle = data["기초.각도.옆"];
 
 	tsin = thick * sin(angle);	//	두께 사인
 
@@ -174,16 +165,16 @@ module under7(name = "UNDER⑦") {
 }
 
 //	UNDER⑧ = UNDER⑤ + UNDER⑥ + UNDER⑦
-module under8() {
+module under8(data = DEFAULT) {
 	echo("under8 처음: ");
 
-	height1st = MEASURE[4] - MEASURE[5];
-	height2nd = MEASURE[5];
-	thick = DEFINE[0];
-	inner = DEFINE[2];
+	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
+	height2nd = data["벽.단.턱두께"];
+	thick = data["다리.두께"];
+	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
-	angle = DEFINE[1];
-	distance = DEFINE[3];
+	angle = data["기초.각도.옆"];
+	distance = data["다리.거리"];
 
 	tcos = thick * cos(angle);	//	두께 코사인
 	tsin = thick * sin(angle);	//	두께 사인
@@ -197,16 +188,16 @@ module under8() {
 
 	// 가까운 지지대 다리
 	translate([0, tsin, 0])
-	under5();
+	under5(data = data);
 
 	//	먼 지지대 다리
 	translate([0, ocos - thick, 0])
-	under6();
+	under6(data = data);
 
 	//	지지대간의 지지대
 	translate([0, 0, height1st - thick])	//	바닥에 있는 걸 들어 올리기
 	translate([0, tsin, 0])
-	under7();
+	under7(data = data);
 
 	echo("under8 끝: ");
 }
@@ -236,38 +227,38 @@ module under9(name = "UNDER⑨", v) {
 }
 
 //	UNDER⑩
-module under10(name = "UNDER⑩") {
-	thick = DEFINE[0];
-	angle = DEFINE[1];
-	distance = DEFINE[3] + 8;
+module under10(name = "UNDER⑩", data = DEFAULT) {
+	thick = data["다리.두께"];
+	angle = data["기초.각도.옆"];
+	distance = data["다리.거리"] + 8;
 	tcos = thick * cos(angle);	//	두께 코사인
 
 	under9(name, [distance + tcos, thick, thick]);
 }
 
 //	UNDER⑪
-module under11(name = "UNDER⑪") {
-	thick = DEFINE[0];
-	inner = DEFINE[2];
+module under11(name = "UNDER⑪", data = DEFAULT) {
+	thick = data["다리.두께"];
+	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
-	angle = DEFINE[1];
-	distance = DEFINE[3] + 8;
+	angle = data["기초.각도.옆"];
+	distance = data["다리.거리"] + 8;
 	osin = outter * sin(angle);	//	외경 사인
 
 	under9(name, [distance  - osin - 12, thick, thick]);
 }
 
 //	UNDER⑫ = UNDER④ + UNDER⑧ + UNDER⑩ + UNDER⑪
-module under12(name = "UNDER⑫") {
+module under12(name = "UNDER⑫", data = DEFAULT) {
 	echo("under12 처음: ");
 
-	height1st = MEASURE[4] - MEASURE[5];
-	height2nd = MEASURE[5];
-	thick = DEFINE[0];
-	inner = DEFINE[2];
+	height1st = data["벽.단.높이"] - data["벽.단.턱두께"];
+	height2nd = data["벽.단.턱두께"];
+	thick = data["다리.두께"];
+	inner = (data["상판.크기"].x + data["다리.두께"] * 2);
 	outter = inner + thick * 2;
-	angle = DEFINE[1];
-	distance = DEFINE[3];
+	angle = data["기초.각도.옆"];
+	distance = data["다리.거리"];
 
 	tcos = thick * cos(angle);	//	두께 코사인
 	tsin = thick * sin(angle);	//	두께 사인
@@ -279,60 +270,60 @@ module under12(name = "UNDER⑫") {
 	y = 0;
 	z = height1st + height2nd + thick;
 
-	rotate([0, 0, DEFINE[1]])	//	회전(약간의 영점 흐트러짐)
-	translate([0, DEFINE[0], 0])	//	영점 조정
-    under4();
+	rotate([0, 0, data["기초.각도.옆"]])	//	회전(약간의 영점 흐트러짐)
+	translate([0, data["다리.두께"], 0])	//	영점 조정
+    under4(data = data);
 
 	translate([-distance, 0, height1st - thick * 2])	//	바닥에 있는 걸 들어 올리기
 	{
 		translate([0, thick, 0])
-		under10();
+		under10(data = data);
 
 		translate([0, ocos - thick - 16, 0])
-		under11();
+		under11(data = data);
 	}
 
 	translate([-distance, 0, 0])
-	under8();
+	under8(data = data);
 
 	echo("under12 끝: ");
 }
 
-module under12_assemble() {
+module under12_assemble(data = DEFAULT) {
 	%translate([32, 0, 0])
-		rotate([0, 0, DEFINE[1]])
-		translate([0, 0, MEASURE[4]])
-		basis01_type_4_assemble();
+		rotate([0, 0, data["기초.각도.옆"]])
+		translate([0, 0, data["벽.단.높이"]])
+		basis01_type_4_assemble(data);
 	*%wall(320, 320, 320);
 	
-	translate([220, 256 * sin(DEFINE[1]), 0])
-	under12();
+	translate([220, 256 * sin(data["기초.각도.옆"]), 0])
+	under12(data = data);
 }
-module under12_print() {
-	thick = DEFINE[0];
+module under12_print(data = DEFAULT) {
+	thick = data["다리.두께"];
 
 	*%translate([32, 0, 0])
-		rotate([0, 0, DEFINE[1]])
-		translate([0, 0, MEASURE[4]])
-		basis01_type_4_assemble();
+		rotate([0, 0, data["기초.각도.옆"]])
+		translate([0, 0, data["벽.단.높이"]])
+		basis01_type_4_assemble(data);
 	
-	translate([220, 256 * sin(DEFINE[1]), 0])
-	*%under12();
+	translate([220, 256 * sin(data["기초.각도.옆"]), 0])
+	*%under12(data = data);
     
 	translate([64, -6, 0])
 	rotate([0, -90, 0])
-    under4();
+    under4(data = data);
 
 	rotate([0, -90, 0])
-	under8();
+	under8(data = data);
 
 	translate([-32, 16, thick])
 	rotate([180, 0, 90])
-	under10();
+	under10(data = data);
 
 	translate([-16, 16, thick])
 	rotate([180, 0, 90])
-	under11();
+	under11(data = data);
 }
 
 module main(command = 0) {
