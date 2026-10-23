@@ -1,19 +1,24 @@
 include	<../knife-data.scad>
 
-//	벽 모델링 자료
-module wall(x, y, z) {
-	echo(str("", parent_module(0), "(", x, y, z, ")"));
+//	레거시 호환용 벽: 길이 y 로 y = 0 을 중심으로 늘린 벽 단면 + 높이 z 의 뒷벽 면
+//	x 는 쓰지 않는다 (예전 호출부 호환용). 새 코드는 wall00(data) 를 쓴다
+module wall(x, y, z, data = DEFAULT) {
+	echo(str("벽(레거시)::", parent_module(0), ".", parent_module(1), "(", x, ", ", y, ", ", z, ")"));
 
-	translate([0, -y / 2, 0]) {
-		cube([167, y, 57.7]);
-		note(167, y, 57.7);
-		
-	}
-	translate([0, -y / 2, 57.7]) {
-		cube([180, y, 13]);
-		note(180, y, 13);
-	}
-	translate([-EPSILON, -y / 2, 0])	cube([EPSILON, y, z]);
+	place1(y)
+	linear_extrude(height = y, v = [0, 0, 1], center = false)
+	wall_2d(data);
+
+	//	뒷벽 면
+	if (!is_undef(z))
+		translate([-EPSILON, -y / 2, 0])	cube([EPSILON, y, z]);
+}
+
+//	레거시 벽 위치 자세::	xy평면의 단면을 길이 length 만큼 y = 0 중심으로 늘리도록 세운다
+module place1(length) {
+	translate([0, length / 2, 0])
+	rotate([90, 0, 0])
+	children();
 }
 
 //	벽표면에 따른, 여유공간을 띄운 도형
