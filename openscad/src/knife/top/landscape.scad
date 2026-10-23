@@ -16,6 +16,19 @@ PALETTE = [
 	[0.0, 0.0, 0.0, 0.0]	//	검정 투명, 호환성 예약
 ];
 
+//	한글 색 이름 → OpenSCAD color() 이름. 표에 없으면 그대로 쓴다 ("yellow", "#ff0" 등)
+COLOR_NAME = object([
+	["노랑",	"yellow"	],
+	["빨강",	"red"		],
+	["파랑",	"blue"		],
+	["초록",	"green"		],
+	["검정",	"black"		],
+	["흰색",	"white"		],
+	["회색",	"gray"		],
+	["갈색",	"brown"		]
+]);
+function colorName(name) = is_undef(COLOR_NAME[name]) ? name : COLOR_NAME[name];
+
 //	인자가 없으면 data 의 값을 쓴다 (기존 호출부 landscape(thick, margin, delta) 호환)
 function landscapeThick(thick, data)	= is_undef(thick) ? data["상판.크기"].z : thick;
 function landscapeMargin(margin, data)	= is_undef(margin) ? data["상판.여백"] : margin;
@@ -66,18 +79,27 @@ module landscape3p(base, thick, side, row) {
 	children();
 }
 
+//	서명 위치: 상판 윗면, 손잡이 가이드 왼쪽의 칼구멍 앞 여백 (오른쪽 정렬)
+module landscape4p(thick, margin, delta, data) {
+	translate([margin + chefsInfo(delta, data)[0] - thick - margin / 2, margin / 4, thick])
+	children();
+}
+
 //	─── 형상 ────────────────────────────────────────────────────
-//	상판 본체 + 서명
-module landscape_plate(base, thick, margin, data) {
+//	상판 본체
+module landscape_plate(base, thick, data) {
 	echo(str("상판 본체::", parent_module(0), ".", parent_module(1), "(", base, ")"));
 
 	translate([base.x / 2, base.y / 2, thick / 2])
 	roundedBox(base, data["상판.모서리반경"], true, $fn = FN);
 	note_type_1([base.x, base.y, base.z]);
+}
 
-	//	서명
-	color(c = PALETTE[2])
-	translate([base.x - margin / 2 - 2, margin / 4, thick / 2])
+//	서명: 윗면 돋을새김. 원점은 글자 오른쪽 기준선
+module landscape_sign(data) {
+	echo(str("서명::", parent_module(0), ".", parent_module(1), "(", data["상판.서명"], ")"));
+
+	color(colorName(data["상판.서명.색상"]))
 	linear_extrude(data["상판.서명.두께"], center = false, slices = $preview ? 20 : 16 * 4)
 	text(data["상판.서명"], size = data["상판.서명.크기"], halign = "right", $fn = FN);
 }
@@ -132,7 +154,10 @@ module landscape(thick, margin, delta, data = DEFAULT) {
 
 	difference() {
 		union() {
-			landscape_plate(base, t, m, data);
+			landscape_plate(base, t, data);
+
+			landscape4p(t, m, d, data)
+			landscape_sign(data);
 
 			landscape1p(t, m, d, data)
 			landscape_handle(base, t, m, d, data);
