@@ -34,7 +34,8 @@ OpenSCAD를 직접 실행하는 것 외에 별도의 빌드 시스템은 없다(
 **파일 구조 / 의존 방향**:
 - `knife-data.scad` — 공유 파라미터 맵(`DEFAULT0`/`DEFAULT`). 전역 변수가 보이도록 거의 모든 곳에서 `use`가 아니라 `include`된다.
 - `knife.scad` — 최상위 어셈블리 진입점. 아래의 모듈들을 `use`하고 `main(command)`에서 이들을 구동한다.
-- `under.scad`, `knife-before.scad` — 배치용 헬퍼 및 레거시/보조 형상.
+- `knife-before.scad` — 회전/이동만 하는 배치 래퍼 모듈(`basis0p`/`basis1p`/`basis2p`). 형상은 두지 않는다.
+- `under.scad` — 배치용 헬퍼 및 레거시/보조 형상.
 - `body/` — 주요 구조 부품들 (`basis*.scad` = 경사진 몸체/칼거치 어셈블리, `wall.scad` = 몸체가 기대는 벽/받침, `under#38.scad` = 하단 가로 지지대, `body.scad`/`bodyOnePiece.scad`/`body_assemble.scad` = 몸체의 다른 구성 방식들, `common.scad` = 이 폴더에서 공유하는 board/window/bulge 헬퍼 모듈들).
 - `top/` — 칼이 꽂히는 구멍 뚫린 상판 (`landscape.scad`/`portrait.scad` 방향; `common.scad`는 README의 실측 날 치수를 기준으로 크기가 정해지는, 칼/가위 슬롯 패턴을 잘라내는 `punch()` 모듈을 정의한다).
 - `etc/` — 작은 독립 유틸리티 (`utils.scad`, `measure.scad`). 대부분 `../common/`으로 대체되었지만, 아직 이를 참조하는 파일들이 있어 남아 있다.
