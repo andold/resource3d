@@ -11,10 +11,13 @@ module	basis0p(data = DEFAULT) {
 }
 
 //	오른쪽 벽 구조물을 해당 위치에 세운다
+//	basis2p 의 왼쪽 지지대와 xz 단면이 겹치도록 이동한다 (어떤 기초.각도.앞 에서도)
+//		x = (기초.중복 - 기초.길이) * cos(앞), z = 기초.중복 - 기초.길이 * sin(앞)
+//	예전 z 이동 sqrt(2) * 상판.크기.y / 2 는 45도 전용이었고, 그때도 0.82mm 높았다
 module	basis1p(data = DEFAULT) {
-	translate([0, data["상판.크기"].x, 0])
-	translate([0, 0, sqrt(2) *  data["상판.크기"].y / 2])
-	rotate([0, 180 -  data["기초.각도.앞"], 0])
+	angle = data["기초.각도.앞"];
+	translate([(data["기초.중복"] - data["기초.길이"]) * cos(angle), data["상판.크기"].x, data["기초.중복"] - data["기초.길이"] * sin(angle)])
+	rotate([0, 180 - angle, 0])
 	rotate([0, 0, 180])
 	rotate([90, 0, 0])
 	children();
